@@ -526,18 +526,35 @@
       });
     }
 
+    // Get today's Wordle game number
+    function getTodayGameNumber() {
+      // Wordle #1 was June 19, 2021
+      const startDate = new Date('2021-06-19T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const diffTime = today - startDate;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      return diffDays + 1; // Wordle #1 was day 0
+    }
+
     // Check word
     function checkWord() {
       const word = wordInput.value.toUpperCase().trim();
-      
+
       if (word.length !== 5) return;
-      
+
       const found = wordList.get(word);
-      
-      result.className = 'result ' + (found ? 'yes' : 'no');
+      const todayGame = getTodayGameNumber();
+
+      // Check if this word is today's solution
+      const isTodaySolution = found && found.game === todayGame;
+
+      result.className = 'result ' + (found && !isTodaySolution ? 'yes' : 'no');
       resultWord.textContent = word;
-      
-      if (found) {
+
+      if (found && !isTodaySolution) {
         resultMessage.textContent = 'Yes, this was a Wordle answer!';
         if (found.date) {
           resultDetail.textContent = `Wordle #${found.game} • ${found.date}`;
@@ -549,8 +566,13 @@
           tile.classList.remove('gray');
         });
       } else {
-        resultMessage.textContent = 'No, this has not been a Wordle answer.';
-        resultDetail.textContent = 'Safe to use as a guess!';
+        if (isTodaySolution) {
+          resultMessage.textContent = 'Cannot verify - might be today\'s puzzle!';
+          resultDetail.textContent = 'Come back tomorrow to check this word.';
+        } else {
+          resultMessage.textContent = 'No, this has not been a Wordle answer.';
+          resultDetail.textContent = 'Safe to use as a guess!';
+        }
         tiles.forEach(tile => {
           tile.classList.add('gray');
           tile.classList.remove('green');
