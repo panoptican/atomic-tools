@@ -72,17 +72,21 @@ Your site will be available at: `https://<username>.github.io/wordle-checker/`
 
 ### Frontend only:
 ```bash
+# From the repository root
 python3 -m http.server 8080
-# Visit http://localhost:8080
+# Visit http://localhost:8080/wordle-checker/
 ```
 
 ### Worker development:
 ```bash
+cd wordle-checker
 npm run dev
 # Worker runs at http://localhost:8787
 ```
 
 ## 📝 Scripts
+
+All scripts should be run from the `wordle-checker/` directory:
 
 ```bash
 npm run dev         # Run Worker locally
@@ -95,7 +99,7 @@ npm run kv:get      # Get word list from KV
 
 ## 🧪 Testing
 
-Legacy test scripts (for old static word list approach):
+Test scripts (run from `wordle-checker/` directory):
 
 ```bash
 node test-checker.js
