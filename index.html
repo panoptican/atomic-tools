@@ -69,6 +69,11 @@
       letter-spacing: 0.1em;
     }
 
+    .word-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .check-btn {
       font-size: 1rem;
       font-weight: 700;
@@ -211,14 +216,15 @@
   </div>
 
   <div class="input-container">
-    <input 
-      type="text" 
-      class="word-input" 
-      id="wordInput" 
-      maxlength="5" 
+    <input
+      type="text"
+      class="word-input"
+      id="wordInput"
+      maxlength="5"
       placeholder="WORD"
       autocomplete="off"
       spellcheck="false"
+      disabled
     >
     <button class="check-btn" id="checkBtn" disabled>Check</button>
   </div>
@@ -506,6 +512,7 @@
       isLoaded = true;
       loading.style.display = 'none';
       updateStats();
+      wordInput.disabled = false;
       wordInput.focus();
     }
 
