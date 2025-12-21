@@ -37,15 +37,16 @@ async function fetchWordList() {
     for (let page = 1; page <= MAX_PAGES; page++) {
       pagePromises.push(
         fetch(`${API_BASE_URL}?page=${page}&per_page=50`)
-          .then(res => res.ok ? res.json() : [])
-          .catch(() => [])
+          .then(res => res.ok ? res.json() : { results: [] })
+          .catch(() => ({ results: [] }))
       );
     }
 
     const results = await Promise.all(pagePromises);
 
     // Process all results
-    for (const words of results) {
+    for (const response of results) {
+      const words = response.results || [];
       if (!Array.isArray(words)) continue;
 
       for (const item of words) {

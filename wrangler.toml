@@ -6,12 +6,9 @@ compatibility_date = "2024-01-01"
 # Note: You'll need to create this KV namespace and bind it
 # Run: wrangler kv:namespace create WORDLE_KV
 kv_namespaces = [
-  { binding = "WORDLE_KV", id = "YOUR_KV_NAMESPACE_ID" }
+  { binding = "WORDLE_KV", id = "92dca682ece94b13b6e706a4a9f59e04" }
 ]
 
 # Cron trigger - runs daily at 3 AM UTC to refresh word list
 [triggers]
 crons = ["0 3 * * *"]
-
-# Usage model
-usage_model = "bundled"
