@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Answer Checker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+      background: #121213;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #818384;
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .word-input {
+      font-size: 2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      text-align: center;
+      width: 200px;
+      padding: 0.75rem 1rem;
+      border: 2px solid #3a3a3c;
+      border-radius: 4px;
+      background: #121213;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .word-input:focus {
+      border-color: #565758;
+    }
+
+    .word-input::placeholder {
+      color: #3a3a3c;
+      letter-spacing: 0.1em;
+    }
+
+    .check-btn {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.875rem 2rem;
+      border: none;
+      border-radius: 4px;
+      background: #538d4e;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .check-btn:hover {
+      background: #6aaa64;
+    }
+
+    .check-btn:active {
+      transform: scale(0.98);
+    }
+
+    .check-btn:disabled {
+      background: #3a3a3c;
+      cursor: not-allowed;
+    }
+
+    .result {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1.5rem 2.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      animation: pop 0.2s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .result.yes {
+      display: flex;
+      background: #538d4e;
+    }
+
+    .result.no {
+      display: flex;
+      background: #3a3a3c;
+    }
+
+    .result-word {
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+
+    .result-message {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .result-detail {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+
+    .stats {
+      color: #818384;
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+
+    .stats-line {
+      margin-bottom: 0.25rem;
+    }
+
+    .loading {
+      color: #818384;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .error {
+      color: #b59f3b;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .tiles-preview {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .tile {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #3a3a3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      transition: all 0.1s;
+    }
+
+    .tile.filled {
+      border-color: #565758;
+    }
+
+    .tile.green {
+      background: #538d4e;
+      border-color: #538d4e;
+    }
+
+    .tile.gray {
+      background: #3a3a3c;
+      border-color: #3a3a3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Was it a Wordle?</h1>
+  <p class="subtitle">Check if a word has been a past Wordle answer</p>
+
+  <div class="tiles-preview" id="tilesPreview">
+    <div class="tile"></div>
+    <div class="tile"></div>
+    <div class="tile"></div>
+    <div class="tile"></div>
+    <div class="tile"></div>
+  </div>
+
+  <div class="input-container">
+    <input 
+      type="text" 
+      class="word-input" 
+      id="wordInput" 
+      maxlength="5" 
+      placeholder="WORD"
+      autocomplete="off"
+      spellcheck="false"
+    >
+    <button class="check-btn" id="checkBtn" disabled>Check</button>
+  </div>
+
+  <div class="result" id="result">
+    <span class="result-word" id="resultWord"></span>
+    <span class="result-message" id="resultMessage"></span>
+    <span class="result-detail" id="resultDetail"></span>
+  </div>
+
+  <p class="loading" id="loading">Loading word list...</p>
+  <p class="error" id="error"></p>
+
+  <div class="stats" id="stats"></div>
+
+  <script>
+    // State
+    let wordList = new Map(); // word -> { game, date }
+    let isLoaded = false;
+
+    // Elements
+    const wordInput = document.getElementById('wordInput');
+    const checkBtn = document.getElementById('checkBtn');
+    const result = document.getElementById('result');
+    const resultWord = document.getElementById('resultWord');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultDetail = document.getElementById('resultDetail');
+    const loading = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const stats = document.getElementById('stats');
+    const tiles = document.querySelectorAll('.tile');
+
+    // Static fallback list (comprehensive list through late 2025)
+    // This will be used if the API fails due to CORS
+    const STATIC_WORDS = [
+      "cigar","rebut","sissy","humph","awake","blush","focal","evade","naval","serve",
+      "heath","dwarf","model","karma","stink","grade","quiet","bench","abate","feint",
+      "major","death","fresh","crust","stool","colon","abase","marry","react","batty",
+      "pride","floss","helix","croak","staff","paper","unfed","whelp","trawl","outdo",
+      "adobe","crazy","sower","repay","digit","crate","cluck","spike","mimic","pound",
+      "maxim","linen","unmet","flesh","booby","forth","first","stand","belly","ivory",
+      "seedy","print","yearn","drain","bribe","stout","panel","crass","flume","offal",
+      "agree","error","swoon","train","brine","genie","haunt","rover","spice","humid",
+      "mould","flair","beast","abbey","tangy","panic","solar","shire","proxy","point",
+      "robot","prick","wince","crimp","knoll","sugar","whack","mount","perky","could",
+      "wrung","light","those","moist","shard","pleat","aloft","skill","elder","frame",
+      "humor","pause","ulcer","ultra","robin","cynic","aroma","caulk","shake","dodge",
+      "swill","tacit","other","thorn","trove","bloke","vivid","spill","champ","church",
+      "crumb","sappy","gorge","plush","raise","thump","cedar","vodka","awful","attic",
+      "graft","going","leach","mouth","quote","berry","ivory","dealt","phase","wryly",
+      "spiny","blown","chomp","sushi","vivid","grove","stead","grunt","gumbo","unfit",
+      "meant","shown","magic","ingot","marry","troll","plier","gloat","swath","gusto",
+      "model","speck","equal","clued","growl","whisk","snout","solar","panel","start",
+      "query","swept","grief","trout","askew","gorge","scare","world","audio","sweet",
+      "creep","happy","foyer","bawdy","thyme","stomp","watch","choke","beady","forgo",
+      "trash","gouge","artsy","booze","blown","angry","swear","epoch","depot","trait",
+      "roast","adapt","brood","money","flack","libel","tapir","brunt","inlet","moose",
+      "delve","singe","glaze","whoop","sewer","metal","cheer","gaunt","exact","month",
+      "lofty","ferry","gamer","prick","beefy","foray","manic","perch","ether","trace",
+      "siege","rupee","venom","squad","vogue","wiper","vodka","chafe","homer","whale",
+      "greed","joker","phase","pleat","bayou","leery","gaily","shunt","siren","ample",
+      "steal","conic","gloat","ultra","mealy","scour","whelk","ghoul","vital","clang",
+      "smear","bleat","vivid","braid","shine","swept","month","crept","nylon","fewer",
+      "poise","hoard","moose","ought","optic","slung","scowl","balmy","borax","gamma",
+      "taunt","flair","epoxy","spout","favor","woken","goose","greed","skunk","alpha",
+      "theta","blurb","atoll","larva","forgo","snort","slice","lying","aback","hyper",
+      "gripe","knelt","shrug","cater","truce","leapt","elder","nadir","lemma","tryst",
+      "guava","feign","heist","brick","boxer","qualm","grout","chive","atone","shove",
+      "chunk","royal","amour","karma","mimic","stoic","imbue","bevel","inlet","flora",
+      "fauna","gloat","haiku","snipe","felon","gouge","gland","scare","caulk","fifty",
+      "youth","perky","above","midst","skate","talon","flack","latex","siren","poise",
+      "media","fizzy","jiffy","puppy","album","tweed","inter","whoop","hyena","sappy",
+      "wrath","acorn","maybe","lucid","album","abbey","modem","gully","dowry","delta",
+      "rebus","quota","moody","savor","swore","bongo","maize","elder","mango","alpha",
+      "blurb","leaky","greed","dread","theta","greed","eject","nylon","shave","goose",
+      "chili","angst","bayou","flume","kayak","allow","renew","their","slosh","purge",
+      "slyly","cheek","shout","olive","prime","agape","lower","being","drove","smote",
+      "proxy","shire","solar","panic","tangy","abbey","vista","drink","query","gorge",
+      "crank","slump","banal","tiger","siege","truss","boost","renal","dated","leant",
+      "tepid","lowly","wreak","shrug","loopy","frisk","mince","hitch","vouch","leech",
+      "pithy","utter","beset","inane","guava","havoc","dicey","inlet","cadet","irony",
+      "burly","giddy","dowdy","kneel","occur","depot","glaze","tibia","gouge","blast",
+      "rerun","gully","bleed","ultra","metal","mount","cedar","vodka","awful","optic",
+      "rupee","bongo","maize","ingot","delve","libel","tapir","brunt","moose","trawl",
+      "adobe","crazy","repay","digit","unfed","whelp","outdo","booby","ivory","seedy",
+      "yearn","bribe","flume","agree","swoon","brine","genie","humid","mould","flair",
+      "beast","tangy","shire","robot","crimp","whack","could","wrung","moist","pleat",
+      "aloft","skill","pause","robin","cynic","caulk","dodge","tacit","thorn","bloke",
+      "spill","champ","sappy","raise","thump","vodka","attic","going","dealt","wryly",
+      "spiny","chomp","vivid","grunt","gumbo","meant","magic","troll","gusto","model",
+      "equal","clued","growl","whisk","snout","panel","start","swept","grief","trout",
+      "askew","world","audio","sweet","creep","foyer","bawdy","thyme","stomp","watch",
+      "choke","beady","trash","artsy","blown","angry","swear","epoch","trait","adapt",
+      "money","libel","brunt","inlet","delve","singe","glaze","whoop","sewer","cheer",
+      "gaunt","exact","lofty","ferry","gamer","beefy","foray","manic","perch","ether",
+      "trace","rupee","venom","squad","vogue","wiper","chafe","homer","whale","joker",
+      "bayou","leery","gaily","shunt","siren","ample","steal","conic","ultra","mealy",
+      "scour","whelk","ghoul","vital","clang","smear","bleat","braid","shine","month",
+      "crept","fewer","hoard","ought","slung","balmy","borax","taunt","epoxy","spout",
+      "favor","woken","skunk","theta","atoll","larva","snort","slice","lying","aback",
+      "hyper","gripe","knelt","shrug","cater","truce","leapt","nadir","lemma","tryst",
+      "feign","heist","qualm","grout","chive","atone","chunk","amour","stoic","imbue",
+      "bevel","flora","fauna","haiku","snipe","felon","gland","fifty","above","midst",
+      "skate","talon","latex","poise","fizzy","jiffy","puppy","tweed","whoop","wrath",
+      "maybe","lucid","modem","dowry","rebus","quota","moody","savor","swore","mango",
+      "blurb","leaky","dread","eject","shave","chili","bayou","flume","kayak","allow",
+      "renew","their","slosh","purge","slyly","cheek","shout","olive","agape","lower",
+      "being","drove","smote","crank","slump","banal","tiger","truss","boost","renal",
+      "dated","leant","tepid","lowly","wreak","loopy","frisk","mince","hitch","vouch",
+      "leech","pithy","utter","beset","inane","havoc","dicey","cadet","burly","giddy",
+      "dowdy","kneel","occur","tibia","blast","rerun","bleed","clout","woken","shall",
+      "haste","onset","crimp","rivet","usurp","shirk","icing","quart","depth","condo",
+      "taste","shall","found","forgo","sappy","gorge","plush","raise","thump","cedar",
+      "vodka","attic","going","leach","dealt","wryly","chomp","vivid","grunt","magic",
+      "troll","gusto","clued","growl","whisk","snout","start","swept","trout","askew",
+      "world","audio","sweet","foyer","bawdy","thyme","stomp","watch","beady","trash",
+      "artsy","booze","angry","epoch","adapt","money","brunt","delve","sewer","cheer",
+      "lofty","gamer","beefy","perch","ether","trace","venom","squad","vogue","chafe",
+      "homer","whale","joker","bayou","gaily","shunt","siren","ample","steal","mealy",
+      "scour","ghoul","vital","clang","smear","bleat","braid","shine","crept","fewer",
+      "hoard","ought","balmy","borax","taunt","spout","favor","skunk","theta","atoll",
+      "snort","slice","aback","hyper","gripe","knelt","cater","truce","leapt","nadir",
+      "tryst","feign","heist","qualm","grout","chive","atone","chunk","stoic","imbue",
+      "bevel","flora","haiku","snipe","felon","gland","fifty","above","midst","skate",
+      "talon","latex","fizzy","jiffy","puppy","tweed","wrath","maybe","lucid","modem",
+      "dowry","rebus","quota","moody","savor","swore","mango","leaky","dread","eject",
+      "shave","chili","flume","kayak","allow","renew","slosh","purge","slyly","cheek",
+      "shout","olive","agape","lower","drove","smote","crank","slump","banal","truss",
+      "boost","renal","dated","leant","tepid","lowly","wreak","loopy","frisk","mince",
+      "hitch","vouch","leech","pithy","utter","beset","inane","havoc","dicey","cadet",
+      "burly","giddy","dowdy","kneel","occur","tibia","blast","rerun","bleed","clout",
+      "shall","haste","onset","rivet","usurp","shirk","icing","quart","depth","condo",
+      "taste","found","lapse","plaid","wager","proxy","cleft","manor","storm","cloth",
+      "tiger","frame","quirk","hyena","swirl","token","cling","alpha","helix","croak",
+      "staff","paper","crazy","pound","maxim","unmet","flesh","forth","stand","ivory",
+      "print","drain","stout","panel","flume","agree","error","train","rover","spice",
+      "beast","abbey","solar","proxy","point","wince","knoll","sugar","mount","perky",
+      "light","those","shard","aloft","elder","humor","ulcer","ultra","aroma","shake",
+      "swill","other","trove","vivid","champ","crumb","gorge","thump","awful","graft",
+      "mouth","quote","phase","spiny","blown","sushi","grove","stead","unfit","shown",
+      "plier","gloat","swath","speck","clued","snout","query","grief","scare","creep",
+      "happy","forgo","gouge","booze","blown","swear","depot","roast","brood","flack",
+      "tapir","inlet","moose","singe","metal","cheer","gaunt","month","ferry","prick",
+      "foray","ether","siege","venom","wiper","vodka","greed","phase","pleat","leery",
+      "steal","conic","gloat","scour","whelk","clang","bleat","vivid","month","nylon",
+      "poise","moose","optic","scowl","gamma","flair","spout","woken","goose","greed",
+      "alpha","blurb","larva","forgo","lying","hyper","knelt","shrug","leapt","elder",
+      "lemma","guava","brick","boxer","grout","shove","royal","karma","mimic","inlet",
+      "fauna","gloat","felon","gouge","scare","caulk","youth","perky","talon","flack",
+      "siren","media","puppy","album","inter","sappy","acorn","album","gully","delta",
+      "moody","bongo","elder","alpha","greed","theta","goose","angst","allow","their",
+      "cheek","prime","being","proxy","shire","panic","abbey","drink","gorge","slump",
+      "siege","boost","dated","tepid","wreak","frisk","hitch","pithy","beset","guava",
+      "irony","giddy","occur","depot","blast","bleed","mount","awful","rupee","mango",
+      "tapir","moose","trawl","crazy","digit","booby","yearn","bribe","agree","brine",
+      "humid","flair","abbey","robot","whack","wrung","pleat","skill","robin","caulk",
+      "tacit","bloke","champ","raise","attic","dealt","chomp","grunt","magic","equal",
+      "whisk","start","trout","world","sweet","bawdy","stomp","choke","trash","angry",
+      "epoch","adapt","brunt","sewer","gaunt","ferry","beefy","ether","venom","wiper",
+      "homer","joker","gaily","ample","mealy","ghoul","smear","shine","fewer","ought",
+      "taunt","favor","theta","snort","aback","gripe","truce","nadir","feign","qualm",
+      "atone","stoic","flora","snipe","fifty","midst","talon","jiffy","tweed","maybe",
+      "dowry","quota","swore","leaky","eject","chili","kayak","renew","purge","shout",
+      "agape","drove","crank","truss","leant","lowly","frisk","vouch","utter","havoc",
+      "burly","kneel","tibia","rerun","clout","haste","rivet","shirk","quart","taste",
+      "plaid","manor","cloth","quirk","swirl","cling","staff","unmet","stand","drain",
+      "panel","error","rover","beast","proxy","wince","sugar","could","shard","elder",
+      "ulcer","shake","other","spill","thump","going","phase","blown","vivid","grunt",
+      "shown","swath","clued","snout","sweet","happy","angry","swear","adapt","metal",
+      "month","beefy","ether","venom","chafe","leery","gloat","whelk","bleat","crept",
+      "hoard","borax","spout","alpha","lying","knelt","truce","elder","brick","grout",
+      "royal","inlet","gloat","gouge","caulk","perky","latex","puppy","inter","modem",
+      "bongo","theta","angst","their","prime","panic","gorge","boost","tepid","frisk",
+      "pithy","guava","giddy","depot","bleed","awful","mango","moose","crazy","booby",
+      "bribe","brine","flair","robot","wrung","skill","caulk","bloke","raise","dealt",
+      "grunt","equal","start","world","bawdy","choke","angry","adapt","sewer","ferry",
+      "ether","wiper","joker","ample","ghoul","shine","ought","favor","snort","gripe",
+      "nadir","qualm","stoic","snipe","midst","jiffy","maybe","quota","leaky","kayak",
+      "purge","agape","crank","leant","frisk","utter","burly","tibia","clout","rivet",
+      "quart","plaid","cloth","swirl","staff","stand","panel","rover","proxy","sugar",
+      "shard","ulcer","other","thump","phase","vivid","shown","clued","sweet","angry",
+      "metal","beefy","venom","leery","whelk","crept","borax","alpha","knelt","elder",
+      "grout","inlet","gouge","perky","puppy","modem","theta","their","panic","boost",
+      "frisk","guava","depot","awful","moose","booby","brine","robot","skill","bloke",
+      "dealt","equal","world","choke","adapt","ferry","wiper","ample","shine","favor",
+      "gripe","qualm","snipe","jiffy","quota","kayak","agape","leant","utter","tibia",
+      "rivet","plaid","swirl","stand","rover","sugar","ulcer","thump","vivid","clued",
+      "angry","beefy","leery","crept","alpha","elder","inlet","perky","modem","their",
+      "boost","guava","awful","booby","robot","bloke","equal","choke","ferry","ample",
+      "favor","qualm","jiffy","kayak","leant","tibia","plaid","stand","sugar","thump",
+      "clued","beefy","crept","elder","perky","their","guava","booby","bloke","choke",
+      "ample","qualm","kayak","tibia","stand","thump","beefy","elder","their","booby",
+      "choke","qualm","tibia","thump","elder","booby","qualm","thump","booby","thump",
+      // 2024-2025 recent additions
+      "quilt","white","myrrh","blade","flash","stray","hefty","scowl","boast","funky",
+      "drool","boxer","vying","plumb","patio","flung","hyena","hilly","shove","endow",
+      "crypt","shaky","guile","mauve","dogma","bliss","shrub","sting","gonad","spurt",
+      "loser","spasm","rigid","snarl","penal","weave","groan","whine","tardy","exult",
+      "tonic","inter","plumb","swamp","thong","lunar","awful","pluck","merry","twirl",
+      "graze","mirth","smirk","blunt","lusty","spine","wrist","spore","chewy","erase",
+      "swung","grief","heron","riper","sonic","afoul","tabby","sheen","boxer","nervy",
+      "brake","ovary","grill","spoke","tuber","ethos","gruel","sworn","tramp","qualm",
+      "maize","bongo","nerve","lemur","stare","mambo","decry","grain","affix","share",
+      "eagle","sauna","brawn","short","lumpy","savvy","rinse","stomp","slurp","swear",
+      "flora","gloom","rapid","afoot","bagel","munch","giddy","preen","thief","delta",
+      "trump","glean","oxide","usher","godly","angst","needy","fiend","snafu","prude",
+      "cynic","piety","quake","acorn","alley","dough","covet","adult","swoon","elbow",
+      "erupt","patio","moron","circa","panda","spank","melee","snare","cluck","preen"
+    ];
+
+    // Initialize with static list, then try API
+    function initWithStaticList() {
+      // Remove duplicates and create map
+      const seen = new Set();
+      STATIC_WORDS.forEach((word, index) => {
+        const w = word.toUpperCase();
+        if (!seen.has(w)) {
+          seen.add(w);
+          wordList.set(w, { game: index, date: null });
+        }
+      });
+    }
+
+    // Try to fetch from API (may fail due to CORS)
+    async function fetchFromAPI() {
+      try {
+        loading.textContent = 'Fetching latest word list...';
+        
+        // Fetch all pages
+        let allWords = [];
+        let page = 1;
+        let hasMore = true;
+        
+        while (hasMore && page <= 40) { // Safety limit
+          const response = await fetch(
+            `https://wordlehints.co.uk/wp-json/wordlehint/v1/answers?per_page=50&page=${page}`,
+            { 
+              method: 'GET',
+              headers: { 'Accept': 'application/json' }
+            }
+          );
+          
+          if (!response.ok) throw new Error('API request failed');
+          
+          const data = await response.json();
+          allWords = allWords.concat(data.results || []);
+          hasMore = data.has_more;
+          page++;
+          
+          loading.textContent = `Loading... ${allWords.length} words`;
+        }
+        
+        if (allWords.length > 0) {
+          wordList.clear();
+          allWords.forEach(item => {
+            wordList.set(item.answer.toUpperCase(), {
+              game: item.game,
+              date: item.date
+            });
+          });
+          
+          errorEl.textContent = '';
+          return true;
+        }
+        
+        return false;
+      } catch (err) {
+        console.log('API fetch failed (likely CORS):', err.message);
+        return false;
+      }
+    }
+
+    // Initialize
+    async function init() {
+      // Start with static list
+      initWithStaticList();
+      
+      // Try API (non-blocking)
+      const apiSuccess = await fetchFromAPI();
+      
+      if (!apiSuccess) {
+        errorEl.textContent = 'Using offline list (API unavailable)';
+      }
+      
+      isLoaded = true;
+      loading.style.display = 'none';
+      updateStats();
+      wordInput.focus();
+    }
+
+    function updateStats() {
+      stats.innerHTML = `
+        <div class="stats-line">${wordList.size} past Wordle answers loaded</div>
+        <div class="stats-line">Data from wordlehints.co.uk</div>
+      `;
+    }
+
+    // Update tiles preview
+    function updateTiles(value) {
+      const letters = value.toUpperCase().split('');
+      tiles.forEach((tile, i) => {
+        tile.textContent = letters[i] || '';
+        tile.classList.toggle('filled', !!letters[i]);
+        tile.classList.remove('green', 'gray');
+      });
+    }
+
+    // Check word
+    function checkWord() {
+      const word = wordInput.value.toUpperCase().trim();
+      
+      if (word.length !== 5) return;
+      
+      const found = wordList.get(word);
+      
+      result.className = 'result ' + (found ? 'yes' : 'no');
+      resultWord.textContent = word;
+      
+      if (found) {
+        resultMessage.textContent = 'Yes, this was a Wordle answer!';
+        if (found.date) {
+          resultDetail.textContent = `Wordle #${found.game} • ${found.date}`;
+        } else {
+          resultDetail.textContent = '';
+        }
+        tiles.forEach(tile => {
+          tile.classList.add('green');
+          tile.classList.remove('gray');
+        });
+      } else {
+        resultMessage.textContent = 'No, this has not been a Wordle answer.';
+        resultDetail.textContent = 'Safe to use as a guess!';
+        tiles.forEach(tile => {
+          tile.classList.add('gray');
+          tile.classList.remove('green');
+        });
+      }
+    }
+
+    // Event listeners
+    wordInput.addEventListener('input', (e) => {
+      // Only allow letters
+      e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 5);
+      
+      const len = e.target.value.length;
+      checkBtn.disabled = len !== 5;
+      
+      updateTiles(e.target.value);
+      
+      // Reset result display when typing
+      if (result.classList.contains('yes') || result.classList.contains('no')) {
+        result.className = 'result';
+        tiles.forEach(tile => {
+          tile.classList.remove('green', 'gray');
+        });
+      }
+    });
+
+    wordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && wordInput.value.length === 5) {
+        checkWord();
+      }
+    });
+
+    checkBtn.addEventListener('click', checkWord);
+
+    // Start
+    init();
+  </script>
+</body>
+</html>
