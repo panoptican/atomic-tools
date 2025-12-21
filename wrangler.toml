@@ -1,0 +1,17 @@
+name = "wordle-checker-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# KV Namespace for storing word list
+# Note: You'll need to create this KV namespace and bind it
+# Run: wrangler kv:namespace create WORDLE_KV
+kv_namespaces = [
+  { binding = "WORDLE_KV", id = "YOUR_KV_NAMESPACE_ID" }
+]
+
+# Cron trigger - runs daily at 3 AM UTC to refresh word list
+[triggers]
+crons = ["0 3 * * *"]
+
+# Usage model
+usage_model = "bundled"

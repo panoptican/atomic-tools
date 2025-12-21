@@ -1,0 +1,23 @@
+{
+  "name": "wordle-checker",
+  "version": "2.0.0",
+  "description": "Check if a word has been a past Wordle answer - with Cloudflare Worker backend",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "kv:create": "wrangler kv:namespace create WORDLE_KV",
+    "kv:list": "wrangler kv:key list --binding WORDLE_KV",
+    "kv:get": "wrangler kv:key get wordle_solutions --binding WORDLE_KV"
+  },
+  "keywords": [
+    "wordle",
+    "cloudflare-workers",
+    "edge-computing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
