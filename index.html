@@ -566,13 +566,10 @@
           tile.classList.remove('gray');
         });
       } else {
-        if (isTodaySolution) {
-          resultMessage.textContent = 'Cannot verify - might be today\'s puzzle!';
-          resultDetail.textContent = 'Come back tomorrow to check this word.';
-        } else {
-          resultMessage.textContent = 'No, this has not been a Wordle answer.';
-          resultDetail.textContent = 'Safe to use as a guess!';
-        }
+        // Treat today's solution the same as any non-past answer
+        // This avoids spoiling that it might be today's puzzle
+        resultMessage.textContent = 'No, this has not been a Wordle answer.';
+        resultDetail.textContent = 'Safe to use as a guess!';
         tiles.forEach(tile => {
           tile.classList.add('gray');
           tile.classList.remove('green');
