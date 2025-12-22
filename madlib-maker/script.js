@@ -1067,6 +1067,7 @@ const PlayerMode = (function() {
   let containerEl;
   let creatorEl;
   let playerContainerEl;
+  let topBarEl;
   let introScreen;
   let sequentialScreen;
   let allAtOnceScreen;
@@ -1355,9 +1356,10 @@ const PlayerMode = (function() {
     }
 
     // For preview mode, don't hide the container (ModeManager handles section visibility)
-    // For player-only mode, hide the entire creator container
+    // For player-only mode, hide the entire creator container and top bar
     if (!isPreview) {
       creatorEl.style.display = 'none';
+      if (topBarEl) topBarEl.style.display = 'none';
     }
     playerContainerEl.style.display = 'flex';
 
@@ -1373,6 +1375,7 @@ const PlayerMode = (function() {
     isActive = false;
     playerContainerEl.style.display = 'none';
     creatorEl.style.display = '';
+    if (topBarEl) topBarEl.style.display = '';
 
     // Reset player state for next activation
     answers = {};
@@ -1384,6 +1387,7 @@ const PlayerMode = (function() {
     // Get main containers
     creatorEl = document.querySelector('.container');
     playerContainerEl = document.getElementById('player-container');
+    topBarEl = document.querySelector('.top-bar');
 
     // Get screens
     introScreen = document.getElementById('player-intro');
