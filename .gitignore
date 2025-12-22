@@ -21,3 +21,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Test specs
+**/spec/
+
+# Playwright MCP
+.playwright-mcp/
