@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Answer Checker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+      background: #121213;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top bar styles - matches index design */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #3a3a3c;
+      position: relative;
+      background: #121213;
+    }
+
+    .back-link {
+      position: absolute;
+      left: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #818384;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #fff;
+    }
+
+    .back-link svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .top-bar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #818384;
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .word-input {
+      font-size: 2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      text-align: center;
+      width: 200px;
+      padding: 0.75rem 1rem;
+      border: 2px solid #3a3a3c;
+      border-radius: 4px;
+      background: #121213;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .word-input:focus {
+      border-color: #565758;
+    }
+
+    .word-input::placeholder {
+      color: #3a3a3c;
+      letter-spacing: 0.1em;
+    }
+
+    .word-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .check-btn {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.875rem 2rem;
+      border: none;
+      border-radius: 4px;
+      background: #538d4e;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .check-btn:hover {
+      background: #6aaa64;
+    }
+
+    .check-btn:active {
+      transform: scale(0.98);
+    }
+
+    .check-btn:disabled {
+      background: #3a3a3c;
+      cursor: not-allowed;
+    }
+
+    .result {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1.5rem 2.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      animation: pop 0.2s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .result.yes {
+      display: flex;
+      background: #538d4e;
+    }
+
+    .result.no {
+      display: flex;
+      background: #3a3a3c;
+    }
+
+    .result-word {
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+
+    .result-message {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .result-detail {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+
+    .stats {
+      color: #818384;
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+
+    .stats-line {
+      margin-bottom: 0.25rem;
+    }
+
+    .loading {
+      color: #818384;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .error {
+      color: #b59f3b;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .tiles-preview {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .tile {
+      width: 48px;
+      height: 48px;
+      border: 2px solid #3a3a3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      transition: all 0.1s;
+    }
+
+    .tile.filled {
+      border-color: #565758;
+    }
+
+    .tile.green {
+      background: #538d4e;
+      border-color: #538d4e;
+    }
+
+    .tile.gray {
+      background: #3a3a3c;
+      border-color: #3a3a3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="../" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      All Tools
+    </a>
+    <span class="top-bar-title">Wordle Checker</span>
+  </div>
+
+  <div class="main-content">
+    <h1>Was it a Wordle?</h1>
+    <p class="subtitle">Check if a word has been a past Wordle answer</p>
+
+    <div class="tiles-preview" id="tilesPreview">
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+      <div class="tile"></div>
+    </div>
+
+    <div class="input-container">
+      <input
+        type="text"
+        class="word-input"
+        id="wordInput"
+        maxlength="5"
+        placeholder="WORD"
+        autocomplete="off"
+        spellcheck="false"
+        disabled
+      >
+      <button class="check-btn" id="checkBtn" disabled>Check</button>
+    </div>
+
+    <div class="result" id="result">
+      <span class="result-word" id="resultWord"></span>
+      <span class="result-message" id="resultMessage"></span>
+      <span class="result-detail" id="resultDetail"></span>
+    </div>
+
+    <p class="loading" id="loading">Loading word list...</p>
+    <p class="error" id="error"></p>
+
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <script>
+    // Cloudflare Worker API endpoint
+    const API_URL = 'https://wordle-checker-api.spidleweb.workers.dev/api/check-word';
+
+    // Elements
+    const wordInput = document.getElementById('wordInput');
+    const checkBtn = document.getElementById('checkBtn');
+    const result = document.getElementById('result');
+    const resultWord = document.getElementById('resultWord');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultDetail = document.getElementById('resultDetail');
+    const loading = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const stats = document.getElementById('stats');
+    const tiles = document.querySelectorAll('.tile');
+
+    // Initialize - no loading needed!
+    function init() {
+      loading.style.display = 'none';
+      wordInput.disabled = false;
+      wordInput.focus();
+      updateStats();
+    }
+
+    function updateStats() {
+      stats.innerHTML = `
+        <div class="stats-line">Powered by Cloudflare Workers</div>
+        <div class="stats-line">Always up-to-date with latest Wordle solutions</div>
+      `;
+    }
+
+    // Update tiles preview
+    function updateTiles(value) {
+      const letters = value.toUpperCase().split('');
+      tiles.forEach((tile, i) => {
+        tile.textContent = letters[i] || '';
+        tile.classList.toggle('filled', !!letters[i]);
+        tile.classList.remove('green', 'gray');
+      });
+    }
+
+    // Check word via API
+    async function checkWord() {
+      const word = wordInput.value.toUpperCase().trim();
+
+      if (word.length !== 5) return;
+
+      // Disable button while checking
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'Checking...';
+      errorEl.textContent = '';
+
+      try {
+        const response = await fetch(`${API_URL}?word=${encodeURIComponent(word)}`);
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Display result
+        result.className = 'result ' + (data.used ? 'yes' : 'no');
+        resultWord.textContent = word;
+
+        if (data.used) {
+          resultMessage.textContent = 'Yes, this was a Wordle answer!';
+          resultDetail.textContent = `Wordle #${data.game} • ${data.date}`;
+          tiles.forEach(tile => {
+            tile.classList.add('green');
+            tile.classList.remove('gray');
+          });
+        } else {
+          resultMessage.textContent = 'No, this has not been a Wordle answer.';
+          resultDetail.textContent = 'Safe to use as a guess!';
+          tiles.forEach(tile => {
+            tile.classList.add('gray');
+            tile.classList.remove('green');
+          });
+        }
+
+      } catch (err) {
+        console.error('Error checking word:', err);
+        errorEl.textContent = `Error: ${err.message}. Please check API_URL in code.`;
+        result.className = 'result';
+      } finally {
+        // Re-enable button
+        checkBtn.disabled = false;
+        checkBtn.textContent = 'Check';
+      }
+    }
+
+    // Event listeners
+    wordInput.addEventListener('input', (e) => {
+      // Only allow letters
+      e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 5);
+
+      const len = e.target.value.length;
+      checkBtn.disabled = len !== 5;
+
+      updateTiles(e.target.value);
+
+      // Reset result display when typing
+      if (result.classList.contains('yes') || result.classList.contains('no')) {
+        result.className = 'result';
+        tiles.forEach(tile => {
+          tile.classList.remove('green', 'gray');
+        });
+      }
+    });
+
+    wordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && wordInput.value.length === 5) {
+        checkWord();
+      }
+    });
+
+    checkBtn.addEventListener('click', checkWord);
+
+    // Start
+    init();
+  </script>
+</body>
+</html>
