@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Madlib Creator</title>
+  <meta name="description" content="Create and share custom madlibs with friends." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<style>
+/* Basic CSS reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Custom styles */
+body {
+  background: #1c0001;
+  font-family: "Work Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  color: #ddd5ba;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: "Nabla", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "EDPT" 100, "EHLT" 12;
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 #1581a1;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+h2 {
+  font-family: "Bungee Spice", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #eeb440;
+}
+
+/* Section styling */
+.section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+/* Button base styles */
+button {
+  position: relative;
+  padding: 12px 24px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  -webkit-appearance: none;
+  background: #831a19;
+  color: #d8cea7;
+  border: 3px solid #491212;
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 #c24229;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+button:hover {
+  box-shadow: 2px 2px 0 #eeb440;
+  transform: translate(2px, 2px);
+}
+
+button:active {
+  box-shadow: 0 0 0 #eeb440;
+  transform: translate(4px, 4px);
+}
+
+/* Preset buttons */
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.preset-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+/* Custom input section */
+.custom-input-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.custom-input-wrapper input {
+  flex: 1;
+  background: #d8cea7;
+  padding: 12px 16px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #290908;
+  border: 3px solid #831a19;
+  border-radius: 6px;
+}
+
+.custom-input-wrapper input:focus {
+  outline: none;
+  box-shadow: 4px 4px 0 #999999;
+}
+
+.custom-input-wrapper input::placeholder {
+  color: #666;
+}
+
+/* Word list */
+.word-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.word-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(238, 180, 64, 0.3);
+}
+
+.word-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.word-id {
+  font-family: monospace;
+  font-size: 14px;
+  background: #491212;
+  color: #eeb440;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.word-label {
+  font-size: 16px;
+  color: #ddd5ba;
+}
+
+.delete-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  background: #491212;
+  border-color: #290908;
+  box-shadow: 2px 2px 0 #831a19;
+}
+
+.delete-btn:hover {
+  background: #6b1a1a;
+  box-shadow: 1px 1px 0 #c24229;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  color: #888;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .preset-buttons {
+    justify-content: center;
+  }
+
+  .custom-input-wrapper {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Madlib Creator</h1>
+    <h2>Build Your Story</h2>
+
+    <!-- Word List Management Section -->
+    <div class="section" id="word-list-section">
+      <h3>Word List</h3>
+
+      <!-- Preset Quick-Add Buttons -->
+      <div class="preset-buttons">
+        <button type="button" class="preset-btn" data-type="noun">+ Noun</button>
+        <button type="button" class="preset-btn" data-type="verb">+ Verb</button>
+        <button type="button" class="preset-btn" data-type="adjective">+ Adjective</button>
+        <button type="button" class="preset-btn" data-type="name">+ Name</button>
+        <button type="button" class="preset-btn" data-type="place">+ Place</button>
+      </div>
+
+      <!-- Custom Label Input -->
+      <div class="custom-input-wrapper">
+        <input type="text" id="custom-label-input" placeholder="Enter custom word type (e.g., 'emotion', 'body part')">
+        <button type="button" id="add-custom-btn">Add</button>
+      </div>
+    </div>
+
+    <!-- Placeholder List Display -->
+    <div class="section" id="placeholder-list-section">
+      <h3>Your Placeholders</h3>
+      <div id="word-list" class="word-list">
+        <!-- Empty state shown when no placeholders -->
+        <div class="empty-state" id="empty-state">
+          No placeholders defined yet. Add some words above to get started!
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// Word List Management Module
+const WordListManager = (function() {
+  // State
+  let placeholders = [];
+  let nextId = 1;
+
+  // DOM Elements
+  const wordListEl = document.getElementById('word-list');
+  const emptyStateEl = document.getElementById('empty-state');
+  const customInput = document.getElementById('custom-label-input');
+  const addCustomBtn = document.getElementById('add-custom-btn');
+  const presetBtns = document.querySelectorAll('.preset-btn');
+
+  // Generate stable ID
+  function generateId() {
+    const id = `word${String(nextId).padStart(2, '0')}`;
+    nextId++;
+    return id;
+  }
+
+  // Add a new placeholder
+  function addPlaceholder(label) {
+    if (!label || !label.trim()) return;
+
+    const placeholder = {
+      id: generateId(),
+      label: label.trim()
+    };
+
+    placeholders.push(placeholder);
+    render();
+  }
+
+  // Delete a placeholder by ID
+  function deletePlaceholder(id) {
+    placeholders = placeholders.filter(p => p.id !== id);
+    render();
+  }
+
+  // Render the placeholder list
+  function render() {
+    // Clear existing items (except empty state)
+    const items = wordListEl.querySelectorAll('.word-item');
+    items.forEach(item => item.remove());
+
+    // Show/hide empty state
+    if (placeholders.length === 0) {
+      emptyStateEl.style.display = 'block';
+    } else {
+      emptyStateEl.style.display = 'none';
+
+      // Render each placeholder
+      placeholders.forEach(placeholder => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'word-item';
+        itemEl.innerHTML = `
+          <div class="word-info">
+            <span class="word-id">{${placeholder.id}}</span>
+            <span class="word-label">${escapeHtml(placeholder.label)}</span>
+          </div>
+          <button type="button" class="delete-btn" data-id="${placeholder.id}">Delete</button>
+        `;
+        wordListEl.appendChild(itemEl);
+      });
+    }
+  }
+
+  // Escape HTML to prevent XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Event: Add custom placeholder
+  function handleAddCustom() {
+    const label = customInput.value;
+    if (label.trim()) {
+      addPlaceholder(label);
+      customInput.value = '';
+      customInput.focus();
+    }
+  }
+
+  // Event: Preset button click
+  function handlePresetClick(e) {
+    const type = e.target.dataset.type;
+    if (type) {
+      addPlaceholder(type);
+    }
+  }
+
+  // Event: Delete button click (delegated)
+  function handleDeleteClick(e) {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = e.target.dataset.id;
+      deletePlaceholder(id);
+    }
+  }
+
+  // Initialize
+  function init() {
+    // Preset button listeners
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', handlePresetClick);
+    });
+
+    // Custom add button listener
+    addCustomBtn.addEventListener('click', handleAddCustom);
+
+    // Enter key in custom input
+    customInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        handleAddCustom();
+      }
+    });
+
+    // Delegated delete listener
+    wordListEl.addEventListener('click', handleDeleteClick);
+
+    // Initial render
+    render();
+  }
+
+  // Public API
+  return {
+    init,
+    getPlaceholders: () => [...placeholders],
+    addPlaceholder,
+    deletePlaceholder
+  };
+})();
+
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  WordListManager.init();
+});
+</script>
+</body>
+</html>
