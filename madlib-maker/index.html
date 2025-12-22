@@ -7,232 +7,38 @@
   <meta name="description" content="Create and share custom madlibs with friends." />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-<style>
-/* Basic CSS reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  box-sizing: border-box;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-/* Custom styles */
-body {
-  background: #1c0001;
-  font-family: "Work Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-  color: #ddd5ba;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-h1 {
-  font-family: "Nabla", system-ui;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings: "EDPT" 100, "EHLT" 12;
-  font-size: 48px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 0 #1581a1;
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-h2 {
-  font-family: "Bungee Spice", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 24px;
-  letter-spacing: 1px;
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-h3 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: #eeb440;
-}
-
-/* Section styling */
-.section {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
-}
-
-/* Button base styles */
-button {
-  position: relative;
-  padding: 12px 24px;
-  font-family: "Work Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  -webkit-appearance: none;
-  background: #831a19;
-  color: #d8cea7;
-  border: 3px solid #491212;
-  border-radius: 6px;
-  box-shadow: 4px 4px 0 #c24229;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-button:hover {
-  box-shadow: 2px 2px 0 #eeb440;
-  transform: translate(2px, 2px);
-}
-
-button:active {
-  box-shadow: 0 0 0 #eeb440;
-  transform: translate(4px, 4px);
-}
-
-/* Preset buttons */
-.preset-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.preset-btn {
-  padding: 10px 20px;
-  font-size: 14px;
-}
-
-/* Custom input section */
-.custom-input-wrapper {
-  display: flex;
-  gap: 12px;
-  align-items: stretch;
-}
-
-.custom-input-wrapper input {
-  flex: 1;
-  background: #d8cea7;
-  padding: 12px 16px;
-  font-family: "Work Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #290908;
-  border: 3px solid #831a19;
-  border-radius: 6px;
-}
-
-.custom-input-wrapper input:focus {
-  outline: none;
-  box-shadow: 4px 4px 0 #999999;
-}
-
-.custom-input-wrapper input::placeholder {
-  color: #666;
-}
-
-/* Word list */
-.word-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.word-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 2px solid rgba(238, 180, 64, 0.3);
-}
-
-.word-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.word-id {
-  font-family: monospace;
-  font-size: 14px;
-  background: #491212;
-  color: #eeb440;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.word-label {
-  font-size: 16px;
-  color: #ddd5ba;
-}
-
-.delete-btn {
-  padding: 6px 12px;
-  font-size: 14px;
-  background: #491212;
-  border-color: #290908;
-  box-shadow: 2px 2px 0 #831a19;
-}
-
-.delete-btn:hover {
-  background: #6b1a1a;
-  box-shadow: 1px 1px 0 #c24229;
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 32px;
-  color: #888;
-  font-style: italic;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  h1 {
-    font-size: 32px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  .preset-buttons {
-    justify-content: center;
-  }
-
-  .custom-input-wrapper {
-    flex-direction: column;
-  }
-}
-</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <div class="container">
-    <h1>Madlib Creator</h1>
+    <div class="header-row">
+      <h1>Madlib Creator</h1>
+      <button type="button" class="new-madlib-btn" id="new-madlib-btn">New Madlib</button>
+    </div>
     <h2>Build Your Story</h2>
+
+    <!-- Mode Toggle Tabs -->
+    <div class="mode-tabs" id="mode-tabs">
+      <button type="button" class="mode-tab active" data-mode="creator">Create</button>
+      <button type="button" class="mode-tab" data-mode="preview">Preview</button>
+    </div>
+
+    <!-- Title & Metadata Section -->
+    <div class="section" id="metadata-section">
+      <h3>Title & Details</h3>
+      <div class="metadata-fields">
+        <div class="field-group">
+          <label for="madlib-title">Title</label>
+          <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled Madlib">
+        </div>
+        <div class="field-group">
+          <label for="madlib-subtitle">Subtitle <span class="optional-label">(optional)</span></label>
+          <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by...">
+        </div>
+      </div>
+    </div>
 
     <!-- Word List Management Section -->
     <div class="section" id="word-list-section">
@@ -252,11 +58,8 @@ button:active {
         <input type="text" id="custom-label-input" placeholder="Enter custom word type (e.g., 'emotion', 'body part')">
         <button type="button" id="add-custom-btn">Add</button>
       </div>
-    </div>
 
-    <!-- Placeholder List Display -->
-    <div class="section" id="placeholder-list-section">
-      <h3>Your Placeholders</h3>
+      <!-- Placeholder List Display -->
       <div id="word-list" class="word-list">
         <!-- Empty state shown when no placeholders -->
         <div class="empty-state" id="empty-state">
@@ -264,146 +67,191 @@ button:active {
         </div>
       </div>
     </div>
+
+    <!-- Story Editor Section -->
+    <div class="section" id="story-editor-section">
+      <h3>Story</h3>
+      <p class="section-hint">Write your story using <code>{word01}</code>, <code>{word02}</code>, etc. to insert placeholders. You can also click the chips in your word list to insert them wherever your cursor is in the textbox below.</p>
+      <textarea
+        id="story-editor"
+        class="story-textarea"
+        placeholder="Once upon a time, a {word01} walked into a {word02}..."
+        rows="10"
+      ></textarea>
+      <div class="orphan-warning" id="orphan-warning">
+        <div class="orphan-warning-title">Orphaned placeholders found</div>
+        <div class="orphan-warning-list" id="orphan-list"></div>
+      </div>
+    </div>
+
+    <!-- Color Theme Section -->
+    <div class="section" id="color-theme-section">
+      <h3>Color Theme</h3>
+
+      <!-- Preset Theme Buttons -->
+      <div class="theme-presets" id="theme-presets">
+        <button type="button" class="theme-preset-btn active" data-theme="brick">
+          <span class="theme-preset-swatch" style="background: #831a19;"></span>
+          Brick
+        </button>
+        <button type="button" class="theme-preset-btn" data-theme="ocean">
+          <span class="theme-preset-swatch" style="background: #1a4f6e;"></span>
+          Ocean
+        </button>
+        <button type="button" class="theme-preset-btn" data-theme="forest">
+          <span class="theme-preset-swatch" style="background: #2d5a3d;"></span>
+          Forest
+        </button>
+        <button type="button" class="theme-preset-btn" data-theme="midnight">
+          <span class="theme-preset-swatch" style="background: #4a1a6b;"></span>
+          Midnight
+        </button>
+      </div>
+
+      <!-- Live Preview Swatches -->
+      <div class="theme-preview" id="theme-preview">
+        <div class="preview-swatch">
+          <div class="preview-swatch-color" id="preview-background"></div>
+          <span class="preview-swatch-label">Background</span>
+        </div>
+        <div class="preview-swatch">
+          <div class="preview-swatch-color" id="preview-text"></div>
+          <span class="preview-swatch-label">Text</span>
+        </div>
+        <div class="preview-swatch">
+          <div class="preview-swatch-color" id="preview-button"></div>
+          <span class="preview-swatch-label">Button</span>
+        </div>
+        <div class="preview-swatch">
+          <div class="preview-swatch-color" id="preview-highlight"></div>
+          <span class="preview-swatch-label">Highlight</span>
+        </div>
+      </div>
+
+      <!-- Custom Color Pickers -->
+      <div class="color-pickers">
+        <div class="color-picker-group">
+          <label for="color-background">Background</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="color-background" value="#1c0001">
+            <span class="color-hex-value" id="hex-background">#1c0001</span>
+          </div>
+        </div>
+        <div class="color-picker-group">
+          <label for="color-text">Text</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="color-text" value="#ddd5ba">
+            <span class="color-hex-value" id="hex-text">#ddd5ba</span>
+          </div>
+        </div>
+        <div class="color-picker-group">
+          <label for="color-button">Button / UI</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="color-button" value="#831a19">
+            <span class="color-hex-value" id="hex-button">#831a19</span>
+          </div>
+        </div>
+        <div class="color-picker-group">
+          <label for="color-highlight">Highlight</label>
+          <div class="color-picker-wrapper">
+            <input type="color" id="color-highlight" value="#eeb440">
+            <span class="color-hex-value" id="hex-highlight">#eeb440</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="theme-actions">
+        <button type="button" class="reset-theme-btn" id="reset-theme-btn">Reset</button>
+      </div>
+    </div>
+
+    <!-- Share Section -->
+    <div class="section" id="share-section">
+      <h3>Share Your Madlib</h3>
+      <div class="share-buttons">
+        <button type="button" class="share-btn share-btn-primary" id="share-player-btn">
+          Share with Players
+        </button>
+        <button type="button" class="share-btn share-btn-secondary" id="share-editor-btn">
+          Copy Editor Link
+        </button>
+      </div>
+    </div>
   </div>
 
-<script>
-// Word List Management Module
-const WordListManager = (function() {
-  // State
-  let placeholders = [];
-  let nextId = 1;
+  <!-- Player Mode Container (hidden in creator mode) -->
+  <div class="player-container" id="player-container" style="display: none;">
 
-  // DOM Elements
-  const wordListEl = document.getElementById('word-list');
-  const emptyStateEl = document.getElementById('empty-state');
-  const customInput = document.getElementById('custom-label-input');
-  const addCustomBtn = document.getElementById('add-custom-btn');
-  const presetBtns = document.querySelectorAll('.preset-btn');
+    <!-- Intro Screen -->
+    <div class="player-screen" id="player-intro">
+      <h1 class="player-title" id="player-title">Untitled Madlib</h1>
+      <h2 class="player-subtitle" id="player-subtitle"></h2>
 
-  // Generate stable ID
-  function generateId() {
-    const id = `word${String(nextId).padStart(2, '0')}`;
-    nextId++;
-    return id;
-  }
+      <div class="mode-toggle">
+        <span class="mode-label">Input mode:</span>
+        <div class="toggle-buttons">
+          <button type="button" class="toggle-btn active" data-mode="sequential">One at a time</button>
+          <button type="button" class="toggle-btn" data-mode="all-at-once">All at once</button>
+        </div>
+      </div>
 
-  // Add a new placeholder
-  function addPlaceholder(label) {
-    if (!label || !label.trim()) return;
+      <button type="button" class="start-btn" id="start-btn">Start</button>
+    </div>
 
-    const placeholder = {
-      id: generateId(),
-      label: label.trim()
-    };
+    <!-- Sequential Prompt Screen -->
+    <div class="player-screen" id="player-sequential" style="display: none;">
+      <div class="prompt-progress" id="prompt-progress">1 of 5</div>
+      <div class="prompt-label" id="prompt-label">noun</div>
+      <input type="text" class="prompt-input" id="prompt-input" placeholder="Enter a noun..." autocomplete="off">
+      <div class="prompt-hint">Press Enter to continue</div>
+      <div class="prompt-nav">
+        <button type="button" class="nav-btn" id="prev-btn" disabled>← Back</button>
+        <button type="button" class="nav-btn nav-btn-primary" id="next-btn">Next →</button>
+      </div>
+    </div>
 
-    placeholders.push(placeholder);
-    render();
-  }
+    <!-- All-at-Once Form Screen -->
+    <div class="player-screen" id="player-all-at-once" style="display: none;">
+      <h3 class="form-title">Fill in the blanks</h3>
+      <div class="all-inputs-form" id="all-inputs-form">
+        <!-- Inputs will be dynamically generated -->
+      </div>
+      <button type="button" class="submit-btn" id="submit-all-btn">See My Story</button>
+    </div>
 
-  // Delete a placeholder by ID
-  function deletePlaceholder(id) {
-    placeholders = placeholders.filter(p => p.id !== id);
-    render();
-  }
+    <!-- Story Reveal Screen -->
+    <div class="player-screen" id="player-reveal" style="display: none;">
+      <h3 class="reveal-title">Your Madlib</h3>
+      <div class="story-output" id="story-output">
+        <!-- Story with highlighted words will appear here -->
+      </div>
+      <div class="reveal-actions">
+        <button type="button" class="action-btn action-btn-primary" id="copy-story-btn">Copy Story</button>
+        <button type="button" class="action-btn" id="play-again-btn">Play Again</button>
+        <button type="button" class="action-btn" id="create-own-btn">Create Your Own</button>
+      </div>
+    </div>
+  </div>
 
-  // Render the placeholder list
-  function render() {
-    // Clear existing items (except empty state)
-    const items = wordListEl.querySelectorAll('.word-item');
-    items.forEach(item => item.remove());
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
 
-    // Show/hide empty state
-    if (placeholders.length === 0) {
-      emptyStateEl.style.display = 'block';
-    } else {
-      emptyStateEl.style.display = 'none';
+  <!-- Delete Confirmation Dialog -->
+  <div class="confirm-dialog-overlay" id="confirm-dialog-overlay">
+    <div class="confirm-dialog">
+      <div class="confirm-dialog-title">Delete Placeholder?</div>
+      <div class="confirm-dialog-message" id="confirm-dialog-message">
+        This placeholder is used in your story.
+      </div>
+      <div class="confirm-dialog-usage" id="confirm-dialog-usage"></div>
+      <div class="confirm-dialog-buttons">
+        <button type="button" class="confirm-dialog-btn confirm-dialog-btn-cancel" id="confirm-cancel-btn">Cancel</button>
+        <button type="button" class="confirm-dialog-btn confirm-dialog-btn-delete" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
 
-      // Render each placeholder
-      placeholders.forEach(placeholder => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'word-item';
-        itemEl.innerHTML = `
-          <div class="word-info">
-            <span class="word-id">{${placeholder.id}}</span>
-            <span class="word-label">${escapeHtml(placeholder.label)}</span>
-          </div>
-          <button type="button" class="delete-btn" data-id="${placeholder.id}">Delete</button>
-        `;
-        wordListEl.appendChild(itemEl);
-      });
-    }
-  }
-
-  // Escape HTML to prevent XSS
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // Event: Add custom placeholder
-  function handleAddCustom() {
-    const label = customInput.value;
-    if (label.trim()) {
-      addPlaceholder(label);
-      customInput.value = '';
-      customInput.focus();
-    }
-  }
-
-  // Event: Preset button click
-  function handlePresetClick(e) {
-    const type = e.target.dataset.type;
-    if (type) {
-      addPlaceholder(type);
-    }
-  }
-
-  // Event: Delete button click (delegated)
-  function handleDeleteClick(e) {
-    if (e.target.classList.contains('delete-btn')) {
-      const id = e.target.dataset.id;
-      deletePlaceholder(id);
-    }
-  }
-
-  // Initialize
-  function init() {
-    // Preset button listeners
-    presetBtns.forEach(btn => {
-      btn.addEventListener('click', handlePresetClick);
-    });
-
-    // Custom add button listener
-    addCustomBtn.addEventListener('click', handleAddCustom);
-
-    // Enter key in custom input
-    customInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        handleAddCustom();
-      }
-    });
-
-    // Delegated delete listener
-    wordListEl.addEventListener('click', handleDeleteClick);
-
-    // Initial render
-    render();
-  }
-
-  // Public API
-  return {
-    init,
-    getPlaceholders: () => [...placeholders],
-    addPlaceholder,
-    deletePlaceholder
-  };
-})();
-
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', function() {
-  WordListManager.init();
-});
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
