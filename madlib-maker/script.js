@@ -760,7 +760,7 @@ const URLManager = (function() {
   // Configuration
   // TODO: Replace with your actual Cloudflare Worker URL after deployment
   // Leave empty to disable URL shortening and use long hash URLs
-  const SHORTENER_API_URL = ''; // e.g., 'https://madlib-url-shortener.your-subdomain.workers.dev'
+  const SHORTENER_API_URL = 'https://madlib-url-shortener.spidleweb.workers.dev';
 
   // Toast element
   let toastEl;
