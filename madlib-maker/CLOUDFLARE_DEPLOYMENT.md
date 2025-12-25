@@ -95,6 +95,20 @@ curl -X POST https://madlib-url-shortener.YOUR-SUBDOMAIN.workers.dev/shorten \
       "story": "Once upon a time..."
     }
   }'
+
+# Or test with story mode (includes answers):
+curl -X POST https://madlib-url-shortener.YOUR-SUBDOMAIN.workers.dev/shorten \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mode": "story",
+    "data": {
+      "title": "Completed Madlib",
+      "subtitle": "A finished story",
+      "placeholders": [{"id": "word01", "label": "noun"}],
+      "story": "I saw a {word01}.",
+      "answers": {"word01": "dragon"}
+    }
+  }'
 ```
 
 Response:
@@ -130,7 +144,7 @@ Response:
 - **Collision Handling**: Automatically retries if a code already exists
 - **Expiration**: URLs expire after 1 year
 - **CORS Enabled**: Frontend can access from any domain
-- **Two Modes**: Supports both `play` and `edit` modes
+- **Three Modes**: Supports `play`, `edit`, and `story` modes
 
 ## Troubleshooting
 

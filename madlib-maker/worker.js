@@ -43,9 +43,9 @@ async function handleShorten(request, env) {
     const { mode, data } = body;
 
     // Validate input
-    if (!mode || !data || (mode !== 'play' && mode !== 'edit')) {
+    if (!mode || !data || (mode !== 'play' && mode !== 'edit' && mode !== 'story')) {
       return new Response(JSON.stringify({
-        error: 'Invalid request. Required: mode (play|edit) and data object'
+        error: 'Invalid request. Required: mode (play|edit|story) and data object'
       }), {
         status: 400,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -169,7 +169,7 @@ export default {
     return new Response(JSON.stringify({
       service: 'Madlib Maker URL Shortener',
       endpoints: {
-        'POST /shorten': 'Create shortened URL (body: {mode: "play"|"edit", data: {...}})',
+        'POST /shorten': 'Create shortened URL (body: {mode: "play"|"edit"|"story", data: {...}})',
         'GET /:shortCode': 'Expand shortened URL',
       },
     }), {
