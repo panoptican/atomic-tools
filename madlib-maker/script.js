@@ -856,6 +856,18 @@ const URLManager = (function() {
     return url.toString();
   }
 
+  // Generate story URL (with answers)
+  function generateStoryURL(answers) {
+    const data = collectData();
+    data.answers = answers; // Include the user's answers
+    const encoded = encodeData(data);
+    if (!encoded) return null;
+
+    const url = new URL(window.location.href);
+    url.hash = `story=${encoded}`;
+    return url.toString();
+  }
+
   // Copy URL to clipboard
   async function copyToClipboard(url) {
     try {
@@ -983,6 +995,11 @@ const URLManager = (function() {
         mode: 'edit',
         data: decodeData(hashContent.substring(5))
       };
+    } else if (hashContent.startsWith('story=')) {
+      return {
+        mode: 'story',
+        data: decodeData(hashContent.substring(6))
+      };
     }
 
     return null;
@@ -1045,6 +1062,7 @@ const URLManager = (function() {
     init,
     generatePlayerURL,
     generateEditorURL,
+    generateStoryURL,
     loadData,
     parseHash,
     showToast
@@ -1093,6 +1111,7 @@ const PlayerMode = (function() {
   // Reveal screen elements
   let storyOutputEl;
   let copyBtn;
+  let shareStoryBtn;
   let playAgainBtn;
   let createOwnBtn;
 
@@ -1316,6 +1335,35 @@ const PlayerMode = (function() {
     }
   }
 
+  // Handle share story link button
+  async function handleShareStoryLink() {
+    const url = URLManager.generateStoryURL(answers);
+    if (!url) {
+      URLManager.showToast('Failed to generate story link', true);
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      URLManager.showToast('Story link copied to clipboard!');
+    } catch (e) {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        URLManager.showToast('Story link copied to clipboard!');
+      } catch (e2) {
+        URLManager.showToast('Failed to copy story link', true);
+      }
+      document.body.removeChild(textarea);
+    }
+  }
+
   // Handle play again button
   function handlePlayAgain() {
     // Reset answers but keep placeholders and story
@@ -1333,7 +1381,8 @@ const PlayerMode = (function() {
 
   // Activate player mode with data
   // isPreview: if true, don't hide the creator container (ModeManager handles that)
-  function activate(data, isPreview = false) {
+  // isStoryView: if true, show completed story directly (for #story= URLs)
+  function activate(data, isPreview = false, isStoryView = false) {
     if (!data) return false;
 
     // Store data
@@ -1341,7 +1390,7 @@ const PlayerMode = (function() {
     story = data.story || '';
     title = data.title || '';
     subtitle = data.subtitle || '';
-    answers = {};
+    answers = data.answers || {};
     currentPromptIndex = 0;
     isActive = true;
 
@@ -1363,9 +1412,15 @@ const PlayerMode = (function() {
     }
     playerContainerEl.style.display = 'flex';
 
-    // Render intro
-    renderIntro();
-    showScreen('intro');
+    // If story view mode, show the completed story directly
+    if (isStoryView && data.answers) {
+      renderReveal();
+      showScreen('reveal');
+    } else {
+      // Otherwise show intro screen for interactive play
+      renderIntro();
+      showScreen('intro');
+    }
 
     return true;
   }
@@ -1415,6 +1470,7 @@ const PlayerMode = (function() {
     // Get reveal elements
     storyOutputEl = document.getElementById('story-output');
     copyBtn = document.getElementById('copy-story-btn');
+    shareStoryBtn = document.getElementById('share-story-btn');
     playAgainBtn = document.getElementById('play-again-btn');
     createOwnBtn = document.getElementById('create-own-btn');
 
@@ -1432,6 +1488,7 @@ const PlayerMode = (function() {
     submitBtn.addEventListener('click', handleSubmitAll);
 
     copyBtn.addEventListener('click', handleCopyStory);
+    shareStoryBtn.addEventListener('click', handleShareStoryLink);
     playAgainBtn.addEventListener('click', handlePlayAgain);
     createOwnBtn.addEventListener('click', handleCreateOwn);
   }
@@ -1822,6 +1879,14 @@ document.addEventListener('DOMContentLoaded', function() {
     ModeManager.setPlayerOnly(true);
     document.querySelector('.container').style.display = 'none';
     PlayerMode.activate(urlResult.data);
+  } else if (urlResult.mode === 'story' && urlResult.loaded && urlResult.data) {
+    // Story view mode from #story= URL
+    // Show completed story directly
+    // Disable draft auto-save for story view mode
+    DraftManager.setEnabled(false);
+    ModeManager.setPlayerOnly(true);
+    document.querySelector('.container').style.display = 'none';
+    PlayerMode.activate(urlResult.data, false, true);
   } else if (urlResult.mode === 'edit' && urlResult.loaded) {
     // Creator mode from #edit= URL, data already loaded by URLManager
     // Overwrite local draft with URL data
