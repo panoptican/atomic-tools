@@ -1,0 +1,16 @@
+{
+  "name": "madlib-url-shortener",
+  "version": "1.0.0",
+  "description": "URL shortening service for Madlib Maker share links",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "keywords": ["cloudflare", "workers", "url-shortener", "madlib"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
