@@ -251,6 +251,26 @@ button:active {
 .word-label {
   font-size: 16px;
   color: var(--color-text);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+}
+
+.word-label:hover {
+  background-color: color-mix(in srgb, var(--color-button), transparent 70%);
+}
+
+.word-label-edit {
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-background);
+  border: 2px solid var(--color-button);
+  border-radius: 4px;
+  padding: 2px 6px;
+  outline: none;
+  min-width: 100px;
 }
 
 .delete-btn {
