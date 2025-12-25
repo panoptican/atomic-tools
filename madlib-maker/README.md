@@ -7,9 +7,10 @@ An interactive web tool for creating and sharing custom madlibs. Create stories 
 - **Interactive Story Editor**: Create stories with custom placeholders using simple `{id}` syntax
 - **Multiple Placeholder Types**: Use preset types (noun, verb, adjective, etc.) or create your own
 - **Color Themes**: Customize the look with built-in themes or create custom color schemes
-- **Two Sharing Modes**:
+- **Three Sharing Modes**:
   - **Player Link**: Share a playable version where others fill in the blanks (no editing)
   - **Editor Link**: Share an editable copy so others can customize your madlib
+  - **Story Link**: Share a completed story with all answers filled in (view only)
 - **URL Shortening**: Optional integration with Cloudflare Workers for short, shareable links
 - **Auto-save Drafts**: Never lose your work with automatic local storage backup
 - **Player Mode**: Clean, focused interface for playing madlibs
@@ -121,6 +122,7 @@ The madlib-maker uses two URL formats:
 
 - **Play Mode** (`#play=` or `#s=code`): Player-only interface with no editing
 - **Edit Mode** (`#edit=` or `#s=code`): Full creator interface for customization
+- **Story Mode** (`#story=` or `#s=code`): View-only mode showing a completed story with all answers
 
 ## Architecture
 

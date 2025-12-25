@@ -862,15 +862,26 @@ const URLManager = (function() {
   }
 
   // Generate story URL (with answers)
-  function generateStoryURL(answers) {
+  async function generateStoryURL(answers) {
     const data = collectData();
     data.answers = answers; // Include the user's answers
-    const encoded = encodeData(data);
-    if (!encoded) return null;
 
-    const url = new URL(window.location.href);
-    url.hash = `story=${encoded}`;
-    return url.toString();
+    // Try to create short URL first (if shortening is enabled)
+    let url = null;
+    if (SHORTENER_API_URL) {
+      url = await createShortURL('story', data);
+    }
+
+    // Fallback to long URL if shortening failed or is disabled
+    if (!url) {
+      const encoded = encodeData(data);
+      if (!encoded) return null;
+      const longUrl = new URL(window.location.href);
+      longUrl.hash = `story=${encoded}`;
+      url = longUrl.toString();
+    }
+
+    return url;
   }
 
   // Copy URL to clipboard
@@ -1433,7 +1444,7 @@ const PlayerMode = (function() {
 
   // Handle share story link button
   async function handleShareStoryLink() {
-    const url = URLManager.generateStoryURL(answers);
+    const url = await URLManager.generateStoryURL(answers);
     if (!url) {
       URLManager.showToast('Failed to generate story link', true);
       return;
