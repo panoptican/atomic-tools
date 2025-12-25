@@ -61,6 +61,22 @@ const WordListManager = (function() {
     }
   }
 
+  // Update a placeholder's label
+  function updatePlaceholder(id, newLabel) {
+    if (!newLabel || !newLabel.trim()) return false;
+
+    const placeholder = placeholders.find(p => p.id === id);
+    if (!placeholder) return false;
+
+    placeholder.label = newLabel.trim();
+    render();
+    // Trigger auto-save
+    if (typeof DraftManager !== 'undefined') {
+      DraftManager.save();
+    }
+    return true;
+  }
+
   // Show confirmation dialog
   function showConfirmDialog(id, usageCount, label) {
     pendingDeleteId = id;
@@ -123,7 +139,7 @@ const WordListManager = (function() {
         itemEl.innerHTML = `
           <div class="word-info">
             <span class="word-id" data-id="${placeholder.id}">{${placeholder.id}}</span>
-            <span class="word-label">${escapeHtml(placeholder.label)}</span>
+            <span class="word-label" data-id="${placeholder.id}" title="Click to edit">${escapeHtml(placeholder.label)}</span>
           </div>
           <button type="button" class="delete-btn" data-id="${placeholder.id}">Delete</button>
         `;
@@ -175,6 +191,48 @@ const WordListManager = (function() {
     }
   }
 
+  // Event: Label click for inline editing (delegated)
+  function handleLabelClick(e) {
+    if (!e.target.classList.contains('word-label')) return;
+
+    const labelEl = e.target;
+    const id = labelEl.dataset.id;
+    const placeholder = placeholders.find(p => p.id === id);
+    if (!placeholder) return;
+
+    // Create inline input
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'word-label-edit';
+    input.value = placeholder.label;
+
+    // Replace label with input
+    labelEl.replaceWith(input);
+    input.focus();
+    input.select();
+
+    // Save on blur or Enter
+    function saveEdit() {
+      const newLabel = input.value.trim();
+      if (newLabel && newLabel !== placeholder.label) {
+        updatePlaceholder(id, newLabel);
+      } else {
+        render(); // Restore original if empty or unchanged
+      }
+    }
+
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        input.blur();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        render(); // Cancel edit
+      }
+    });
+  }
+
   // Initialize
   function init() {
     // Get confirmation dialog elements
@@ -204,6 +262,9 @@ const WordListManager = (function() {
 
     // Delegated insert listener
     wordListEl.addEventListener('click', handleInsertClick);
+
+    // Delegated label edit listener
+    wordListEl.addEventListener('click', handleLabelClick);
 
     // Confirmation dialog listeners
     confirmCancelBtn.addEventListener('click', handleCancelDelete);
