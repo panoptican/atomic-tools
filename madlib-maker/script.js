@@ -862,19 +862,17 @@ const URLManager = (function() {
   }
 
   // Generate story URL (with answers)
-  async function generateStoryURL(answers) {
-    const data = collectData();
-    data.answers = answers; // Include the user's answers
-
+  // dataWithAnswers: full data object including answers (from PlayerMode)
+  async function generateStoryURL(dataWithAnswers) {
     // Try to create short URL first (if shortening is enabled)
     let url = null;
     if (SHORTENER_API_URL) {
-      url = await createShortURL('story', data);
+      url = await createShortURL('story', dataWithAnswers);
     }
 
     // Fallback to long URL if shortening failed or is disabled
     if (!url) {
-      const encoded = encodeData(data);
+      const encoded = encodeData(dataWithAnswers);
       if (!encoded) return null;
       const longUrl = new URL(window.location.href);
       longUrl.hash = `story=${encoded}`;
@@ -1184,6 +1182,7 @@ const PlayerMode = (function() {
   let title = '';
   let subtitle = '';
   let answers = {};
+  let originalData = null; // Store original data for sharing
   let inputMode = 'sequential'; // 'sequential' or 'all-at-once'
   let currentPromptIndex = 0;
   let isActive = false;
@@ -1444,7 +1443,19 @@ const PlayerMode = (function() {
 
   // Handle share story link button
   async function handleShareStoryLink() {
-    const url = await URLManager.generateStoryURL(answers);
+    // Build data from stored values (originalData may not have current answers)
+    const dataToShare = {
+      title,
+      subtitle,
+      placeholders,
+      story,
+      answers
+    };
+    // Include theme if present in original data
+    if (originalData && originalData.theme) {
+      dataToShare.theme = originalData.theme;
+    }
+    const url = await URLManager.generateStoryURL(dataToShare);
     if (!url) {
       URLManager.showToast('Failed to generate story link', true);
       return;
@@ -1498,6 +1509,7 @@ const PlayerMode = (function() {
     title = data.title || '';
     subtitle = data.subtitle || '';
     answers = data.answers || {};
+    originalData = data; // Store for sharing
     currentPromptIndex = 0;
     isActive = true;
 
