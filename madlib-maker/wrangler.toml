@@ -5,7 +5,7 @@ compatibility_date = "2024-01-01"
 # KV namespace for storing shortened URLs
 [[kv_namespaces]]
 binding = "MADLIB_URLS"
-id = "YOUR_KV_NAMESPACE_ID"  # Replace with actual KV namespace ID after creation
+id = "a8a3e8d1a3d042f8aa52925166e87d8a"
 
 # For local development
 # Run: wrangler kv:namespace create "MADLIB_URLS"
