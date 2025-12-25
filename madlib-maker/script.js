@@ -757,6 +757,11 @@ const ColorThemeManager = (function() {
 
 // URL Manager Module
 const URLManager = (function() {
+  // Configuration
+  // TODO: Replace with your actual Cloudflare Worker URL after deployment
+  // Leave empty to disable URL shortening and use long hash URLs
+  const SHORTENER_API_URL = 'https://madlib-url-shortener.spidleweb.workers.dev';
+
   // Toast element
   let toastEl;
   let toastTimeout;
@@ -857,15 +862,24 @@ const URLManager = (function() {
   }
 
   // Generate story URL (with answers)
-  function generateStoryURL(answers) {
-    const data = collectData();
-    data.answers = answers; // Include the user's answers
-    const encoded = encodeData(data);
-    if (!encoded) return null;
+  // dataWithAnswers: full data object including answers (from PlayerMode)
+  async function generateStoryURL(dataWithAnswers) {
+    // Try to create short URL first (if shortening is enabled)
+    let url = null;
+    if (SHORTENER_API_URL) {
+      url = await createShortURL('story', dataWithAnswers);
+    }
 
-    const url = new URL(window.location.href);
-    url.hash = `story=${encoded}`;
-    return url.toString();
+    // Fallback to long URL if shortening failed or is disabled
+    if (!url) {
+      const encoded = encodeData(dataWithAnswers);
+      if (!encoded) return null;
+      const longUrl = new URL(window.location.href);
+      longUrl.hash = `story=${encoded}`;
+      url = longUrl.toString();
+    }
+
+    return url;
   }
 
   // Copy URL to clipboard
@@ -892,6 +906,60 @@ const URLManager = (function() {
     }
   }
 
+  // Create a shortened URL using the shortener API
+  async function createShortURL(mode, data) {
+    if (!SHORTENER_API_URL) {
+      return null; // Shortening disabled
+    }
+
+    try {
+      const response = await fetch(`${SHORTENER_API_URL}/shorten`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ mode, data }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to create short URL:', response.statusText);
+        return null;
+      }
+
+      const result = await response.json();
+
+      // Build the madlib-maker URL with the short code
+      const baseUrl = new URL(window.location.href);
+      baseUrl.hash = `s=${result.shortCode}`;
+      return baseUrl.toString();
+    } catch (e) {
+      console.error('Error creating short URL:', e);
+      return null;
+    }
+  }
+
+  // Expand a shortened URL to get the madlib data
+  async function expandShortURL(shortCode) {
+    if (!SHORTENER_API_URL) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${SHORTENER_API_URL}/${shortCode}`);
+
+      if (!response.ok) {
+        console.error('Failed to expand short URL:', response.statusText);
+        return null;
+      }
+
+      const result = await response.json();
+      return result; // { mode, data }
+    } catch (e) {
+      console.error('Error expanding short URL:', e);
+      return null;
+    }
+  }
+
   // Handle share player button click
   async function handleSharePlayer() {
     // Validate before sharing
@@ -908,7 +976,18 @@ const URLManager = (function() {
       return;
     }
 
-    const url = generatePlayerURL();
+    // Try to create short URL first (if shortening is enabled)
+    let url = null;
+    if (SHORTENER_API_URL) {
+      const data = collectData();
+      url = await createShortURL('play', data);
+    }
+
+    // Fallback to long URL if shortening failed or is disabled
+    if (!url) {
+      url = generatePlayerURL();
+    }
+
     if (!url) {
       showToast('Failed to generate link', true);
       return;
@@ -924,7 +1003,18 @@ const URLManager = (function() {
 
   // Handle share editor button click
   async function handleShareEditor() {
-    const url = generateEditorURL();
+    // Try to create short URL first (if shortening is enabled)
+    let url = null;
+    if (SHORTENER_API_URL) {
+      const data = collectData();
+      url = await createShortURL('edit', data);
+    }
+
+    // Fallback to long URL if shortening failed or is disabled
+    if (!url) {
+      url = generateEditorURL();
+    }
+
     if (!url) {
       showToast('Failed to generate link', true);
       return;
@@ -979,12 +1069,27 @@ const URLManager = (function() {
   }
 
   // Parse current URL hash
-  function parseHash() {
+  async function parseHash() {
     const hash = window.location.hash;
     if (!hash || hash.length < 2) return null;
 
     const hashContent = hash.substring(1); // Remove #
 
+    // Check for short URL format: #s=shortCode
+    if (hashContent.startsWith('s=')) {
+      const shortCode = hashContent.substring(2);
+      const expanded = await expandShortURL(shortCode);
+      if (expanded) {
+        return {
+          mode: expanded.mode,
+          data: expanded.data,
+          isShort: true
+        };
+      }
+      return null; // Failed to expand
+    }
+
+    // Standard long hash formats
     if (hashContent.startsWith('play=')) {
       return {
         mode: 'play',
@@ -1006,8 +1111,8 @@ const URLManager = (function() {
   }
 
   // Handle URL on page load
-  function handleURLOnLoad() {
-    const parsed = parseHash();
+  async function handleURLOnLoad() {
+    const parsed = await parseHash();
 
     if (!parsed) {
       // No hash or invalid format - stay in creator mode
@@ -1036,7 +1141,7 @@ const URLManager = (function() {
   }
 
   // Initialize
-  function init() {
+  async function init() {
     toastEl = document.getElementById('toast');
 
     // Set up button listeners
@@ -1051,7 +1156,7 @@ const URLManager = (function() {
     }
 
     // Handle URL on load
-    const result = handleURLOnLoad();
+    const result = await handleURLOnLoad();
 
     // Return mode info for potential use by other modules
     return result;
@@ -1077,6 +1182,7 @@ const PlayerMode = (function() {
   let title = '';
   let subtitle = '';
   let answers = {};
+  let originalData = null; // Store original data for sharing
   let inputMode = 'sequential'; // 'sequential' or 'all-at-once'
   let currentPromptIndex = 0;
   let isActive = false;
@@ -1337,7 +1443,19 @@ const PlayerMode = (function() {
 
   // Handle share story link button
   async function handleShareStoryLink() {
-    const url = URLManager.generateStoryURL(answers);
+    // Build data from stored values (originalData may not have current answers)
+    const dataToShare = {
+      title,
+      subtitle,
+      placeholders,
+      story,
+      answers
+    };
+    // Include theme if present in original data
+    if (originalData && originalData.theme) {
+      dataToShare.theme = originalData.theme;
+    }
+    const url = await URLManager.generateStoryURL(dataToShare);
     if (!url) {
       URLManager.showToast('Failed to generate story link', true);
       return;
@@ -1391,6 +1509,7 @@ const PlayerMode = (function() {
     title = data.title || '';
     subtitle = data.subtitle || '';
     answers = data.answers || {};
+    originalData = data; // Store for sharing
     currentPromptIndex = 0;
     isActive = true;
 
@@ -1859,7 +1978,7 @@ const ModeManager = (function() {
 })();
 
 // Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   WordListManager.init();
   StoryEditor.init();
   MetadataManager.init();
@@ -1869,7 +1988,7 @@ document.addEventListener('DOMContentLoaded', function() {
   DraftManager.init();
 
   // Initialize URL manager and check for play/edit mode
-  const urlResult = URLManager.init();
+  const urlResult = await URLManager.init();
 
   if (urlResult.mode === 'play' && urlResult.loaded && urlResult.data) {
     // Player-only mode from #play= URL
