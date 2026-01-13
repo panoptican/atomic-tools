@@ -27,3 +27,6 @@ Thumbs.db
 
 # Playwright MCP
 .playwright-mcp/
+
+# Cloudflare deployment docs
+**/CLOUDFLARE_DEPLOYMENT.md

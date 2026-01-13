@@ -818,9 +818,7 @@ const ColorThemeManager = (function() {
 
 // URL Manager Module
 const URLManager = (function() {
-  // Configuration
-  // TODO: Replace with your actual Cloudflare Worker URL after deployment
-  // Leave empty to disable URL shortening and use long hash URLs
+  // Configuration (leave empty to disable URL shortening and use long hash URLs)
   const SHORTENER_API_URL = 'https://madlib-url-shortener.spidleweb.workers.dev';
 
   // Toast element
