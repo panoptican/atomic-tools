@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Rich Text ↔ Markdown Converter</title>
+    <meta
+      name="description"
+      content="Convert pasted rich text to Markdown, or turn Markdown into copy-ready rich text."
+    />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="./assets/index-CUrMMMOm.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DlXNN6VD.css">
+    <style>
+      .top-bar {
+        position: relative;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        padding: 1rem 1.5rem;
+        padding-right: 5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: #0f0f0e;
+        color: #fff;
+        font-family: var(--font-sans);
+      }
+
+      .back-link {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: rgba(255, 255, 255, 0.55);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .back-link:hover {
+        color: #fff;
+      }
+
+      .back-link svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .tool-title {
+        grid-column: 2;
+        min-width: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      .tool-title svg {
+        width: 1.125rem;
+        height: 1.125rem;
+        color: hsl(var(--primary));
+        flex: 0 0 auto;
+      }
+
+      #root > div > header {
+        position: fixed !important;
+        top: 0;
+        right: 0;
+        left: auto;
+        z-index: 30;
+        width: 5rem;
+        height: 3.375rem;
+        border-bottom: 0 !important;
+        background: transparent !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+
+      #root > div > header > div {
+        width: 100%;
+        height: 100%;
+        padding: 0 1.5rem 0 0;
+        justify-content: flex-end;
+      }
+
+      #root > div > header > div > div:first-child {
+        display: none;
+      }
+
+      #root [data-testid="button-theme-toggle"] {
+        width: 2.25rem;
+        height: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        color: #fff;
+        pointer-events: auto;
+      }
+
+      #root [data-testid="button-theme-toggle"]:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      @media (max-width: 420px) {
+        .top-bar {
+          padding-inline: 1rem;
+          padding-right: 4.5rem;
+        }
+
+        .back-link,
+        .tool-title {
+          font-size: 0.75rem;
+        }
+
+        .tool-title svg {
+          width: 1rem;
+          height: 1rem;
+        }
+
+        #root > div > header {
+          width: 4.5rem;
+        }
+
+        #root > div > header > div {
+          padding-right: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <a href="../" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        All Tools
+      </a>
+      <span class="tool-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
+          <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+        </svg>
+        Rich Text ↔ Markdown
+      </span>
+    </div>
+    <div id="root"></div>
+  </body>
+</html>
