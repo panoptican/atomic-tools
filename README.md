@@ -9,6 +9,7 @@ A collection of lightweight web utilities. Each does one thing well.
 | [Wordle Checker](wordle-checker/) | Check if a 5-letter word has been a past Wordle solution |
 | [Madlib Maker](madlib-maker/) | Create and share custom madlibs with friends |
 | [Rich Text Markdown](rich-text-markdown/) | Convert between pasted rich text and Markdown |
+| [AI Coding Subscriptions](ai-coding-subscriptions/) | Compare AI coding subscriptions by price, quota, headroom, and representative quality signals |
 
 ## Development
 
