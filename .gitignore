@@ -22,6 +22,15 @@ Thumbs.db
 *.swp
 *.swo
 
+# Local agent/skill workspaces
+.agents/
+.claude/
+.factory/
+.pi/
+skills-lock.json
+app/
+**/app/playground/
+
 # Test specs
 **/spec/
 
