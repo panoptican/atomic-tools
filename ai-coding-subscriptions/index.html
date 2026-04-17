@@ -38,6 +38,7 @@
       --shadow: 0 1px 2px rgba(18, 24, 31, 0.05);
       --provider-col: 12rem;
       --plan-col: 13rem;
+      --top-bar-h: 3.3rem;
       --mono: "SF Mono", "SFMono-Regular", ui-monospace, Consolas, "Liberation Mono", Menlo, monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Aptos", "Segoe UI", sans-serif;
     }
@@ -56,6 +57,7 @@
       font-kerning: normal;
       font-feature-settings: "kern" 1;
       text-rendering: optimizeLegibility;
+      overflow-x: hidden;
     }
 
     a {
@@ -82,6 +84,9 @@
     }
 
     .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 80;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       align-items: center;
@@ -114,6 +119,8 @@
 
     .tool-title {
       grid-column: 2;
+      min-width: 0;
+      overflow: hidden;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
@@ -122,6 +129,11 @@
       letter-spacing: 0;
       color: #fff;
       white-space: nowrap;
+    }
+
+    .tool-title span {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .tool-title svg {
@@ -134,56 +146,6 @@
       width: min(100%, 1840px);
       margin: 0 auto;
       padding: clamp(0.75rem, 1.5vw, 1.25rem);
-    }
-
-    .masthead {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) max-content;
-      gap: var(--space-md);
-      align-items: center;
-      margin-bottom: var(--space-sm);
-    }
-
-    h1 {
-      margin: 0;
-      max-width: 980px;
-      font-size: clamp(1.35rem, 2.3vw, 2.15rem);
-      line-height: 1.08;
-      letter-spacing: 0;
-      font-weight: 780;
-    }
-
-    .meta-stack {
-      display: grid;
-      gap: var(--space-2xs);
-      justify-items: end;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      line-height: 1.35;
-      text-align: right;
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-xs);
-      margin-top: var(--space-xs);
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      height: 1.65rem;
-      padding: 0 0.55rem;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255, 254, 253, 0.68);
-      color: #34414c;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      text-transform: uppercase;
     }
 
     .control-panel {
@@ -535,6 +497,7 @@
       font-size: 1rem;
       font-weight: 700;
       line-height: 1.24;
+      overflow-wrap: anywhere;
     }
 
     .insight-sub {
@@ -542,6 +505,7 @@
       color: #596674;
       font-size: 0.84rem;
       line-height: 1.36;
+      overflow-wrap: anywhere;
     }
 
     .table-shell {
@@ -682,13 +646,30 @@
     .dot.gray { background: #9aa4ac; }
 
     .scroll-wrap {
-      overflow: auto;
-      max-height: calc(100vh - 15.5rem);
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    .sticky-head {
+      position: sticky;
+      top: var(--top-bar-h);
+      z-index: 70;
+      background: var(--surface);
+    }
+
+    .header-scroll {
+      border-bottom: 1px solid var(--line);
+      scrollbar-width: none;
+    }
+
+    .header-scroll::-webkit-scrollbar {
+      display: none;
     }
 
     table {
       width: 100%;
       min-width: 1790px;
+      table-layout: fixed;
       border-collapse: separate;
       border-spacing: 0;
       background: #fff;
@@ -707,8 +688,6 @@
     }
 
     thead th {
-      position: sticky;
-      top: 0;
       z-index: 12;
       background: #edf2f5;
       color: #2f3a43;
@@ -720,7 +699,6 @@
     }
 
     thead tr.filter-row th {
-      top: 2.75rem;
       z-index: 11;
       padding: 0.35rem;
       background: #f6f8f9;
@@ -830,12 +808,14 @@
 
     thead .provider-cell {
       left: 0;
-      z-index: 24;
+      z-index: 34;
+      background: #edf2f5;
     }
 
     thead .plan-cell {
       left: var(--provider-col);
-      z-index: 24;
+      z-index: 34;
+      background: #edf2f5;
       box-shadow: 1px 0 0 var(--line), 8px 0 12px rgba(18, 24, 31, 0.05);
     }
 
@@ -855,6 +835,14 @@
     thead tr.filter-row .provider-cell,
     thead tr.filter-row .plan-cell {
       background: #f6f8f9;
+    }
+
+    thead tr.filter-row .provider-cell {
+      z-index: 23;
+    }
+
+    thead tr.filter-row .plan-cell {
+      z-index: 23;
     }
 
     .plan-name {
@@ -915,6 +903,16 @@
     .badge.low { border-color: #ffadb6; background: var(--red-soft); color: var(--red); }
     .badge.display { border-color: #cbc2f3; background: var(--violet-soft); color: var(--violet); }
     .badge.legacy { border-color: #bbc6cc; background: #eef2f4; color: #4e5a63; }
+    .badge.official { border-color: #abc8ec; background: var(--blue-soft); color: var(--blue); }
+    .badge.estimate { border-color: #cbc2f3; background: var(--violet-soft); color: var(--violet); }
+    .badge.metered { border-color: #bbc6cc; background: #eef2f4; color: #4e5a63; }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin-top: 0.25rem;
+    }
 
     .sourced {
       display: inline-flex;
@@ -1161,8 +1159,140 @@
       border: 0;
     }
 
+    .page-footnotes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm) var(--space-lg);
+      margin: var(--space-sm) 0 0;
+      padding: var(--space-sm) 0 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
+    .mobile-results,
+    .table-scroll-note {
+      display: none;
+    }
+
+    .mobile-results {
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      border-top: 1px solid var(--line);
+      background: #f6f8f9;
+    }
+
+    .mobile-results-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .mobile-results-head strong {
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+
+    .mobile-card {
+      display: grid;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .mobile-card.current {
+      background: #fff8e8;
+      border-color: #efd28f;
+    }
+
+    .mobile-card-head {
+      display: grid;
+      gap: var(--space-xs);
+      align-items: start;
+    }
+
+    .mobile-card-title {
+      display: grid;
+      gap: 0.12rem;
+      min-width: 0;
+    }
+
+    .mobile-provider {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 750;
+    }
+
+    .mobile-plan {
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: 780;
+      line-height: 1.2;
+    }
+
+    .mobile-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-xs);
+    }
+
+    .mobile-metric {
+      display: grid;
+      gap: 0.14rem;
+      min-width: 0;
+      padding: var(--space-xs);
+      border: 1px solid #e4e9ed;
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+    .mobile-metric-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 750;
+    }
+
+    .mobile-metric-value {
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 0.94rem;
+      font-weight: 780;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .mobile-metric .mini-line,
+    .mobile-notes {
+      overflow-wrap: anywhere;
+    }
+
+    .mobile-notes {
+      display: grid;
+      gap: var(--space-xs);
+      color: #46545f;
+      font-size: 0.86rem;
+      line-height: 1.38;
+    }
+
+    .mobile-source-link {
+      color: var(--blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .mobile-source-link:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 1280px) {
-      .masthead,
       .insight-strip {
         grid-template-columns: 1fr;
       }
@@ -1183,11 +1313,6 @@
           "current";
       }
 
-      .table-meta,
-      .table-primary {
-        grid-template-columns: 1fr;
-      }
-
       .usage-panel {
         grid-template-columns: repeat(5, minmax(145px, 1fr));
       }
@@ -1201,29 +1326,182 @@
         grid-template-columns: minmax(180px, 1fr) minmax(9rem, auto) minmax(9rem, auto);
       }
 
-      .table-options {
-        justify-self: start;
-      }
-
       .control-panel > .panel + .panel,
       .insight + .insight {
         border-left: 0;
         border-top: 1px solid var(--line);
       }
 
-      .meta-stack {
-        justify-items: start;
-        text-align: left;
-      }
     }
 
     @media (max-width: 720px) {
       .top-bar {
         grid-template-columns: auto 1fr;
+        gap: var(--space-sm);
+        padding: 0.75rem 1rem;
+      }
+
+      .back-link,
+      .tool-title {
+        min-height: 2.75rem;
       }
 
       .tool-title {
         justify-self: end;
+        max-width: 100%;
+        font-size: 0.78rem;
+      }
+
+      .tool-title svg {
+        flex: 0 0 auto;
+      }
+
+      .shell {
+        width: 100%;
+        padding: var(--space-sm);
+      }
+
+      .shell,
+      .control-panel,
+      .insight-strip,
+      .table-shell,
+      .helper-panel {
+        max-width: 100%;
+      }
+
+      .control-panel {
+        overflow: hidden;
+      }
+
+      .control-panel,
+      .panel,
+      .table-shell,
+      .insight {
+        min-width: 0;
+      }
+
+      .table-shell {
+        overflow: hidden;
+      }
+
+      .usage-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: visible;
+      }
+
+      .usage-cell {
+        min-width: 0;
+        padding: var(--space-sm);
+        border-top: 1px solid var(--line);
+      }
+
+      .usage-cell:nth-child(-n + 2) {
+        border-top: 0;
+      }
+
+      .usage-cell + .usage-cell {
+        border-left: 0;
+      }
+
+      .usage-cell:nth-child(even) {
+        border-left: 1px solid var(--line);
+      }
+
+      .input-with-unit,
+      input[type="number"],
+      input[type="search"],
+      input[type="text"],
+      select,
+      .action-button,
+      .ghost-button,
+      .toggle,
+      .table-options summary {
+        min-height: 2.75rem;
+      }
+
+      .input-with-unit {
+        max-height: none;
+      }
+
+      .insight-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .insight {
+        padding: var(--space-sm);
+      }
+
+      .table-meta {
+        grid-template-columns: 1fr;
+        padding: var(--space-sm);
+      }
+
+      .table-primary {
+        grid-template-columns: 1fr;
+      }
+
+      .table-tools {
+        width: 100%;
+        grid-template-columns: 1fr;
+      }
+
+      .table-options {
+        width: 100%;
+      }
+
+      .table-options summary {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .table-options-menu {
+        position: static;
+        width: 100%;
+        margin-top: var(--space-xs);
+        box-shadow: none;
+      }
+
+      .table-option-actions,
+      .legend {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .toggle {
+        justify-content: flex-start;
+      }
+
+      .mobile-results {
+        display: grid;
+      }
+
+      .mobile-results-head {
+        display: grid;
+      }
+
+      .table-scroll-note {
+        display: block;
+        margin: 0;
+        padding: var(--space-sm);
+        border-top: 1px solid var(--line);
+        background: #fff;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .scroll-wrap {
+        border-top: 1px solid var(--line);
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        min-width: 1500px;
+      }
+
+      :root {
+        --provider-col: 9rem;
+        --plan-col: 10rem;
       }
 
       .helper-body,
@@ -1231,8 +1509,32 @@
         grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: clamp(1.6rem, 9vw, 2.4rem);
+      .helper-actions {
+        display: grid;
+      }
+
+      .estimate-result {
+        min-height: 1.5rem;
+      }
+
+      .page-footnotes {
+        display: grid;
+        gap: var(--space-xs);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .mobile-metrics,
+      .usage-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .usage-cell:nth-child(even) {
+        border-left: 0;
+      }
+
+      .usage-cell:nth-child(2) {
+        border-top: 1px solid var(--line);
       }
     }
 
@@ -1267,23 +1569,6 @@
   </div>
 
   <main class="shell">
-    <section class="masthead" aria-labelledby="page-title">
-      <div>
-        <h1 id="page-title">Cost and quota matrix</h1>
-        <div class="tag-row" aria-label="Scope tags">
-          <span class="tag">Private decision tool</span>
-          <span class="tag">Official data preferred</span>
-          <span class="tag">No runtime API calls</span>
-          <span class="tag">Benchmark signals marked</span>
-        </div>
-      </div>
-      <div class="meta-stack">
-        <span>Data fetch date: 2026-04-17</span>
-        <span>Month basis: 30 days</span>
-        <span>Window basis: 4.8 five-hour windows/day</span>
-      </div>
-    </section>
-
     <section class="control-panel" aria-label="Usage and current subscription">
       <div class="panel usage-panel">
         <div class="usage-cell">
@@ -1324,74 +1609,85 @@
 
     <section class="insight-strip" aria-live="polite">
       <div class="insight">
-        <p class="insight-label">Cheapest fit</p>
+        <p class="insight-label">Budget recommendation</p>
         <p class="insight-main" id="bestFitMain">Calculating</p>
         <p class="insight-sub" id="bestFitSub"></p>
       </div>
       <div class="insight equiv">
-        <p class="insight-label">Best quality per dollar</p>
+        <p class="insight-label">Quality recommendation</p>
         <p class="insight-main" id="equivMain">Calculating</p>
         <p class="insight-sub" id="equivSub"></p>
       </div>
     </section>
 
     <section class="table-shell" aria-label="Subscription matrix">
-      <div class="table-meta">
-        <div class="table-primary">
-          <div class="row-count" id="rowCount">0 rows</div>
-          <div class="table-tools" aria-label="Table filters">
-            <label class="sr-only" for="globalFilter">Search all columns</label>
-            <input id="globalFilter" type="search" placeholder="Search table">
-            <label class="sr-only" for="statusFilter">Plan status</label>
-            <select id="statusFilter" aria-label="Plan status filter">
-              <option value="all">All rows</option>
-              <option value="current">Current plans</option>
-              <option value="normalized">Comparable rows</option>
-              <option value="display">Display-only rows</option>
-            </select>
-            <label class="sr-only" for="providerFilter">Provider</label>
-            <select id="providerFilter" aria-label="Provider filter">
-              <option value="all">All providers</option>
-            </select>
+      <div class="sticky-head">
+        <div class="table-meta">
+          <div class="table-primary">
+            <div class="row-count" id="rowCount">0 rows</div>
+            <div class="table-tools" aria-label="Table filters">
+              <label class="sr-only" for="globalFilter">Search all columns</label>
+              <input id="globalFilter" type="search" placeholder="Search table">
+              <label class="sr-only" for="statusFilter">Plan status</label>
+              <select id="statusFilter" aria-label="Plan status filter">
+                <option value="all">All rows</option>
+                <option value="current">Current plans</option>
+                <option value="normalized">Comparable rows</option>
+                <option value="estimated">Estimated rows</option>
+              </select>
+              <label class="sr-only" for="providerFilter">Provider</label>
+              <select id="providerFilter" aria-label="Provider filter">
+                <option value="all">All providers</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <details class="table-options">
-          <summary>Options</summary>
-          <div class="table-options-menu">
-            <div class="table-option-actions">
-              <label class="toggle">
-                <input id="showSecondary" type="checkbox">
-                <span>Show secondary columns</span>
-              </label>
-              <label class="toggle">
-                <input id="hideLowConfidence" type="checkbox">
-                <span>Hide low-confidence rows</span>
-              </label>
-            </div>
-            <div>
-              <div class="legend-label">Method notes</div>
-              <ul class="method-notes">
-                <li><strong>Comparable rows</strong> have enough quota data to calculate cost at your usage.</li>
-                <li><strong>Normalized cap/day</strong> converts monthly, weekly, or five-hour limits into a daily planning estimate.</li>
-                <li><strong>Quality signal</strong> uses a representative published benchmark for the model family, not a direct plan score.</li>
-                <li><strong>Source markers</strong> open the pricing, quota, or benchmark reference used for that cell.</li>
-              </ul>
-            </div>
-            <div>
-              <div class="legend-label">Headroom key</div>
-              <div class="legend" aria-label="Headroom legend">
-                <span><i class="dot green"></i>using less than 80%</span>
-                <span><i class="dot amber"></i>within 20% of cap</span>
-                <span><i class="dot red"></i>over cap</span>
-                <span><i class="dot gray"></i>unstated</span>
+          <details class="table-options">
+            <summary>Options</summary>
+            <div class="table-options-menu">
+              <div class="table-option-actions">
+                <label class="toggle">
+                  <input id="showSecondary" type="checkbox">
+                  <span>Show secondary columns</span>
+                </label>
+                <label class="toggle">
+                  <input id="hideLowConfidence" type="checkbox">
+                  <span>Hide low-confidence rows</span>
+                </label>
+              </div>
+              <div>
+                <div class="legend-label">Method notes</div>
+                <ul class="method-notes">
+                  <li><strong>Comparable rows</strong> have published limits or explicit planning estimates for cost at your usage.</li>
+                  <li><strong>Confidence tags</strong> say how solid the source is; basis tags say whether the cap is official, inferred, estimated, or metered.</li>
+                  <li><strong>Normalized cap/day</strong> converts monthly, weekly, five-hour, or estimated limits into a daily planning number.</li>
+                  <li><strong>Quality signal</strong> uses a representative published benchmark for the model family, not a direct plan score.</li>
+                  <li><strong>Source markers</strong> open the pricing, quota, or benchmark reference used for that cell.</li>
+                </ul>
+              </div>
+              <div>
+                <div class="legend-label">Headroom key</div>
+                <div class="legend" aria-label="Headroom legend">
+                  <span><i class="dot green"></i>using less than 80%</span>
+                  <span><i class="dot amber"></i>within 20% of cap</span>
+                  <span><i class="dot red"></i>over cap</span>
+                  <span><i class="dot gray"></i>unstated</span>
+                </div>
               </div>
             </div>
-          </div>
-        </details>
+          </details>
+        </div>
+        <div class="scroll-wrap header-scroll">
+          <table>
+            <colgroup id="headerCols"></colgroup>
+            <thead id="tableHead"></thead>
+          </table>
+        </div>
       </div>
-      <div class="scroll-wrap">
+      <div class="mobile-results" id="mobileResults" aria-live="polite"></div>
+      <p class="table-scroll-note">Full sortable table below. Swipe sideways for all columns; use the cards above for quick phone reference.</p>
+      <div class="scroll-wrap body-scroll">
         <table>
-          <thead id="tableHead"></thead>
+          <colgroup id="bodyCols"></colgroup>
           <tbody id="tableBody"></tbody>
         </table>
       </div>
@@ -1427,6 +1723,12 @@
         </ul>
       </div>
     </details>
+
+    <footer class="page-footnotes" aria-label="Data notes">
+      <span>Data fetch date: 2026-04-17</span>
+      <span>Month basis: 30 days</span>
+      <span>Window basis: 4.8 five-hour windows/day</span>
+    </footer>
   </main>
 
   <script>
@@ -1443,10 +1745,6 @@
       alibabaLegacy: {
         label: "Alibaba legacy detail doc",
         url: "https://www.alibabacloud.com/help/doc-detail/3005961.html"
-      },
-      kiro: {
-        label: "Kiro pricing",
-        url: "https://kiro.dev/pricing/"
       },
       minimaxPlan: {
         label: "MiniMax Token Plan pricing",
@@ -1540,10 +1838,6 @@
         label: "Anthropic Claude Opus 4.7 benchmarks",
         url: "https://www.anthropic.com/news/claude-opus-4-7"
       },
-      kiroOpus47: {
-        label: "Kiro Opus 4.7 benchmark table",
-        url: "https://kiro.dev/blog/opus-4-7/"
-      },
       zaiGlm5: {
         label: "Z.ai GLM-5 model benchmarks",
         url: "https://docs.z.ai/guides/llm/glm-5"
@@ -1630,102 +1924,6 @@
         integrations: "Same endpoint family as Alibaba Coding Plan.",
         features: "Coding endpoint bundle.",
         caveats: "Included for existing-account comparison only."
-      },
-      {
-        id: "kiro-pro",
-        provider: "Kiro",
-        plan: "Pro",
-        category: "credit bundle",
-        buyable: "current",
-        confidence: "high",
-        monthlyUsd: 20,
-        annualUsd: null,
-        priceSource: sources.kiro,
-        quotaSource: sources.kiro,
-        quotaText: "1,000 credits/month. Credits meter to 0.01 and task complexity changes burn.",
-        nativeUnit: "credit",
-        nativePerMessage: 1,
-        nativeMonthlyCap: 1000,
-        nativeDailyCap: 33.3333333333,
-        capDailyMin: 33.3333333333,
-        capDailyMax: 33.3333333333,
-        capMonthlyMin: 1000,
-        capMonthlyMax: 1000,
-        capKind: "exact",
-        costBasis: "1 credit per user action is a neutral display assumption; actual burn varies.",
-        rateLimits: "Credit budget published; RPM/TPM not stated.",
-        overage: "Optional overage, disabled by default, billed month-end.",
-        overageUsdPerNative: 0.04,
-        tokenRates: "Credit-based; no token rate published.",
-        models: "Auto, Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4.5, Opus 4.6, Opus 4.7.",
-        context: "Model-dependent; not stated.",
-        integrations: "Kiro IDE.",
-        features: "Vibe mode, specs, task execution, agent hooks.",
-        caveats: "Sonnet 4 example costs 1.3x Auto; credits are not equivalent to messages."
-      },
-      {
-        id: "kiro-pro-plus",
-        provider: "Kiro",
-        plan: "Pro+",
-        category: "credit bundle",
-        buyable: "current",
-        confidence: "high",
-        monthlyUsd: 40,
-        annualUsd: null,
-        priceSource: sources.kiro,
-        quotaSource: sources.kiro,
-        quotaText: "2,000 credits/month. Credits meter to 0.01 and task complexity changes burn.",
-        nativeUnit: "credit",
-        nativePerMessage: 1,
-        nativeMonthlyCap: 2000,
-        nativeDailyCap: 66.6666666667,
-        capDailyMin: 66.6666666667,
-        capDailyMax: 66.6666666667,
-        capMonthlyMin: 2000,
-        capMonthlyMax: 2000,
-        capKind: "exact",
-        costBasis: "1 credit per user action is a neutral display assumption; actual burn varies.",
-        rateLimits: "Credit budget published; RPM/TPM not stated.",
-        overage: "Optional overage, disabled by default, billed month-end.",
-        overageUsdPerNative: 0.04,
-        tokenRates: "Credit-based; no token rate published.",
-        models: "Auto, Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4.5, Opus 4.6, Opus 4.7.",
-        context: "Model-dependent; not stated.",
-        integrations: "Kiro IDE.",
-        features: "Vibe mode, specs, task execution, agent hooks.",
-        caveats: "Same $/credit as Pro; more headroom only."
-      },
-      {
-        id: "kiro-power",
-        provider: "Kiro",
-        plan: "Power",
-        category: "credit bundle",
-        buyable: "current",
-        confidence: "high",
-        monthlyUsd: 200,
-        annualUsd: null,
-        priceSource: sources.kiro,
-        quotaSource: sources.kiro,
-        quotaText: "10,000 credits/month. Credits meter to 0.01 and task complexity changes burn.",
-        nativeUnit: "credit",
-        nativePerMessage: 1,
-        nativeMonthlyCap: 10000,
-        nativeDailyCap: 333.3333333333,
-        capDailyMin: 333.3333333333,
-        capDailyMax: 333.3333333333,
-        capMonthlyMin: 10000,
-        capMonthlyMax: 10000,
-        capKind: "exact",
-        costBasis: "1 credit per user action is a neutral display assumption; actual burn varies.",
-        rateLimits: "Credit budget published; RPM/TPM not stated.",
-        overage: "Optional overage, disabled by default, billed month-end.",
-        overageUsdPerNative: 0.04,
-        tokenRates: "Credit-based; no token rate published.",
-        models: "Auto, Sonnet 4, Sonnet 4.5, Haiku 4.5, Opus 4.5, Opus 4.6, Opus 4.7.",
-        context: "Model-dependent; not stated.",
-        integrations: "Kiro IDE.",
-        features: "Vibe mode, specs, task execution, agent hooks.",
-        caveats: "Five times Pro+ quota at five times price; same $/credit."
       },
       {
         id: "minimax-starter",
@@ -2125,25 +2323,24 @@
         id: "cursor-pro",
         provider: "Cursor",
         plan: "Pro",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 20,
         annualUsd: null,
         priceSource: sources.cursor,
         quotaSource: sources.cursor,
-        quotaText: "Extended limits on Agent; exact base quota not published on pricing page.",
-        nativeUnit: "unstated",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "unstated",
-        displayOnly: true,
-        costBasis: "Cannot normalize without a published hard quota.",
+        quotaText: "Published as extended Agent limits; planning estimate uses 15-30 normalized coding messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 900,
+        nativeDailyCap: 30,
+        capDailyMin: 15,
+        capDailyMax: 30,
+        capMonthlyMin: 450,
+        capMonthlyMax: 900,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate only; Cursor publishes relative/extended usage, not a hard message quota.",
         rateLimits: "Unstated on pricing page.",
         overage: "On-demand usage billed in arrears after included amount is consumed.",
         overageUsdPerNative: null,
@@ -2152,31 +2349,30 @@
         context: "Model-dependent.",
         integrations: "Cursor editor.",
         features: "Agent, Tab, background agents, MCPs, skills, hooks.",
-        caveats: "Keep as display-only until exact quota/on-demand rate card is available."
+        caveats: "Estimate exists only to keep comparisons possible; actual usage varies by model mix and task complexity."
       },
       {
         id: "cursor-pro-plus",
         provider: "Cursor",
         plan: "Pro+",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 60,
         annualUsd: null,
         priceSource: sources.cursor,
         quotaSource: sources.cursor,
-        quotaText: "3x usage on all OpenAI, Claude, Gemini models; exact base quota not published on pricing page.",
-        nativeUnit: "unstated",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "unstated",
-        displayOnly: true,
-        costBasis: "Cannot normalize without a published hard quota.",
+        quotaText: "Published as 3x usage on OpenAI, Claude, Gemini models; planning estimate scales Pro to 45-90 messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 2700,
+        nativeDailyCap: 90,
+        capDailyMin: 45,
+        capDailyMax: 90,
+        capMonthlyMin: 1350,
+        capMonthlyMax: 2700,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate scales the Cursor Pro estimate by the published 3x multiplier.",
         rateLimits: "Unstated on pricing page.",
         overage: "On-demand usage billed in arrears after included amount is consumed.",
         overageUsdPerNative: null,
@@ -2191,25 +2387,24 @@
         id: "cursor-ultra",
         provider: "Cursor",
         plan: "Ultra",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 200,
         annualUsd: null,
         priceSource: sources.cursor,
         quotaSource: sources.cursor,
-        quotaText: "20x usage on all OpenAI, Claude, Gemini models; exact base quota not published on pricing page.",
-        nativeUnit: "unstated",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "unstated",
-        displayOnly: true,
-        costBasis: "Cannot normalize without a published hard quota.",
+        quotaText: "Published as 20x usage on OpenAI, Claude, Gemini models; planning estimate scales Pro to 300-600 messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 18000,
+        nativeDailyCap: 600,
+        capDailyMin: 300,
+        capDailyMax: 600,
+        capMonthlyMin: 9000,
+        capMonthlyMax: 18000,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate scales the Cursor Pro estimate by the published 20x multiplier.",
         rateLimits: "Unstated on pricing page.",
         overage: "On-demand usage billed in arrears after included amount is consumed.",
         overageUsdPerNative: null,
@@ -2224,25 +2419,24 @@
         id: "claude-pro",
         provider: "Claude",
         plan: "Pro",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 20,
         annualUsd: 200,
         priceSource: sources.claudePricing,
         quotaSource: sources.claudePro,
-        quotaText: "At least 5x Free usage per session; resets about every 5h; exact message count varies.",
-        nativeUnit: "unstated",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "unstated",
-        displayOnly: true,
-        costBasis: "Consumer message quota intentionally not numeric.",
+        quotaText: "At least 5x Free usage per session; planning estimate uses 60-180 normalized coding messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 5400,
+        nativeDailyCap: 180,
+        capDailyMin: 60,
+        capDailyMax: 180,
+        capMonthlyMin: 1800,
+        capMonthlyMax: 5400,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate only; Claude limits vary with model, message length, attachments, and rolling windows.",
         rateLimits: "5-hour session limits and weekly limits; exact message count varies.",
         overage: "Extra usage can bill at standard API rates when enabled.",
         overageUsdPerNative: null,
@@ -2252,31 +2446,30 @@
         context: "Model-dependent.",
         integrations: "Claude web, Claude Code, connectors and MCP depending on plan.",
         features: "Claude Code, files, artifacts, web search, code execution depending on plan.",
-        caveats: "Not fair to compare as fixed messages/day."
+        caveats: "Treat as a planning range, not a contractual quota."
       },
       {
         id: "claude-max-5x",
         provider: "Claude",
         plan: "Max 5x",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 100,
         annualUsd: null,
         priceSource: sources.claudePricing,
         quotaSource: sources.claudeMax,
-        quotaText: "5x Pro usage per session; exact message count varies.",
-        nativeUnit: "unstated",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "unstated",
-        displayOnly: true,
-        costBasis: "Consumer message quota intentionally not numeric.",
+        quotaText: "Published as 5x Pro usage per session; planning estimate scales Pro to 300-900 messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 27000,
+        nativeDailyCap: 900,
+        capDailyMin: 300,
+        capDailyMax: 900,
+        capMonthlyMin: 9000,
+        capMonthlyMax: 27000,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate scales the Claude Pro range by the published 5x Max multiplier.",
         rateLimits: "5-hour session limits and weekly limits; exact message count varies.",
         overage: "Extra usage can bill at standard API rates when enabled.",
         overageUsdPerNative: null,
@@ -2286,31 +2479,30 @@
         context: "Model-dependent.",
         integrations: "Claude web, Claude Code, connectors and MCP depending on plan.",
         features: "More usage than Pro, priority access, Claude Code.",
-        caveats: "Not fair to compare as fixed messages/day."
+        caveats: "Treat as a planning range, not a contractual quota."
       },
       {
         id: "claude-max-20x",
         provider: "Claude",
         plan: "Max 20x",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 200,
         annualUsd: null,
         priceSource: sources.claudePricing,
         quotaSource: sources.claudeMax,
-        quotaText: "20x Pro usage per session; exact message count varies.",
-        nativeUnit: "unstated",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "unstated",
-        displayOnly: true,
-        costBasis: "Consumer message quota intentionally not numeric.",
+        quotaText: "Published as 20x Pro usage per session; planning estimate scales Pro to 1,200-3,600 messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 108000,
+        nativeDailyCap: 3600,
+        capDailyMin: 1200,
+        capDailyMax: 3600,
+        capMonthlyMin: 36000,
+        capMonthlyMax: 108000,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate scales the Claude Pro range by the published 20x Max multiplier.",
         rateLimits: "5-hour session limits and weekly limits; exact message count varies.",
         overage: "Extra usage can bill at standard API rates when enabled.",
         overageUsdPerNative: null,
@@ -2320,13 +2512,13 @@
         context: "Model-dependent.",
         integrations: "Claude web, Claude Code, connectors and MCP depending on plan.",
         features: "Highest Claude consumer quota tier captured.",
-        caveats: "Not fair to compare as fixed messages/day."
+        caveats: "Treat as a planning range, not a contractual quota."
       },
       {
         id: "claude-api",
         provider: "Claude",
         plan: "API / extra usage",
-        category: "payg",
+        category: "metered estimate",
         buyable: "payg",
         confidence: "high",
         monthlyUsd: 0,
@@ -2335,8 +2527,8 @@
         priceSource: sources.claudePricing,
         quotaSource: sources.claudePricing,
         quotaText: "No bundled subscription quota; token-billed API usage.",
-        nativeUnit: "token",
-        nativePerMessage: null,
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
         nativeMonthlyCap: null,
         nativeDailyCap: null,
         capDailyMin: null,
@@ -2344,8 +2536,8 @@
         capMonthlyMin: null,
         capMonthlyMax: null,
         capKind: "payg",
-        displayOnly: true,
-        costBasis: "Token billing only; no fixed monthly quota.",
+        estimatedUsdPerMessage: 0.12,
+        costBasis: "Metered estimate assumes a representative coding turn of 20k input tokens and 4k output tokens on Sonnet 4.6.",
         rateLimits: "API rate limits depend on account tier.",
         overage: "No overage concept; usage is pay-as-you-go.",
         overageUsdPerNative: null,
@@ -2361,25 +2553,24 @@
         id: "mistral-pro",
         provider: "Mistral",
         plan: "Pro",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 14.99,
         annualUsd: null,
         priceSource: sources.mistral,
         quotaSource: sources.mistral,
-        quotaText: "Messages up to 6x Free; web searches up to 5x Free; Think mode up to 30x Free; Vibe all-day coding, PAYG beyond.",
-        nativeUnit: "relative limit",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "relative",
-        displayOnly: true,
-        costBasis: "Free baseline and PAYG unit not published in captured text.",
+        quotaText: "Messages up to 6x Free; Vibe all-day coding, PAYG beyond. Planning estimate uses 60-180 messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 5400,
+        nativeDailyCap: 180,
+        capDailyMin: 60,
+        capDailyMax: 180,
+        capMonthlyMin: 1800,
+        capMonthlyMax: 5400,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate only; Free baseline and Vibe PAYG unit were not captured.",
         rateLimits: "Relative multipliers only.",
         overage: "PAYG beyond for Mistral Vibe; price not captured.",
         overageUsdPerNative: null,
@@ -2388,31 +2579,30 @@
         context: "Model-dependent.",
         integrations: "Mistral Vibe for coding.",
         features: "More messages, web search, Think mode, Deep Research, document storage.",
-        caveats: "Display-only until absolute limits are published."
+        caveats: "Estimate exists only to keep comparisons possible."
       },
       {
         id: "mistral-team",
         provider: "Mistral",
         plan: "Team",
-        category: "display-only",
+        category: "estimated bundle",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 24.99,
         annualUsd: null,
         priceSource: sources.mistral,
         quotaSource: sources.mistral,
-        quotaText: "Relative usage multipliers vs Free; 30GB/user document storage. Exact coding quota not published in captured text.",
-        nativeUnit: "relative limit",
-        nativePerMessage: null,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "relative",
-        displayOnly: true,
-        costBasis: "Free baseline and PAYG unit not published in captured text.",
+        quotaText: "Relative usage multipliers vs Free; 30GB/user storage. Planning estimate uses 120-300 messages/day.",
+        nativeUnit: "estimated message",
+        nativePerMessage: 1,
+        nativeMonthlyCap: 9000,
+        nativeDailyCap: 300,
+        capDailyMin: 120,
+        capDailyMax: 300,
+        capMonthlyMin: 3600,
+        capMonthlyMax: 9000,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate only; absolute coding quota was not captured.",
         rateLimits: "Relative multipliers only.",
         overage: "Not normalized.",
         overageUsdPerNative: null,
@@ -2421,13 +2611,13 @@
         context: "Model-dependent.",
         integrations: "Mistral Vibe for coding.",
         features: "Team administration plus higher storage.",
-        caveats: "Display-only until absolute limits are published."
+        caveats: "Estimate exists only to keep comparisons possible."
       },
       {
         id: "kimi-code",
         provider: "Kimi",
         plan: "Kimi Code membership",
-        category: "display-only",
+        category: "estimated range",
         buyable: "current",
         confidence: "low",
         monthlyUsd: 19,
@@ -2439,15 +2629,14 @@
         quotaText: "Current docs: 300-1,200 API calls/5h, max concurrency 30; plan-specific price and hard quota not visible in current crawl.",
         nativeUnit: "API call",
         nativePerMessage: 15,
-        nativeMonthlyCap: null,
-        nativeDailyCap: null,
-        capDailyMin: null,
-        capDailyMax: null,
-        capMonthlyMin: null,
-        capMonthlyMax: null,
-        capKind: "range-unassigned",
-        displayOnly: true,
-        costBasis: "Archived official prices: $19/$39/$99/$199 monthly; current plan-specific quotas unavailable.",
+        nativeMonthlyCap: 1200 * FIVE_HOUR_WINDOWS_PER_DAY * DAYS_PER_MONTH,
+        nativeDailyCap: 1200 * FIVE_HOUR_WINDOWS_PER_DAY,
+        capDailyMin: 300 * FIVE_HOUR_WINDOWS_PER_DAY / 15,
+        capDailyMax: 1200 * FIVE_HOUR_WINDOWS_PER_DAY / 15,
+        capMonthlyMin: 300 * FIVE_HOUR_WINDOWS_PER_DAY * DAYS_PER_MONTH / 15,
+        capMonthlyMax: 1200 * FIVE_HOUR_WINDOWS_PER_DAY * DAYS_PER_MONTH / 15,
+        capKind: "estimate-range",
+        costBasis: "Planning estimate maps the documented 300-1,200 API calls/5h through 15 calls per normalized coding message.",
         rateLimits: "300-1,200 API calls/5h; max concurrency 30.",
         overage: "Quota included in membership benefits; overage behavior not captured.",
         overageUsdPerNative: null,
@@ -2456,16 +2645,13 @@
         context: "Model-dependent.",
         integrations: "Kimi CLI, Claude Code, Roo Code, VS Code, Zed, JetBrains via ACP.",
         features: "Personal development only; enterprise use excluded.",
-        caveats: "Price is from archived official page; use as a placeholder until current pricing is visible."
+        caveats: "Price is from archived official page; estimate uses the low published price against the high documented call range."
       }
     ];
 
     const qualitySignals = {
       "alibaba-pro": q(77.8, "SWE-bench Verified", "GLM-5", sources.zaiGlm5, "Representative best published model in the Alibaba pool; not a plan-level score."),
       "alibaba-lite": q(null, "mixed legacy pool", "Legacy Coding Lite", sources.alibabaLegacy, "Legacy model access is unclear, so no benchmark score is assigned."),
-      "kiro-pro": q(87.6, "SWE-bench Verified", "Claude Opus 4.7", sources.kiroOpus47, "Representative model available in Kiro with experimental rollout."),
-      "kiro-pro-plus": q(87.6, "SWE-bench Verified", "Claude Opus 4.7", sources.kiroOpus47, "Representative model available in Kiro with experimental rollout."),
-      "kiro-power": q(87.6, "SWE-bench Verified", "Claude Opus 4.7", sources.kiroOpus47, "Representative model available in Kiro with experimental rollout."),
       "minimax-starter": q(56.22, "SWE-Pro", "MiniMax M2.7", sources.minimaxM27, "Different benchmark from SWE-bench Verified; use as directional quality only."),
       "minimax-plus": q(56.22, "SWE-Pro", "MiniMax M2.7", sources.minimaxM27, "Different benchmark from SWE-bench Verified; use as directional quality only."),
       "minimax-max": q(56.22, "SWE-Pro", "MiniMax M2.7", sources.minimaxM27, "Different benchmark from SWE-bench Verified; use as directional quality only."),
@@ -2485,9 +2671,9 @@
       "claude-max-5x": q(87.6, "SWE-bench Verified", "Claude Opus 4.7", sources.anthropicOpus47, "Representative top Claude model; consumer limits vary by plan."),
       "claude-max-20x": q(87.6, "SWE-bench Verified", "Claude Opus 4.7", sources.anthropicOpus47, "Representative top Claude model; consumer limits vary by plan."),
       "claude-api": q(87.6, "SWE-bench Verified", "Claude Opus 4.7", sources.anthropicOpus47, "API model-level benchmark, not a subscription quota."),
-      "mistral-pro": q(72.2, "SWE-bench Verified", "Devstral 2", sources.mistralDevstral2, "Representative Mistral Vibe model; plan quota is still display-only."),
-      "mistral-team": q(72.2, "SWE-bench Verified", "Devstral 2", sources.mistralDevstral2, "Representative Mistral Vibe model; plan quota is still display-only."),
-      "kimi-code": q(76.8, "SWE-Bench Verified", "Kimi K2.5", sources.kimiK25, "Kimi Code is powered by K2.5; membership quota is still display-only.")
+      "mistral-pro": q(72.2, "SWE-bench Verified", "Devstral 2", sources.mistralDevstral2, "Representative Mistral Vibe model; plan quota uses a planning estimate."),
+      "mistral-team": q(72.2, "SWE-bench Verified", "Devstral 2", sources.mistralDevstral2, "Representative Mistral Vibe model; plan quota uses a planning estimate."),
+      "kimi-code": q(76.8, "SWE-Bench Verified", "Kimi K2.5", sources.kimiK25, "Kimi Code is powered by K2.5; membership quota uses the documented API-call range as a planning estimate.")
     };
 
     rows.forEach(row => {
@@ -2685,6 +2871,11 @@
 
     const tableHead = document.getElementById("tableHead");
     const tableBody = document.getElementById("tableBody");
+    const headerCols = document.getElementById("headerCols");
+    const bodyCols = document.getElementById("bodyCols");
+    const headerScroll = document.querySelector(".header-scroll");
+    const bodyScroll = document.querySelector(".body-scroll");
+    const mobileResults = document.getElementById("mobileResults");
     const messagesDayNumber = document.getElementById("messagesDayNumber");
     const hoursDayNumber = document.getElementById("hoursDayNumber");
     const globalFilter = document.getElementById("globalFilter");
@@ -2704,6 +2895,7 @@
       populateProviderFilter();
       populateCurrentPlan();
       bindInputs();
+      bindScrollSync();
       render();
     }
 
@@ -2746,6 +2938,18 @@
       applyEstimate.addEventListener("click", applyUsageEstimate);
     }
 
+    function bindScrollSync() {
+      let syncing = false;
+      const sync = (source, target) => {
+        if (syncing) return;
+        syncing = true;
+        target.scrollLeft = source.scrollLeft;
+        syncing = false;
+      };
+      headerScroll.addEventListener("scroll", () => sync(headerScroll, bodyScroll));
+      bodyScroll.addEventListener("scroll", () => sync(bodyScroll, headerScroll));
+    }
+
     function bindNumberInput(input, key, min, max) {
       const update = value => {
         const numeric = clamp(Number(value), min, max);
@@ -2783,6 +2987,7 @@
       const visibleRows = filteredRows().sort(compareRows);
       renderInsights(visibleRows);
       renderBody(visibleRows);
+      renderMobileResults(visibleRows);
       document.getElementById("rowCount").textContent = `${visibleRows.length} rows`;
     }
 
@@ -2796,6 +3001,9 @@
 
     function renderHead() {
       const visibleColumns = currentColumns();
+      const colGroup = renderColGroup(visibleColumns);
+      headerCols.innerHTML = colGroup;
+      bodyCols.innerHTML = colGroup;
       const labelRow = visibleColumns.map(column => {
         const active = state.sortKey === column.key;
         const indicator = active ? (state.sortDir === "asc" ? "asc" : "desc") : "";
@@ -2835,6 +3043,38 @@
       });
     }
 
+    function renderColGroup(visibleColumns) {
+      return visibleColumns.map(column => `<col style="width: ${escapeAttr(columnWidth(column))}">`).join("");
+    }
+
+    function columnWidth(column) {
+      const widths = {
+        provider: "12rem",
+        plan: "13rem",
+        currentDelta: "13rem",
+        monthlyUsd: "7rem",
+        quotaText: "16rem",
+        capDailyMax: "9rem",
+        headroom: "13rem",
+        qualityScore: "18rem",
+        totalCost: "8rem",
+        usedMessageCost: "8rem",
+        plannedHourCost: "8rem",
+        ceilingMessageCost: "8rem",
+        nativeCost: "9rem",
+        tokenRates: "15rem",
+        overage: "16rem",
+        annualUsd: "7rem",
+        nativeUnit: "15rem",
+        rateLimits: "15rem",
+        models: "18rem",
+        integrations: "18rem",
+        caveats: "20rem",
+        sources: "14rem"
+      };
+      return widths[column.key] || "10rem";
+    }
+
     function renderBody(visibleRows) {
       const visibleColumns = currentColumns();
       if (!visibleRows.length) {
@@ -2851,6 +3091,81 @@
       }).join("");
     }
 
+    function renderMobileResults(visibleRows) {
+      const sortColumn = columns.find(item => item.key === state.sortKey) || columns[0];
+      if (!visibleRows.length) {
+        mobileResults.innerHTML = `
+          <div class="empty-state">
+            <strong>No matching plans</strong>
+            <span>Clear filters to restore the mobile reference list.</span>
+            <button class="ghost-button" type="button" data-clear-filters>Clear filters</button>
+          </div>
+        `;
+        mobileResults.querySelector("[data-clear-filters]")?.addEventListener("click", clearTableFilters);
+        return;
+      }
+
+      mobileResults.innerHTML = `
+        <div class="mobile-results-head">
+          <strong>Phone reference</strong>
+          <span>${visibleRows.length} rows, sorted by ${escapeHtml(sortColumn.label)} ${escapeHtml(state.sortDir)}</span>
+        </div>
+        ${visibleRows.map(row => mobilePlanCard(row)).join("")}
+      `;
+    }
+
+    function mobilePlanCard(row) {
+      const total = totalCostForUsage(row);
+      const status = statusForUsage(row);
+      const totalLabel = finite(total.value) ? money(total.value) : total.label;
+      const totalNote = finite(total.value) ? total.label : "not comparable";
+      const qualityLabel = finite(row.qualityScore) ? `${trimNumber(row.qualityScore, 1)}%` : "n/a";
+      const qualityNote = finite(row.qualityScore) ? `${row.qualityBenchmark}; ${row.qualityModel}` : row.qualityNote;
+      const headroomLabel = finite(status.pct) ? status.label : "Unstated";
+      const headroomNote = finite(status.pct)
+        ? `${trimNumber(status.pct * 100, 1)}% of daily cap`
+        : "No numeric ceiling";
+      const source = row.priceSource || row.quotaSource || row.qualitySource;
+      const sourceLink = source
+        ? `<a class="mobile-source-link" href="${escapeAttr(source.url)}" target="_blank" rel="noreferrer">Open source</a>`
+        : "";
+      const currentClass = row.id === state.currentId ? " current" : "";
+
+      return `
+        <article class="mobile-card${currentClass}">
+          <div class="mobile-card-head">
+            <div class="mobile-card-title">
+              <span class="mobile-provider">${escapeHtml(row.provider)}</span>
+              <span class="mobile-plan">${escapeHtml(row.plan)}</span>
+              <span class="mini-line">${escapeHtml(row.category)}</span>
+            </div>
+            ${statusBadge(row)}
+          </div>
+          <div class="mobile-metrics">
+            ${mobileMetric("Monthly", priceLabel(row), row.priceInferred ? "inferred" : "published")}
+            ${mobileMetric("Cost at usage", totalLabel, totalNote)}
+            ${mobileMetric("Headroom", headroomLabel, headroomNote)}
+            ${mobileMetric("Quality signal", qualityLabel, qualityNote)}
+          </div>
+          <div class="mobile-notes">
+            <span><strong>Quota:</strong> ${escapeHtml(row.quotaText)}</span>
+            <span><strong>Normalized cap/day:</strong> ${escapeHtml(capText(row, "daily"))}</span>
+            ${sourceLink}
+          </div>
+        </article>
+      `;
+    }
+
+    function mobileMetric(label, value, note) {
+      return `
+        <div class="mobile-metric">
+          <span class="mobile-metric-label">${escapeHtml(label)}</span>
+          <span class="mobile-metric-value">${escapeHtml(String(value))}</span>
+          <span class="mini-line">${escapeHtml(note)}</span>
+        </div>
+      `;
+    }
+
     function clearTableFilters() {
       state.filters = {};
       state.globalFilter = "";
@@ -2865,44 +3180,95 @@
     }
 
     function renderInsights(visibleRows) {
-      const candidates = rows
-        .filter(row => !row.displayOnly && row.buyable !== "legacy" && finite(row.monthlyUsd))
+      const candidates = visibleRows
+        .filter(row => isComparableRow(row) && finite(row.monthlyUsd))
         .map(row => ({ row, total: totalCostForUsage(row) }))
-        .filter(item => finite(item.total.value) && item.total.viable)
+        .filter(item => finite(item.total.value) && item.total.viable && statusForUsage(item.row).level !== "red")
         .sort((a, b) => a.total.value - b.total.value || efficiencySort(a.row, b.row));
+      const current = currentRow();
 
       const bestMain = document.getElementById("bestFitMain");
       const bestSub = document.getElementById("bestFitSub");
       if (!state.messagesDay) {
         bestMain.textContent = "Set a nonzero daily message target";
-        bestSub.textContent = "Cost-per-used-message needs expected usage.";
+        bestSub.textContent = "Budget recommendations need expected usage.";
       } else if (!candidates.length) {
         bestMain.textContent = "No normalized plan covers this target without unsupported assumptions";
-        bestSub.textContent = "Lower usage, show low-confidence rows, or inspect overage policies.";
+        bestSub.textContent = "Lower usage, clear filters, show low-confidence rows, or inspect overage policies.";
       } else {
         const best = candidates[0];
-        bestMain.textContent = `${best.row.provider} ${best.row.plan} at ${money(best.total.value)}/mo`;
-        bestSub.textContent = `Lowest projected cost among normalized plans that fit ${formatNumber(state.messagesDay)} messages/day. Quality is shown separately, not used for this pick.`;
+        bestMain.textContent = recommendationMain(best, current);
+        bestSub.textContent = budgetRecommendationCopy(best, current);
       }
 
       const equivMain = document.getElementById("equivMain");
       const equivSub = document.getElementById("equivSub");
-      const deals = candidates
+      const qualityPicks = candidates
         .filter(item => finite(item.row.qualityScore) && item.total.value > 0)
-        .map(item => ({ ...item, score: item.row.qualityScore / item.total.value }))
-        .sort((a, b) => b.score - a.score || a.total.value - b.total.value || efficiencySort(a.row, b.row));
+        .sort((a, b) => b.row.qualityScore - a.row.qualityScore || a.total.value - b.total.value || efficiencySort(a.row, b.row));
 
       if (!state.messagesDay) {
-        equivMain.textContent = "Set usage to score value";
-        equivSub.textContent = "Quality-per-dollar compares the representative benchmark signal against projected monthly cost.";
-      } else if (!deals.length) {
-        equivMain.textContent = "No quality-per-dollar score available";
+        equivMain.textContent = "Set usage to score quality";
+        equivSub.textContent = "Quality recommendations need both usage and a representative benchmark signal.";
+      } else if (!qualityPicks.length) {
+        equivMain.textContent = "No quality recommendation available";
         equivSub.textContent = "Needs a plan with both projected cost and a representative benchmark signal.";
       } else {
-        const deal = deals[0];
-        equivMain.textContent = `${deal.row.provider} ${deal.row.plan} at ${money(deal.total.value)}/mo`;
-        equivSub.textContent = `Highest quality-signal points per projected dollar among plans that fit usage: ${trimNumber(deal.score, 2)} pts/$ using ${deal.row.qualityBenchmark}.`;
+        const qualityPick = qualityPicks[0];
+        equivMain.textContent = recommendationMain(qualityPick, current);
+        equivSub.textContent = qualityRecommendationCopy(qualityPick, current);
       }
+    }
+
+    function recommendationMain(item, current) {
+      if (current?.id === item.row.id) return `Stay on ${item.row.provider} ${item.row.plan}`;
+      if (current) return `Switch to ${item.row.provider} ${item.row.plan}`;
+      return `${item.row.provider} ${item.row.plan} at ${money(item.total.value)}/mo`;
+    }
+
+    function budgetRecommendationCopy(item, current) {
+      if (!current) {
+        return `Lowest projected monthly cost among comparable rows in view that fit ${formatNumber(state.messagesDay)} messages/day.`;
+      }
+      if (current.id === item.row.id) {
+        return `Your current subscription is already the lowest-cost comparable fit for ${formatNumber(state.messagesDay)} messages/day.`;
+      }
+      return `Budget move versus ${current.provider} ${current.plan}: ${costComparison(item, current)}, ${capComparison(item.row, current)}, ${qualityComparison(item.row, current)}.`;
+    }
+
+    function qualityRecommendationCopy(item, current) {
+      if (!current) {
+        return `Strongest representative quality signal among comparable rows in view that fit usage; projected at ${money(item.total.value)}/mo.`;
+      }
+      if (current.id === item.row.id) {
+        return `Your current subscription already has the strongest representative quality signal among comparable fits in view.`;
+      }
+      return `Quality move versus ${current.provider} ${current.plan}: ${qualityComparison(item.row, current)}, ${costComparison(item, current)}, ${capComparison(item.row, current)}.`;
+    }
+
+    function costComparison(item, current) {
+      const currentCost = totalCostForUsage(current);
+      if (!finite(item.total.value) || !finite(currentCost.value)) return "projected cost comparison unavailable";
+      const delta = item.total.value - currentCost.value;
+      if (Math.abs(delta) < 0.005) return "same projected monthly cost";
+      if (delta < 0) return `${money(Math.abs(delta))}/mo less`;
+      return `${money(delta)}/mo more`;
+    }
+
+    function qualityComparison(row, current) {
+      if (!finite(row.qualityScore) || !finite(current.qualityScore)) return "quality comparison unavailable";
+      const delta = row.qualityScore - current.qualityScore;
+      if (Math.abs(delta) < 0.05) return "same representative quality signal";
+      if (delta > 0) return `+${trimNumber(delta, 1)} quality-signal points`;
+      return `${trimNumber(delta, 1)} quality-signal points`;
+    }
+
+    function capComparison(row, current) {
+      if (!finite(row.capDailyMax) || !finite(current.capDailyMax)) return "cap comparison unavailable";
+      const delta = row.capDailyMax - current.capDailyMax;
+      if (Math.abs(delta) < 0.05) return "same normalized daily cap";
+      if (delta > 0) return `+${formatNumber(delta)} normalized messages/day`;
+      return `${formatNumber(delta)} normalized messages/day`;
     }
 
     function currentRow() {
@@ -3013,8 +3379,8 @@
         if (state.providerFilter !== "all" && row.provider !== state.providerFilter) return false;
         if (state.hideLowConfidence && row.confidence === "low") return false;
         if (state.statusFilter === "current" && row.buyable !== "current") return false;
-        if (state.statusFilter === "normalized" && row.displayOnly) return false;
-        if (state.statusFilter === "display" && !row.displayOnly) return false;
+        if (state.statusFilter === "normalized" && !isComparableRow(row)) return false;
+        if (state.statusFilter === "estimated" && !isEstimatedRow(row)) return false;
 
         if (state.globalFilter) {
           const haystack = activeColumns.map(column => String(column.raw(row))).join(" ").toLowerCase();
@@ -3027,6 +3393,17 @@
           return String(column.raw(row)).toLowerCase().includes(value);
         });
       });
+    }
+
+    function isComparableRow(row) {
+      if (row.buyable === "legacy") return false;
+      const total = totalCostForUsage(row);
+      return finite(total.value) && total.viable;
+    }
+
+    function isEstimatedRow(row) {
+      if (row.buyable === "legacy") return false;
+      return row.capKind !== "exact" || finite(row.estimatedUsdPerMessage) || row.priceInferred;
     }
 
     function compareRows(a, b) {
@@ -3050,6 +3427,10 @@
     function totalCostForUsage(row) {
       const requiredMessages = state.messagesDay * DAYS_PER_MONTH;
       if (!finite(row.monthlyUsd)) return { value: null, viable: false, sort: Infinity, label: "unstated" };
+      if (finite(row.estimatedUsdPerMessage)) {
+        const value = row.monthlyUsd + requiredMessages * row.estimatedUsdPerMessage;
+        return { value, viable: true, sort: value, label: "metered estimate" };
+      }
       if (!finite(row.capMonthlyMax)) {
         if (row.displayOnly || row.monthlyUsd === 0) return { value: null, viable: false, sort: Infinity, label: "unstated" };
         return { value: row.monthlyUsd, viable: false, sort: Infinity, label: "quota unstated" };
@@ -3068,7 +3449,10 @@
 
     function statusForUsage(row) {
       if (!finite(row.capDailyMax)) {
-        return { label: "Unstated", level: "gray", pct: null, sort: Infinity };
+        if (finite(row.estimatedUsdPerMessage)) {
+          return { label: "Metered", level: "green", pct: null, sort: 0, note: "No bundled ceiling; cost scales with usage." };
+        }
+        return { label: "Unstated", level: "gray", pct: null, sort: Infinity, note: "No published or estimated numeric ceiling." };
       }
       const pct = row.capDailyMax === 0 ? Infinity : state.messagesDay / row.capDailyMax;
       if (pct > 1) {
@@ -3083,7 +3467,7 @@
     function headroomCell(row) {
       const status = statusForUsage(row);
       if (!finite(status.pct)) {
-        return `<span class="status-pill gray">Unstated</span><span class="mini-line">No published numeric ceiling.</span>`;
+        return `<span class="status-pill ${status.level}">${escapeHtml(status.label)}</span><span class="mini-line">${escapeHtml(status.note)}</span>`;
       }
       const width = Math.min(status.pct * 100, 100);
       const left = row.capDailyMax - state.messagesDay;
@@ -3101,7 +3485,7 @@
     function costAtUsageCell(row) {
       const total = totalCostForUsage(row);
       if (!finite(total.value)) return `<span class="dim">${escapeHtml(total.label)}</span>`;
-      const note = total.label === "with overage" ? "incl. overage" : "fixed";
+      const note = total.label === "with overage" ? "incl. overage" : total.label === "metered estimate" ? "metered est." : "fixed";
       return `<span class="money">${money(total.value)}</span><span class="mini-line">${note}</span>`;
     }
 
@@ -3157,7 +3541,10 @@
     }
 
     function normalizedCapCell(row) {
-      if (!finite(row.capDailyMax)) return `<span class="dim">unstated</span>`;
+      if (!finite(row.capDailyMax)) {
+        if (finite(row.estimatedUsdPerMessage)) return `<span class="num inferred">metered</span><span class="mini-line">PAYG estimate</span>`;
+        return `<span class="dim">unstated</span>`;
+      }
       const cap = capText(row, "daily");
       const monthly = capText(row, "monthly");
       const inferred = row.capKind !== "exact";
@@ -3173,9 +3560,18 @@
     }
 
     function statusBadge(row) {
-      const cls = row.buyable === "legacy" ? "legacy" : row.displayOnly ? "display" : row.confidence;
-      const label = row.displayOnly ? "display-only" : row.buyable === "legacy" ? "legacy" : row.confidence;
-      return `<span class="badge ${cls}">${escapeHtml(label)}</span>`;
+      const confidence = row.confidence ? `<span class="badge ${escapeAttr(row.confidence)}">${escapeHtml(row.confidence)} conf</span>` : "";
+      const basis = basisBadge(row);
+      return `<span class="badge-row">${confidence}${basis}</span>`;
+    }
+
+    function basisBadge(row) {
+      if (row.buyable === "legacy") return `<span class="badge legacy">legacy</span>`;
+      if (row.displayOnly) return `<span class="badge display">display-only</span>`;
+      if (finite(row.estimatedUsdPerMessage) || row.capKind === "payg") return `<span class="badge metered">metered</span>`;
+      if (row.capKind === "exact") return `<span class="badge official">official</span>`;
+      if (finite(row.capDailyMax)) return `<span class="badge estimate">estimated</span>`;
+      return `<span class="badge display">unstated</span>`;
     }
 
     function priceLabel(row) {
