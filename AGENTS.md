@@ -23,6 +23,9 @@ A collection of single-purpose web tools, starting with the Wordle Checker. Each
     ├── test-checker.js             # Test scripts
     ├── analyze-wordlist.js
     └── test-today-exclusion.js
+└── ai-coding-subscriptions/        # AI Coding Subscription Matrix
+    ├── index.html                  # Frontend UI
+    └── README.md                   # Tool documentation
 ```
 
 ## Development
@@ -35,6 +38,7 @@ python3 -m http.server 8080
 Then visit:
 - http://localhost:8080/ - Atomic Tools index
 - http://localhost:8080/wordle-checker/ - Wordle Checker
+- http://localhost:8080/ai-coding-subscriptions/ - AI Coding Subscription Matrix
 
 ## Tool-Specific Commands
 
