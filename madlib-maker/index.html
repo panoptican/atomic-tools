@@ -9,6 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    @font-face {
+      font-family: "GT America";
+      src: url("../assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
+           url("../assets/fonts/GT-America-Standard-Medium.woff") format("woff");
+      font-display: swap;
+      font-weight: 500;
+    }
+  </style>
 </head>
 
 <body>
@@ -36,9 +45,9 @@
     <h2>Story first</h2>
 
     <!-- Mode Toggle Tabs -->
-    <div class="mode-tabs" id="mode-tabs">
-      <button type="button" class="mode-tab active" data-mode="creator">Create</button>
-      <button type="button" class="mode-tab" data-mode="preview">Preview</button>
+    <div class="mode-tabs" id="mode-tabs" aria-label="Madlib mode">
+      <button type="button" class="mode-tab active" data-mode="creator" aria-selected="true">Create</button>
+      <button type="button" class="mode-tab" data-mode="preview" aria-selected="false">Preview</button>
     </div>
 
     <!-- Story Editor Section -->
@@ -211,9 +220,9 @@
 
       <div class="mode-toggle">
         <span class="mode-label">Input mode:</span>
-        <div class="toggle-buttons">
-          <button type="button" class="toggle-btn active" data-mode="sequential">One at a time</button>
-          <button type="button" class="toggle-btn" data-mode="all-at-once">All at once</button>
+        <div class="toggle-buttons" role="group" aria-label="Input mode">
+          <button type="button" class="toggle-btn active" data-mode="sequential" aria-pressed="true">One at a time</button>
+          <button type="button" class="toggle-btn" data-mode="all-at-once" aria-pressed="false">All at once</button>
         </div>
       </div>
 
@@ -257,12 +266,19 @@
   </div>
 
   <!-- Toast Notification -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Delete Confirmation Dialog -->
-  <div class="confirm-dialog-overlay" id="confirm-dialog-overlay">
-    <div class="confirm-dialog">
-      <div class="confirm-dialog-title">Delete Placeholder?</div>
+  <div class="confirm-dialog-overlay" id="confirm-dialog-overlay" aria-hidden="true">
+    <div
+      class="confirm-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-dialog-title"
+      aria-describedby="confirm-dialog-message confirm-dialog-usage"
+      tabindex="-1"
+    >
+      <div class="confirm-dialog-title" id="confirm-dialog-title">Delete Placeholder?</div>
       <div class="confirm-dialog-message" id="confirm-dialog-message">
         This placeholder is used in your story.
       </div>
