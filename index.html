@@ -32,6 +32,23 @@
       font-weight: 200 800;
     }
 
+    @font-face {
+      font-family: "GT America";
+      src: url("assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
+           url("assets/fonts/GT-America-Standard-Medium.woff") format("woff");
+      font-display: swap;
+      font-weight: 500;
+    }
+
+    @font-face {
+      font-family: "GT America";
+      src: url("assets/fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
+           url("assets/fonts/GT-America-Expanded-Regular.woff") format("woff");
+      font-display: swap;
+      font-weight: 400;
+      font-stretch: expanded;
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -60,6 +77,7 @@
       --header: "Monaspace Argon Var", "SF Mono", Menlo, monospace;
       --body: "Monaspace Neon Var", "SF Mono", Menlo, monospace;
       --support: "Monaspace Radon Var", "SF Mono", Menlo, monospace;
+      --label: "GT America", "Satoshi", system-ui, sans-serif;
     }
 
     body {
