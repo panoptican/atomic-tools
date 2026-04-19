@@ -25,11 +25,18 @@ Thumbs.db
 # Local agent/skill workspaces
 .agents/
 .claude/
+.codex/
 .factory/
+.opencode/
 .pi/
 skills-lock.json
 app/
 **/app/playground/
+
+# Local config
+.mcp.json
+opencode.json
+_concepts/
 
 # Test specs
 **/spec/
