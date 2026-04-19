@@ -33,7 +33,7 @@
       <h1>Madlib Creator</h1>
       <button type="button" class="new-madlib-btn" id="new-madlib-btn">New Madlib</button>
     </div>
-    <h2>Build Your Story</h2>
+    <h2>Story first</h2>
 
     <!-- Mode Toggle Tabs -->
     <div class="mode-tabs" id="mode-tabs">
@@ -41,24 +41,33 @@
       <button type="button" class="mode-tab" data-mode="preview">Preview</button>
     </div>
 
-    <!-- Title & Metadata Section -->
-    <div class="section" id="metadata-section">
-      <h3>Title & Details</h3>
-      <div class="metadata-fields">
-        <div class="field-group">
-          <label for="madlib-title">Title</label>
-          <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled Madlib">
-        </div>
-        <div class="field-group">
-          <label for="madlib-subtitle">Subtitle <span class="optional-label">(optional)</span></label>
-          <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by...">
-        </div>
+    <!-- Story Editor Section -->
+    <div class="section primary-section" id="story-editor-section">
+      <h3>Story</h3>
+      <p class="section-hint">Type blanks in braces, like <code>{noun}</code> or <code>{favorite-food}</code>. They appear below automatically.</p>
+      <textarea
+        id="story-editor"
+        class="story-textarea"
+        placeholder="Once upon a time, a {blank} walked into a {place}..."
+        rows="10"
+      ></textarea>
+      <div class="orphan-warning" id="orphan-warning">
+        <div class="orphan-warning-title">Orphaned placeholders found</div>
+        <div class="orphan-warning-list" id="orphan-list"></div>
       </div>
     </div>
 
-    <!-- Word List Management Section -->
-    <div class="section" id="word-list-section">
-      <h3>Word List</h3>
+    <!-- Detected Blanks Section -->
+    <div class="section supporting-section" id="word-list-section">
+      <h3>Blanks</h3>
+
+      <!-- Placeholder List Display -->
+      <div id="word-list" class="word-list">
+        <!-- Empty state shown when no placeholders -->
+        <div class="empty-state" id="empty-state">
+          No blanks yet.
+        </div>
+      </div>
 
       <!-- Preset Quick-Add Buttons -->
       <div class="preset-buttons">
@@ -71,129 +80,125 @@
 
       <!-- Custom Label Input -->
       <div class="custom-input-wrapper">
-        <input type="text" id="custom-label-input" placeholder="Enter custom word type (e.g., 'emotion', 'body part')">
+        <input type="text" id="custom-label-input" placeholder="Add a custom blank">
         <button type="button" id="add-custom-btn">Add</button>
       </div>
+    </div>
 
-      <!-- Placeholder List Display -->
-      <div id="word-list" class="word-list">
-        <!-- Empty state shown when no placeholders -->
-        <div class="empty-state" id="empty-state">
-          No placeholders defined yet. Add some words above to get started!
+    <!-- Title & Metadata Section -->
+    <details class="section secondary-section" id="metadata-section">
+      <summary>Title & details</summary>
+      <div class="secondary-section-body">
+        <div class="metadata-fields">
+          <div class="field-group">
+            <label for="madlib-title">Title</label>
+            <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled Madlib">
+          </div>
+          <div class="field-group">
+            <label for="madlib-subtitle">Subtitle <span class="optional-label">(optional)</span></label>
+            <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by...">
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Story Editor Section -->
-    <div class="section" id="story-editor-section">
-      <h3>Story</h3>
-      <p class="section-hint">Write your story using <code>{word01}</code>, <code>{word02}</code>, etc. to insert placeholders. You can also click the chips in your word list to insert them wherever your cursor is in the textbox below.</p>
-      <textarea
-        id="story-editor"
-        class="story-textarea"
-        placeholder="Once upon a time, a {word01} walked into a {word02}..."
-        rows="10"
-      ></textarea>
-      <div class="orphan-warning" id="orphan-warning">
-        <div class="orphan-warning-title">Orphaned placeholders found</div>
-        <div class="orphan-warning-list" id="orphan-list"></div>
-      </div>
-    </div>
+    </details>
 
     <!-- Color Theme Section -->
-    <div class="section" id="color-theme-section">
-      <h3>Color Theme</h3>
+    <details class="section secondary-section" id="color-theme-section">
+      <summary>Theme</summary>
+      <div class="secondary-section-body">
+        <!-- Preset Theme Buttons -->
+        <div class="theme-presets" id="theme-presets">
+          <button type="button" class="theme-preset-btn active" data-theme="brick">
+            <span class="theme-preset-swatch" style="background: #831a19;"></span>
+            Brick
+          </button>
+          <button type="button" class="theme-preset-btn" data-theme="ocean">
+            <span class="theme-preset-swatch" style="background: #1a4f6e;"></span>
+            Ocean
+          </button>
+          <button type="button" class="theme-preset-btn" data-theme="forest">
+            <span class="theme-preset-swatch" style="background: #2d5a3d;"></span>
+            Forest
+          </button>
+          <button type="button" class="theme-preset-btn" data-theme="midnight">
+            <span class="theme-preset-swatch" style="background: #4a1a6b;"></span>
+            Midnight
+          </button>
+        </div>
 
-      <!-- Preset Theme Buttons -->
-      <div class="theme-presets" id="theme-presets">
-        <button type="button" class="theme-preset-btn active" data-theme="brick">
-          <span class="theme-preset-swatch" style="background: #831a19;"></span>
-          Brick
-        </button>
-        <button type="button" class="theme-preset-btn" data-theme="ocean">
-          <span class="theme-preset-swatch" style="background: #1a4f6e;"></span>
-          Ocean
-        </button>
-        <button type="button" class="theme-preset-btn" data-theme="forest">
-          <span class="theme-preset-swatch" style="background: #2d5a3d;"></span>
-          Forest
-        </button>
-        <button type="button" class="theme-preset-btn" data-theme="midnight">
-          <span class="theme-preset-swatch" style="background: #4a1a6b;"></span>
-          Midnight
-        </button>
-      </div>
-
-      <!-- Live Preview Swatches -->
-      <div class="theme-preview" id="theme-preview">
-        <div class="preview-swatch">
-          <div class="preview-swatch-color" id="preview-background"></div>
-          <span class="preview-swatch-label">Background</span>
-        </div>
-        <div class="preview-swatch">
-          <div class="preview-swatch-color" id="preview-text"></div>
-          <span class="preview-swatch-label">Text</span>
-        </div>
-        <div class="preview-swatch">
-          <div class="preview-swatch-color" id="preview-button"></div>
-          <span class="preview-swatch-label">Button</span>
-        </div>
-        <div class="preview-swatch">
-          <div class="preview-swatch-color" id="preview-highlight"></div>
-          <span class="preview-swatch-label">Highlight</span>
-        </div>
-      </div>
-
-      <!-- Custom Color Pickers -->
-      <div class="color-pickers">
-        <div class="color-picker-group">
-          <label for="color-background">Background</label>
-          <div class="color-picker-wrapper">
-            <input type="color" id="color-background" value="#1c0001">
-            <span class="color-hex-value" id="hex-background">#1c0001</span>
+        <!-- Live Preview Swatches -->
+        <div class="theme-preview" id="theme-preview">
+          <div class="preview-swatch">
+            <div class="preview-swatch-color" id="preview-background"></div>
+            <span class="preview-swatch-label">Background</span>
+          </div>
+          <div class="preview-swatch">
+            <div class="preview-swatch-color" id="preview-text"></div>
+            <span class="preview-swatch-label">Text</span>
+          </div>
+          <div class="preview-swatch">
+            <div class="preview-swatch-color" id="preview-button"></div>
+            <span class="preview-swatch-label">Button</span>
+          </div>
+          <div class="preview-swatch">
+            <div class="preview-swatch-color" id="preview-highlight"></div>
+            <span class="preview-swatch-label">Highlight</span>
           </div>
         </div>
-        <div class="color-picker-group">
-          <label for="color-text">Text</label>
-          <div class="color-picker-wrapper">
-            <input type="color" id="color-text" value="#ddd5ba">
-            <span class="color-hex-value" id="hex-text">#ddd5ba</span>
-          </div>
-        </div>
-        <div class="color-picker-group">
-          <label for="color-button">Button / UI</label>
-          <div class="color-picker-wrapper">
-            <input type="color" id="color-button" value="#831a19">
-            <span class="color-hex-value" id="hex-button">#831a19</span>
-          </div>
-        </div>
-        <div class="color-picker-group">
-          <label for="color-highlight">Highlight</label>
-          <div class="color-picker-wrapper">
-            <input type="color" id="color-highlight" value="#eeb440">
-            <span class="color-hex-value" id="hex-highlight">#eeb440</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Actions -->
-      <div class="theme-actions">
-        <button type="button" class="reset-theme-btn" id="reset-theme-btn">Reset</button>
+        <!-- Custom Color Pickers -->
+        <div class="color-pickers">
+          <div class="color-picker-group">
+            <label for="color-background">Background</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="color-background" value="#1c0001">
+              <span class="color-hex-value" id="hex-background">#1c0001</span>
+            </div>
+          </div>
+          <div class="color-picker-group">
+            <label for="color-text">Text</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="color-text" value="#ddd5ba">
+              <span class="color-hex-value" id="hex-text">#ddd5ba</span>
+            </div>
+          </div>
+          <div class="color-picker-group">
+            <label for="color-button">Button / UI</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="color-button" value="#831a19">
+              <span class="color-hex-value" id="hex-button">#831a19</span>
+            </div>
+          </div>
+          <div class="color-picker-group">
+            <label for="color-highlight">Highlight</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="color-highlight" value="#eeb440">
+              <span class="color-hex-value" id="hex-highlight">#eeb440</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="theme-actions">
+          <button type="button" class="reset-theme-btn" id="reset-theme-btn">Reset</button>
+        </div>
       </div>
-    </div>
+    </details>
 
     <!-- Share Section -->
-    <div class="section" id="share-section">
-      <h3>Share Your Madlib</h3>
-      <div class="share-buttons">
-        <button type="button" class="share-btn share-btn-primary" id="share-player-btn">
-          Share with Players
-        </button>
-        <button type="button" class="share-btn share-btn-secondary" id="share-editor-btn">
-          Copy Editor Link
-        </button>
+    <details class="section secondary-section" id="share-section">
+      <summary>Share</summary>
+      <div class="secondary-section-body">
+        <div class="share-buttons">
+          <button type="button" class="share-btn share-btn-primary" id="share-player-btn">
+            Share with Players
+          </button>
+          <button type="button" class="share-btn share-btn-secondary" id="share-editor-btn">
+            Copy Editor Link
+          </button>
+        </div>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- Player Mode Container (hidden in creator mode) -->

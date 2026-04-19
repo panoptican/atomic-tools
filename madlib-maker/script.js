@@ -26,14 +26,34 @@ const WordListManager = (function() {
     return id;
   }
 
+  function escapeRegex(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function humanizePlaceholderLabel(id) {
+    if (/^word\d+$/i.test(id)) {
+      return `word ${id.replace(/^word/i, '')}`;
+    }
+
+    return id
+      .replace(/[_-]+/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .toLowerCase();
+  }
+
   // Add a new placeholder
-  function addPlaceholder(label) {
+  function addPlaceholder(label, options = {}) {
     if (!label || !label.trim()) return;
 
     const placeholder = {
-      id: generateId(),
-      label: label.trim()
+      id: options.id || generateId(),
+      label: label.trim(),
+      derived: !!options.derived
     };
+
+    if (placeholders.some(p => p.id === placeholder.id)) {
+      return;
+    }
 
     placeholders.push(placeholder);
     render();
@@ -69,6 +89,7 @@ const WordListManager = (function() {
     if (!placeholder) return false;
 
     placeholder.label = newLabel.trim();
+    placeholder.derived = false;
     render();
     // Trigger auto-save
     if (typeof DraftManager !== 'undefined') {
@@ -95,10 +116,15 @@ const WordListManager = (function() {
   function deletePlaceholder(id) {
     // Check if placeholder is used in story
     const usageCount = StoryEditor.countPlaceholderUsage(id);
+    const placeholder = placeholders.find(p => p.id === id);
+
+    if (placeholder && placeholder.derived && usageCount > 0) {
+      StoryEditor.removeReferences(id);
+      return;
+    }
 
     if (usageCount > 0) {
       // Find the label for this placeholder
-      const placeholder = placeholders.find(p => p.id === id);
       const label = placeholder ? placeholder.label : id;
       showConfirmDialog(id, usageCount, label);
     } else {
@@ -140,6 +166,7 @@ const WordListManager = (function() {
           <div class="word-info">
             <span class="word-id" data-id="${placeholder.id}">{${placeholder.id}}</span>
             <span class="word-label" data-id="${placeholder.id}" title="Click to edit">${escapeHtml(placeholder.label)}</span>
+            ${placeholder.derived ? '<span class="word-origin">story</span>' : ''}
           </div>
           <button type="button" class="delete-btn" data-id="${placeholder.id}">Delete</button>
         `;
@@ -281,13 +308,62 @@ const WordListManager = (function() {
     render();
   }
 
+  function syncFromStory(references) {
+    if (!Array.isArray(references)) return;
+
+    const previousPlaceholders = placeholders;
+    const uniqueReferences = [];
+    const seen = new Set();
+
+    references.forEach(ref => {
+      if (ref && !seen.has(ref)) {
+        seen.add(ref);
+        uniqueReferences.push(ref);
+      }
+    });
+
+    const byId = new Map(previousPlaceholders.map(placeholder => [placeholder.id, placeholder]));
+    const nextPlaceholders = uniqueReferences.map(id => {
+      const existing = byId.get(id);
+      if (existing) {
+        return existing;
+      }
+
+      return {
+        id,
+        label: humanizePlaceholderLabel(id),
+        derived: true
+      };
+    });
+
+    previousPlaceholders.forEach(placeholder => {
+      if (!seen.has(placeholder.id) && !placeholder.derived) {
+        nextPlaceholders.push(placeholder);
+      }
+    });
+
+    placeholders = nextPlaceholders;
+
+    const maxNum = placeholders.reduce((max, placeholder) => {
+      const match = placeholder.id.match(/^word(\d+)$/i);
+      return match ? Math.max(max, parseInt(match[1], 10)) : max;
+    }, 0);
+    nextId = Math.max(nextId, maxNum + 1);
+
+    render();
+    if (typeof StoryEditor !== 'undefined' && StoryEditor.checkOrphanedReferences) {
+      StoryEditor.checkOrphanedReferences();
+    }
+  }
+
   // Set placeholders (for loading from URL)
   function setPlaceholders(newPlaceholders) {
     if (!Array.isArray(newPlaceholders)) return;
 
     placeholders = newPlaceholders.map(p => ({
       id: p.id,
-      label: p.label
+      label: p.label || humanizePlaceholderLabel(p.id),
+      derived: !!p.derived
     }));
 
     // Update nextId to be higher than any loaded ID
@@ -310,7 +386,8 @@ const WordListManager = (function() {
     getPlaceholders: () => [...placeholders],
     addPlaceholder,
     deletePlaceholder,
-    setPlaceholders
+    setPlaceholders,
+    syncFromStory
   };
 })();
 
@@ -328,6 +405,10 @@ const StoryEditor = (function() {
   // Update internal state from textarea
   function syncFromTextarea() {
     storyText = textareaEl.value;
+    const references = findReferencesInStory();
+    if (typeof WordListManager !== 'undefined' && WordListManager.syncFromStory) {
+      WordListManager.syncFromStory(references);
+    }
     checkOrphanedReferences();
     // Trigger auto-save
     if (typeof DraftManager !== 'undefined') {
@@ -337,7 +418,7 @@ const StoryEditor = (function() {
 
   // Find all placeholder references in the story
   function findReferencesInStory() {
-    const regex = /\{(word\d+)\}/g;
+    const regex = /\{([A-Za-z][A-Za-z0-9_-]*)\}/g;
     const references = [];
     let match;
     while ((match = regex.exec(storyText)) !== null) {
@@ -348,9 +429,13 @@ const StoryEditor = (function() {
 
   // Count occurrences of a specific placeholder in story
   function countPlaceholderUsage(placeholderId) {
-    const regex = new RegExp(`\\{${placeholderId}\\}`, 'g');
+    const regex = new RegExp(`\\{${escapeRegex(placeholderId)}\\}`, 'g');
     const matches = storyText.match(regex);
     return matches ? matches.length : 0;
+  }
+
+  function escapeRegex(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   // Check for orphaned references and update warning
@@ -394,6 +479,7 @@ const StoryEditor = (function() {
     storyText = text || '';
     if (textareaEl) {
       textareaEl.value = storyText;
+      syncFromTextarea();
     }
   }
 
@@ -436,6 +522,19 @@ const StoryEditor = (function() {
     syncFromTextarea();
   }
 
+  function removeReferences(placeholderId) {
+    if (!textareaEl || !placeholderId) return;
+
+    const regex = new RegExp(`\\{${escapeRegex(placeholderId)}\\}`, 'g');
+    const nextStory = storyText.replace(regex, '');
+
+    if (nextStory === storyText) return;
+
+    storyText = nextStory;
+    textareaEl.value = storyText;
+    syncFromTextarea();
+  }
+
   // Initialize
   function init() {
     textareaEl = document.getElementById('story-editor');
@@ -462,6 +561,7 @@ const StoryEditor = (function() {
     setStory,
     getTextarea,
     insertAtCursor,
+    removeReferences,
     countPlaceholderUsage,
     checkOrphanedReferences
   };
