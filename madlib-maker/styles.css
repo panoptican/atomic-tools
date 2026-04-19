@@ -14,6 +14,11 @@
   --color-input-text: color-mix(in srgb, var(--color-background), black 20%);
   --color-section-bg: rgba(255, 255, 255, 0.05);
   --color-section-border: color-mix(in srgb, var(--color-highlight), transparent 70%);
+  --color-muted: color-mix(in srgb, var(--color-text), var(--color-background) 28%);
+  --color-muted-strong: color-mix(in srgb, var(--color-text), var(--color-background) 16%);
+  --color-placeholder: color-mix(in srgb, var(--color-input-text), var(--color-input-bg) 22%);
+  --color-danger-text: color-mix(in srgb, var(--color-text), #ff6b4a 30%);
+  --color-danger-title: color-mix(in srgb, var(--color-highlight), #ff6b4a 35%);
 }
 
 /* Basic CSS reset */
@@ -43,22 +48,31 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: #0f0f0e;
   color: #fff;
+  font-family: "GT America", "Work Sans", sans-serif;
 }
 
 .back-link {
   justify-self: start;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.25rem;
   color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-family: "GT America", "Work Sans", sans-serif;
+  font-size: 0.75rem;
   font-weight: 500;
+  letter-spacing: 0.02em;
   transition: color 0.2s;
 }
 
 .back-link:hover {
   color: #fff;
+}
+
+.back-link:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .back-link svg {
@@ -68,11 +82,13 @@ body {
 
 .tool-title {
   grid-column: 2;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: "GT America", "Work Sans", sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0;
   color: #fff;
   white-space: nowrap;
@@ -82,6 +98,7 @@ body {
   width: 1.125rem;
   height: 1.125rem;
   color: var(--color-highlight);
+  flex: 0 0 auto;
 }
 
 .container {
@@ -300,7 +317,7 @@ button:active {
 }
 
 .custom-input-wrapper input::placeholder {
-  color: #666;
+  color: var(--color-placeholder);
 }
 
 /* Word list */
@@ -354,7 +371,11 @@ button:active {
 
 .word-label {
   font-size: 16px;
+  font-family: "Work Sans", sans-serif;
   color: var(--color-text);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   cursor: pointer;
   padding: 2px 6px;
   border-radius: 4px;
@@ -363,10 +384,17 @@ button:active {
 
 .word-label:hover {
   background-color: color-mix(in srgb, var(--color-button), transparent 70%);
+  box-shadow: none;
+  transform: none;
+}
+
+.word-label:active {
+  box-shadow: none;
+  transform: none;
 }
 
 .word-origin {
-  color: #999;
+  color: var(--color-muted);
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -414,14 +442,14 @@ button:active {
 .empty-state {
   text-align: center;
   padding: 32px;
-  color: #888;
+  color: var(--color-muted);
   font-style: italic;
 }
 
 /* Section hint text */
 .section-hint {
   font-size: 14px;
-  color: #999;
+  color: var(--color-muted-strong);
   margin-bottom: 12px;
 }
 
@@ -456,7 +484,7 @@ button:active {
 }
 
 .story-textarea::placeholder {
-  color: #666;
+  color: var(--color-placeholder);
   font-style: italic;
 }
 
@@ -469,7 +497,7 @@ button:active {
   border: 2px solid #c24229;
   border-radius: 6px;
   font-size: 14px;
-  color: #ffaa88;
+  color: var(--color-danger-text);
 }
 
 .orphan-warning.show {
@@ -479,7 +507,7 @@ button:active {
 .orphan-warning-title {
   font-weight: 700;
   margin-bottom: 6px;
-  color: #ff9977;
+  color: var(--color-danger-title);
 }
 
 .orphan-warning-list {
@@ -594,7 +622,7 @@ button:active {
 
 .optional-label {
   font-weight: 400;
-  color: #888;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
@@ -616,7 +644,7 @@ button:active {
 }
 
 .metadata-input::placeholder {
-  color: #666;
+  color: var(--color-placeholder);
   font-weight: 400;
 }
 
@@ -733,7 +761,7 @@ button:active {
 
 .preview-swatch-label {
   font-size: 11px;
-  color: #999;
+  color: var(--color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -966,7 +994,7 @@ button:active {
 
 .mode-label {
   font-size: 14px;
-  color: #999;
+  color: var(--color-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -1011,7 +1039,7 @@ button:active {
 /* Sequential Prompt Screen */
 .prompt-progress {
   font-size: 14px;
-  color: #999;
+  color: var(--color-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 24px;
@@ -1046,13 +1074,13 @@ button:active {
 }
 
 .prompt-input::placeholder {
-  color: #888;
+  color: var(--color-placeholder);
   font-weight: 400;
 }
 
 .prompt-hint {
   font-size: 14px;
-  color: #777;
+  color: var(--color-muted);
   margin-bottom: 32px;
 }
 
@@ -1135,7 +1163,7 @@ button:active {
 }
 
 .form-field input::placeholder {
-  color: #888;
+  color: var(--color-placeholder);
   font-weight: 400;
 }
 

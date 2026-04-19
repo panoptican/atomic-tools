@@ -14,10 +14,12 @@ const WordListManager = (function() {
 
   // Confirmation dialog elements
   let confirmOverlay;
+  let confirmDialog;
   let confirmMessage;
   let confirmUsage;
   let confirmCancelBtn;
   let confirmDeleteBtn;
+  let lastFocusedBeforeDialog = null;
 
   // Generate stable ID
   function generateId() {
@@ -101,15 +103,25 @@ const WordListManager = (function() {
   // Show confirmation dialog
   function showConfirmDialog(id, usageCount, label) {
     pendingDeleteId = id;
+    lastFocusedBeforeDialog = document.activeElement;
     confirmMessage.textContent = `The placeholder {${id}} is used in your story.`;
     confirmUsage.innerHTML = `Used <strong>${usageCount}</strong> time${usageCount !== 1 ? 's' : ''} as "<strong>${label}</strong>"`;
+    confirmOverlay.setAttribute('aria-hidden', 'false');
     confirmOverlay.classList.add('show');
+    setTimeout(() => confirmCancelBtn.focus(), 50);
   }
 
   // Hide confirmation dialog
   function hideConfirmDialog() {
     confirmOverlay.classList.remove('show');
+    confirmOverlay.setAttribute('aria-hidden', 'true');
     pendingDeleteId = null;
+    if (lastFocusedBeforeDialog && document.contains(lastFocusedBeforeDialog) && typeof lastFocusedBeforeDialog.focus === 'function') {
+      lastFocusedBeforeDialog.focus();
+    } else if (StoryEditor && StoryEditor.getTextarea()) {
+      StoryEditor.getTextarea().focus();
+    }
+    lastFocusedBeforeDialog = null;
   }
 
   // Request to delete a placeholder (with confirmation if in use)
@@ -146,6 +158,38 @@ const WordListManager = (function() {
     hideConfirmDialog();
   }
 
+  function handleConfirmDialogKeydown(e) {
+    if (!confirmOverlay.classList.contains('show')) return;
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      hideConfirmDialog();
+      return;
+    }
+
+    if (e.key !== 'Tab') return;
+
+    const focusable = Array.from(confirmDialog.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+      .filter(el => !el.disabled && el.offsetParent !== null);
+
+    if (focusable.length === 0) {
+      e.preventDefault();
+      confirmDialog.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
   // Render the placeholder list
   function render() {
     // Clear existing items (except empty state)
@@ -161,14 +205,16 @@ const WordListManager = (function() {
       // Render each placeholder
       placeholders.forEach(placeholder => {
         const itemEl = document.createElement('div');
+        const escapedId = escapeHtml(placeholder.id);
+        const escapedLabel = escapeHtml(placeholder.label);
         itemEl.className = 'word-item';
         itemEl.innerHTML = `
           <div class="word-info">
-            <span class="word-id" data-id="${placeholder.id}">{${placeholder.id}}</span>
-            <span class="word-label" data-id="${placeholder.id}" title="Click to edit">${escapeHtml(placeholder.label)}</span>
+            <button type="button" class="word-id" data-id="${escapedId}" aria-label="Insert {${escapedId}} into story">{${escapedId}}</button>
+            <button type="button" class="word-label" data-id="${escapedId}" title="Click to edit" aria-label="Edit blank label ${escapedLabel}">${escapedLabel}</button>
             ${placeholder.derived ? '<span class="word-origin">story</span>' : ''}
           </div>
-          <button type="button" class="delete-btn" data-id="${placeholder.id}">Delete</button>
+          <button type="button" class="delete-btn" data-id="${escapedId}">Delete</button>
         `;
         wordListEl.appendChild(itemEl);
       });
@@ -264,6 +310,7 @@ const WordListManager = (function() {
   function init() {
     // Get confirmation dialog elements
     confirmOverlay = document.getElementById('confirm-dialog-overlay');
+    confirmDialog = confirmOverlay.querySelector('.confirm-dialog');
     confirmMessage = document.getElementById('confirm-dialog-message');
     confirmUsage = document.getElementById('confirm-dialog-usage');
     confirmCancelBtn = document.getElementById('confirm-cancel-btn');
@@ -303,6 +350,7 @@ const WordListManager = (function() {
         hideConfirmDialog();
       }
     });
+    document.addEventListener('keydown', handleConfirmDialogKeydown);
 
     // Initial render
     render();
@@ -936,6 +984,8 @@ const URLManager = (function() {
 
     toastEl.textContent = message;
     toastEl.classList.remove('show', 'error');
+    toastEl.setAttribute('role', isError ? 'alert' : 'status');
+    toastEl.setAttribute('aria-live', isError ? 'assertive' : 'polite');
 
     if (isError) {
       toastEl.classList.add('error');
@@ -1409,8 +1459,10 @@ const PlayerMode = (function() {
     toggleBtns.forEach(btn => {
       if (btn.dataset.mode === inputMode) {
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
       } else {
         btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
       }
     });
   }
@@ -2000,10 +2052,34 @@ const ModeManager = (function() {
     modeTabs.forEach(tab => {
       if (tab.dataset.mode === currentMode) {
         tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
       } else {
         tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
       }
     });
+  }
+
+  function handleTabKeydown(e) {
+    const tabs = Array.from(modeTabs);
+    const index = tabs.indexOf(e.currentTarget);
+    if (index === -1) return;
+
+    let nextIndex = null;
+    if (e.key === 'ArrowRight') {
+      nextIndex = (index + 1) % tabs.length;
+    } else if (e.key === 'ArrowLeft') {
+      nextIndex = (index - 1 + tabs.length) % tabs.length;
+    } else if (e.key === 'Home') {
+      nextIndex = 0;
+    } else if (e.key === 'End') {
+      nextIndex = tabs.length - 1;
+    }
+
+    if (nextIndex === null) return;
+
+    e.preventDefault();
+    tabs[nextIndex].focus();
   }
 
   // Show creator sections
@@ -2121,7 +2197,9 @@ const ModeManager = (function() {
     // Add tab click listeners
     modeTabs.forEach(tab => {
       tab.addEventListener('click', handleTabClick);
+      tab.addEventListener('keydown', handleTabKeydown);
     });
+    updateTabButtons();
   }
 
   // Public API
