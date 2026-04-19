@@ -1,163 +1,899 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Rich Text ↔ Markdown Converter</title>
-    <meta
-      name="description"
-      content="Convert pasted rich text to Markdown, or turn Markdown into copy-ready rich text."
-    />
-    <link
-      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <script type="module" crossorigin src="./assets/index-CUrMMMOm.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DlXNN6VD.css">
-    <style>
-      .top-bar {
-        position: relative;
-        z-index: 20;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        align-items: center;
-        padding: 1rem 1.5rem;
-        padding-right: 5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        background: #0f0f0e;
-        color: #fff;
-        font-family: var(--font-sans);
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Rich Text ↔ Markdown</title>
+<meta name="description" content="Convert pasted rich text to Markdown, or turn Markdown into copy-ready rich text.">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/turndown@7.2.0/dist/turndown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/turndown-plugin-gfm@1.0.2/dist/turndown-plugin-gfm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+<style>
+@font-face {
+  font-family: "Monaspace Argon Var";
+  src: url("../assets/fonts/MonaspaceArgonVarVF.woff") format("woff");
+  font-display: swap;
+  font-stretch: 75% 125%;
+  font-style: oblique -11deg 0deg;
+  font-weight: 200 800;
+}
+@font-face {
+  font-family: "Monaspace Neon Var";
+  src: url("../assets/fonts/MonaspaceNeonVarVF.woff") format("woff");
+  font-display: swap;
+  font-stretch: 75% 125%;
+  font-style: oblique -11deg 0deg;
+  font-weight: 200 800;
+}
+@font-face {
+  font-family: "GT America";
+  src: url("../assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
+       url("../assets/fonts/GT-America-Standard-Medium.woff") format("woff");
+  font-display: swap;
+  font-weight: 500;
+}
+@font-face {
+  font-family: "GT America";
+  src: url("../assets/fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
+       url("../assets/fonts/GT-America-Expanded-Regular.woff") format("woff");
+  font-display: swap;
+  font-weight: 400;
+  font-stretch: expanded;
+}
 
-      .back-link {
-        justify-self: start;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        color: rgba(255, 255, 255, 0.55);
-        text-decoration: none;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: color 0.2s;
-      }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      .back-link:hover {
-        color: #fff;
-      }
+:root {
+  --bg: oklch(97.7% 0.006 92);
+  --bg-80: oklch(97.7% 0.006 92 / 0.82);
+  --surface: oklch(99.4% 0.004 92);
+  --surface-soft: oklch(95.2% 0.011 92);
+  --border: oklch(84% 0.012 92);
+  --border-strong: oklch(61% 0.017 92);
+  --text: oklch(20% 0.014 92);
+  --text-muted: oklch(37% 0.017 92);
+  --text-faint: oklch(60% 0.016 92);
+  --primary: oklch(51% 0.108 244);
+  --primary-hover: oklch(45% 0.12 244);
+  --primary-10: oklch(51% 0.108 244 / 0.1);
+  --primary-30: oklch(51% 0.108 244 / 0.35);
+  --muted-bg: oklch(93% 0.01 92);
+  --green: oklch(46% 0.12 160);
+  --green-soft: oklch(91% 0.044 160);
+  --green-bg: oklch(91% 0.044 160);
+  --green-text: oklch(35% 0.14 160);
+  --error: oklch(55% 0.2 25);
+  --error-soft: oklch(92% 0.05 25);
+  --error-bg: oklch(92% 0.05 25);
+  --error-text: oklch(40% 0.18 25);
+  --radius: 0.5rem;
+  --font-heading: "Monaspace Argon Var", "SF Mono", Menlo, monospace;
+  --font-label: "GT America", "Satoshi", system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Monaspace Neon Var', monospace;
+  --font-sans: 'Satoshi', system-ui, sans-serif;
+  --top-bar-bg: oklch(14% 0.014 92);
+  --top-bar-border: oklch(30% 0.01 92 / 0.4);
+  --top-bar-text: oklch(95% 0.01 92);
+  --top-bar-muted: oklch(60% 0.016 92);
+}
 
-      .back-link svg {
-        width: 1rem;
-        height: 1rem;
-      }
+.dark {
+  --bg: oklch(13% 0.01 92);
+  --bg-80: oklch(13% 0.01 92 / 0.82);
+  --surface: oklch(17% 0.012 92);
+  --surface-soft: oklch(21% 0.012 92);
+  --border: oklch(28% 0.012 92);
+  --border-strong: oklch(48% 0.016 92);
+  --text: oklch(90% 0.008 92);
+  --text-muted: oklch(62% 0.014 92);
+  --text-faint: oklch(50% 0.014 92);
+  --primary: oklch(66% 0.1 220);
+  --primary-hover: oklch(72% 0.12 220);
+  --primary-10: oklch(66% 0.1 220 / 0.14);
+  --primary-30: oklch(66% 0.1 220 / 0.3);
+  --muted-bg: oklch(22% 0.01 92);
+  --green: oklch(66% 0.15 160);
+  --green-soft: oklch(30% 0.06 160);
+  --green-bg: oklch(30% 0.06 160);
+  --green-text: oklch(72% 0.15 160);
+  --error: oklch(62% 0.2 25);
+  --error-soft: oklch(30% 0.06 25);
+  --error-bg: oklch(30% 0.06 25);
+  --error-text: oklch(72% 0.16 25);
+  --top-bar-bg: oklch(11% 0.012 92);
+  --top-bar-border: oklch(25% 0.01 92 / 0.5);
+  --top-bar-text: oklch(93% 0.008 92);
+  --top-bar-muted: oklch(58% 0.014 92);
+}
 
-      .tool-title {
-        grid-column: 2;
-        min-width: 0;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        letter-spacing: 0;
-        color: #fff;
-        white-space: nowrap;
-      }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-kerning: normal; font-synthesis: none; }
+body {
+  font-family: var(--font-label);
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.2s, color 0.2s;
+  min-height: 100vh;
+}
 
-      .tool-title svg {
-        width: 1.125rem;
-        height: 1.125rem;
-        color: hsl(var(--primary));
-        flex: 0 0 auto;
-      }
+/* ============ TOP BAR ============ */
+.top-bar {
+  position: relative; z-index: 20;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--top-bar-border);
+  background: var(--top-bar-bg);
+  color: var(--top-bar-text);
+  font-family: var(--font-label);
+}
+.back-link {
+  justify-self: start; display: inline-flex; align-items: center; gap: 0.25rem;
+  color: var(--top-bar-muted); text-decoration: none;
+  font-family: var(--font-label);
+  font-size: 0.75rem; font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--top-bar-text); }
+.back-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 2px; }
+.back-link svg { width: 1rem; height: 1rem; }
+.tool-title {
+  grid-column: 2; min-width: 0;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-label);
+  font-size: 0.875rem; font-weight: 500; white-space: nowrap;
+}
+.tool-title svg { width: 1.125rem; height: 1.125rem; color: var(--primary); flex: 0 0 auto; }
+.theme-btn-top {
+  grid-column: 3; justify-self: end;
+  background: none; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+  color: var(--top-bar-muted); transition: background 0.15s, color 0.15s;
+}
+.theme-btn-top:hover { background: oklch(30% 0.015 92 / 0.5); color: var(--top-bar-text); }
+.theme-btn-top:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-      #root > div > header {
-        position: fixed !important;
-        top: 0;
-        right: 0;
-        left: auto;
-        z-index: 30;
-        width: 5rem;
-        height: 3.375rem;
-        border-bottom: 0 !important;
-        background: transparent !important;
-        -webkit-backdrop-filter: none !important;
-        backdrop-filter: none !important;
-      }
+main {
+  max-width: 52rem; margin: 0 auto; padding: 1.25rem 1rem 1rem;
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
 
-      #root > div > header > div {
-        width: 100%;
-        height: 100%;
-        padding: 0 1.5rem 0 0;
-        justify-content: flex-end;
-      }
+/* ============ TEXTAREA & CLEAR ============ */
+.input-wrap { position: relative; }
+.section-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;
+}
+.section-label {
+  font-family: var(--font-label);
+  font-size: 0.6875rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-muted);
+}
 
-      #root > div > header > div > div:first-child {
-        display: none;
-      }
+.text-btn {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  font-family: var(--font-label);
+  font-size: 0.6875rem; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--text-muted);
+  background: none; border: none; cursor: pointer; transition: color 0.15s;
+  min-height: 44px; padding: 0.375rem 0.5rem;
+}
+.text-btn:hover { color: var(--text); }
+.text-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 2px; }
+.text-btn svg { width: 12px; height: 12px; }
 
-      #root [data-testid="button-theme-toggle"] {
-        width: 2.25rem;
-        height: 2.25rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 9999px;
-        color: #fff;
-        pointer-events: auto;
-      }
+.clear-btn-overlay {
+  position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2;
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  font-family: var(--font-label);
+  font-size: 0.6875rem; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--text-faint); background: var(--surface); border: none;
+  cursor: pointer; transition: color 0.15s, background 0.15s;
+  min-height: 32px; min-width: 32px; padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+.clear-btn-overlay:hover { color: var(--text-muted); background: var(--surface-soft); }
+.clear-btn-overlay:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.clear-btn-overlay svg { width: 12px; height: 12px; }
 
-      #root [data-testid="button-theme-toggle"]:hover {
-        background: rgba(255, 255, 255, 0.08);
-      }
+textarea {
+  width: 100%; min-height: 180px; padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.875rem; line-height: 1.625;
+  resize: vertical;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+textarea::placeholder { color: var(--text-faint); }
+textarea:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-30);
+}
 
-      @media (max-width: 420px) {
-        .top-bar {
-          padding-inline: 1rem;
-          padding-right: 4.5rem;
-        }
+/* ============ DIRECTION BADGE ============ */
+.direction-row { display: flex; align-items: center; gap: 0.5rem; }
+.direction-line { height: 1px; flex: 1; background: var(--border); }
 
-        .back-link,
-        .tool-title {
-          font-size: 0.75rem;
-        }
+.direction-badge {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  padding: 0.375rem 0.75rem; border-radius: 9999px;
+  font-family: var(--font-label);
+  font-size: 0.6875rem; font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s, outline-color 0.15s;
+  white-space: nowrap; cursor: default;
+}
+.direction-badge[data-interactive] { cursor: pointer; }
+.direction-badge[data-interactive]:hover { outline: 2px solid var(--primary-30); outline-offset: 2px; }
+.direction-badge[data-interactive]:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
-        .tool-title svg {
-          width: 1rem;
-          height: 1rem;
-        }
+.direction-badge.idle { background: var(--muted-bg); color: var(--text-muted); }
+.direction-badge.active { background: var(--primary-10); color: var(--primary); }
+.direction-badge.copied { background: var(--green-bg); color: var(--green-text); }
+.direction-badge.error { background: var(--error-bg); color: var(--error-text); }
+.direction-badge svg { width: 16px; height: 16px; }
 
-        #root > div > header {
-          width: 4.5rem;
-        }
+.swap-hint {
+  font-size: 0.6875rem; font-weight: 400; opacity: 0.55;
+  margin-left: 0.125rem;
+}
 
-        #root > div > header > div {
-          padding-right: 1rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="top-bar">
-      <a href="../" class="back-link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
-        All Tools
-      </a>
-      <span class="tool-title">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
-          <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
-        </svg>
-        Rich Text ↔ Markdown
-      </span>
+/* ============ OUTPUT ============ */
+.output-section {
+  animation: fadeSlideIn 0.25s ease;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.output-box {
+  width: 100%; padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.875rem; line-height: 1.625;
+  overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+  user-select: all; -webkit-user-select: all;
+}
+
+/* ============ PREVIEW (MD to RT) ============ */
+.preview-content { font-family: var(--font-sans); }
+.preview-content h1 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; }
+.preview-content h2 { font-family: var(--font-heading); font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
+.preview-content h3 { font-family: var(--font-heading); font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+.preview-content h4 { font-family: var(--font-heading); font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; }
+.preview-content h5 { font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem; }
+.preview-content h6 { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; }
+.preview-content p { margin-bottom: 0.75rem; line-height: 1.625; }
+.preview-content strong { font-weight: 700; }
+.preview-content em { font-style: italic; }
+.preview-content del { text-decoration: line-through; }
+.preview-content code {
+  font-family: var(--font-mono); font-size: 0.875rem;
+  background: var(--muted-bg); padding: 0.125rem 0.375rem; border-radius: 0.25rem;
+}
+.preview-content pre {
+  margin-bottom: 0.75rem; background: var(--muted-bg);
+  padding: 1rem; border-radius: var(--radius); overflow-x: auto;
+}
+.preview-content pre code { background: transparent; padding: 0; }
+.preview-content ul { margin-bottom: 0.75rem; margin-left: 1.5rem; list-style: disc; }
+.preview-content ol { margin-bottom: 0.75rem; margin-left: 1.5rem; list-style: decimal; }
+.preview-content li { margin-bottom: 0.25rem; }
+.preview-content li ul, .preview-content li ol { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+.preview-content blockquote {
+  margin-bottom: 0.75rem; padding: 0.5rem 1rem;
+  background: var(--surface-soft);
+  border-radius: 0.25rem;
+  color: var(--text-muted); font-style: italic;
+}
+.preview-content a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.preview-content img { max-width: 100%; border-radius: 0.5rem; margin: 0.75rem 0; }
+.preview-content hr { margin: 1rem 0; border: none; border-top: 1px solid var(--border); }
+.preview-content table { margin-bottom: 0.75rem; width: 100%; border-collapse: collapse; }
+.preview-content th {
+  border: 1px solid var(--border); padding: 0.5rem 0.75rem;
+  background: var(--muted-bg); font-weight: 600; text-align: left; font-size: 0.875rem;
+}
+.preview-content td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; font-size: 0.875rem; }
+
+/* ============ HINT & FOOTER ============ */
+.hint {
+  text-align: center; font-size: 0.75rem; color: var(--text-faint); margin-top: 0.25rem; line-height: 1.6;
+  font-family: var(--font-label);
+}
+footer { max-width: 52rem; margin: 0 auto; padding: 0.25rem 1rem 1.5rem; text-align: center; }
+footer p { font-size: 0.75rem; color: var(--text-faint); font-family: var(--font-label); }
+
+.hidden { display: none !important; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 640px) {
+  main { padding-inline: 0.75rem; }
+  textarea { padding: 0.875rem; }
+  .output-box { padding: 0.875rem; }
+}
+@media (max-width: 480px) {
+  .top-bar { padding-inline: 1rem; }
+  .back-link, .tool-title { font-size: 0.75rem; }
+  .tool-title svg { width: 1rem; height: 1rem; }
+  main { padding: 0.75rem; gap: 0.625rem; }
+  textarea { min-height: 140px; padding: 0.75rem; font-size: 0.8125rem; }
+  .direction-badge { padding: 0.3rem 0.625rem; font-size: 0.6875rem; }
+  .swap-hint { display: none; }
+  .clear-btn-overlay { top: 0.375rem; right: 0.375rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .output-section { animation: none; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top navigation bar -->
+<div class="top-bar">
+  <a href="../" class="back-link">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    All Tools
+  </a>
+  <span class="tool-title">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+    Rich Text ↔ Markdown
+  </span>
+  <button class="theme-btn-top" id="themeToggle" aria-label="Toggle dark mode">
+    <svg id="iconSun" class="hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</div>
+
+<main>
+  <section>
+    <div class="input-wrap">
+      <textarea id="inputArea" placeholder="Paste rich text or markdown here, or start typing markdown..." spellcheck="false"></textarea>
+      <button class="clear-btn-overlay hidden" id="clearBtn" onclick="clearAll()" aria-label="Clear input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+        Clear
+      </button>
     </div>
-    <div id="root"></div>
-  </body>
+  </section>
+
+  <div class="direction-row">
+    <div class="direction-line"></div>
+    <span class="direction-badge idle" id="directionBadge" role="button" tabindex="0"
+          aria-label="Conversion direction. Click to swap.">
+      <svg id="badgeIconDefault" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M18 13v6"/><path d="M22 16l-4 4-4-4"/><path d="M12 8H6"/><path d="M10 12H6"/><path d="M10 4l4 4-4 4"/></svg>
+      <svg id="badgeIconHash" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3 8 21"/><path d="M16 3l-2 18"/></svg>
+      <svg id="badgeIconType" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+      <svg id="badgeIconCheck" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+      <svg id="badgeIconError" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <svg id="badgeIconSwap" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+      <span id="badgeText">Paste or type to begin</span>
+      <span id="swapHint" class="swap-hint hidden">swap</span>
+    </span>
+    <div class="direction-line"></div>
+  </div>
+
+  <section id="outputSection" class="output-section hidden">
+    <div class="section-header">
+      <span class="section-label" id="outputLabel">Markdown</span>
+      <button class="text-btn" id="copyBtn" onclick="manualCopy()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        Copy again
+      </button>
+    </div>
+    <div class="output-box" id="outputBox"></div>
+  </section>
+
+  <p class="hint" id="hintText">
+    Paste rich text from Google Docs, Notion, or anywhere for markdown.<br>
+    Paste markdown and get back rich text.<br>
+    Output is automatically copied to your clipboard.
+  </p>
+</main>
+
+<footer>
+  <p>All conversion happens in your browser. Nothing is sent to a server.</p>
+</footer>
+
+<script>
+// ============ THEME ============
+(function initTheme() {
+  var stored = localStorage.getItem('rtm-theme');
+  if (stored === 'dark') document.documentElement.classList.add('dark');
+  else if (stored === 'light') document.documentElement.classList.remove('dark');
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+  updateThemeIcons();
+})();
+
+function updateThemeIcons() {
+  var isDark = document.documentElement.classList.contains('dark');
+  document.getElementById('iconSun').classList.toggle('hidden', !isDark);
+  document.getElementById('iconMoon').classList.toggle('hidden', isDark);
+}
+
+document.getElementById('themeToggle').addEventListener('click', function() {
+  document.documentElement.classList.toggle('dark');
+  var isDark = document.documentElement.classList.contains('dark');
+  localStorage.setItem('rtm-theme', isDark ? 'dark' : 'light');
+  updateThemeIcons();
+});
+
+// ============ CONVERTER SETUP ============
+var turndown = new TurndownService({
+  headingStyle: 'atx', codeBlockStyle: 'fenced',
+  bulletListMarker: '-', emDelimiter: '*', strongDelimiter: '**', hr: '---'
+});
+turndown.use(turndownPluginGfm.gfm);
+
+turndown.addRule('strikethrough', {
+  filter: ['del', 's', 'strike'],
+  replacement: function(content) { return '~~' + content + '~~'; }
+});
+
+turndown.addRule('fencedCodeBlock', {
+  filter: function(node) {
+    return node.nodeName === 'PRE' && node.firstChild && node.firstChild.nodeName === 'CODE';
+  },
+  replacement: function(_content, node) {
+    var code = node.firstChild;
+    var className = code.getAttribute('class') || '';
+    var langMatch = className.match(/(?:lang(?:uage)?|highlight)-(\w+)/);
+    var lang = langMatch ? langMatch[1] : '';
+    var text = code.textContent || '';
+    return '\n```' + lang + '\n' + text + '\n```\n';
+  }
+});
+
+turndown.addRule('styledBold', {
+  filter: function(node) {
+    if (node.nodeName !== 'SPAN') return false;
+    var style = node.getAttribute('style') || '';
+    return /font-weight\s*:\s*(bold|[7-9]\d{2})/i.test(style);
+  },
+  replacement: function(content) { return '**' + content + '**'; }
+});
+
+turndown.addRule('styledItalic', {
+  filter: function(node) {
+    if (node.nodeName !== 'SPAN') return false;
+    var style = node.getAttribute('style') || '';
+    return /font-style\s*:\s*italic/i.test(style) && !/font-weight\s*:\s*(bold|[7-9]\d{2})/i.test(style);
+  },
+  replacement: function(content) { return '*' + content + '*'; }
+});
+
+function getAlignment(node) {
+  var style = node.getAttribute('style') || '';
+  var align = node.getAttribute('align') || '';
+  var match = style.match(/text-align\s*:\s*(left|center|right)/i);
+  var val = match ? match[1].toLowerCase() : align.toLowerCase();
+  return val || 'left';
+}
+function escapePipes(text) { return text.replace(/\|/g, '\\|'); }
+
+turndown.addRule('tableCell', {
+  filter: ['th', 'td'],
+  replacement: function(content, node) {
+    var cleaned = escapePipes(content.trim().replace(/\n+/g, ' '));
+    node.setAttribute('data-align', getAlignment(node));
+    return ' ' + cleaned + ' |';
+  }
+});
+turndown.addRule('tableRow', {
+  filter: 'tr',
+  replacement: function(content, node) {
+    var cells = Array.from(node.querySelectorAll('th, td'));
+    var isHeader = cells.length > 0 && cells[0].nodeName === 'TH';
+    var row = '|' + content + '\n';
+    if (isHeader) {
+      var sep = cells.map(function(cell) {
+        var a = getAlignment(cell);
+        return a === 'center' ? ' :---: |' : a === 'right' ? ' ---: |' : ' --- |';
+      }).join('');
+      row += '|' + sep + '\n';
+    }
+    return row;
+  }
+});
+turndown.addRule('table', {
+  filter: 'table',
+  replacement: function(_content, node) {
+    var rows = Array.from(node.querySelectorAll('tr'));
+    if (rows.length === 0) return '';
+    var result = '';
+    for (var i = 0; i < rows.length; i++) {
+      var cells = Array.from(rows[i].querySelectorAll('th, td'));
+      var isHeader = cells.length > 0 && cells[0].nodeName === 'TH';
+      var cellTexts = cells.map(function(c) { return ' ' + escapePipes((c.textContent || '').trim().replace(/\n+/g, ' ')) + ' '; });
+      result += '|' + cellTexts.join('|') + '|\n';
+      if (isHeader) {
+        var sep = cells.map(function(cell) {
+          var a = getAlignment(cell);
+          return a === 'center' ? ' :---: ' : a === 'right' ? ' ---: ' : ' --- ';
+        }).join('|');
+        result += '|' + sep + '|\n';
+      }
+    }
+    return '\n' + result + '\n';
+  }
+});
+
+var mdi = window.markdownit({ html: false, linkify: true, typographer: false, breaks: false });
+
+// ============ DETECTION ============
+var SEMANTIC_TAGS = /<(h[1-6]|ul|ol|li|table|thead|tbody|tr|th|td|strong|em|del|blockquote|pre|code|a\s|img\s|hr)[^>]*>/i;
+var MSO_PATTERNS = /(?:mso-|class="Mso|MsoListParagraph|MsoNormal)/i;
+var SHEETS_PATTERNS = /(?:google-sheets-html-origin|data-sheets-)/i;
+
+function detectDirection(htmlData, textData) {
+  if (htmlData && (SEMANTIC_TAGS.test(htmlData) || MSO_PATTERNS.test(htmlData) || SHEETS_PATTERNS.test(htmlData)))
+    return 'html-to-md';
+  if (textData) return 'md-to-html';
+  return null;
+}
+
+// ============ HTML PRE-PROCESSING ============
+function preProcessHtml(html) {
+  var c = html;
+  c = c.replace(/<!(--\[if[\s\S]*?\[endif\]--|--[\s\S]*?--)>/gi, '');
+  c = c.replace(/<!\[if !supportLists\]>[\s\S]*?<!\[endif\]>/gi, '');
+  c = c.replace(/<meta[^>]*>/gi, '');
+  c = c.replace(/<style[\s\S]*?<\/style>/gi, '');
+  c = c.replace(/<xml[\s\S]*?<\/xml>/gi, '');
+  c = c.replace(/<o:p>[\s\S]*?<\/o:p>/gi, '');
+  c = c.replace(/<\/?ac:[^>]*>/gi, '');
+  c = c.replace(/<colgroup[\s\S]*?<\/colgroup>/gi, '');
+  c = c.replace(/<col[^>]*>/gi, '');
+  c = c.replace(/\s*data-sheets-[a-z]+='[^']*'/gi, '');
+  c = c.replace(/\s*data-sheets-[a-z]+="[^"]*"/gi, '');
+  c = c.replace(/\s*xmlns(?::[a-z]+)?="[^"]*"/gi, '');
+
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(c, 'text/html');
+
+  var listPs = doc.querySelectorAll('p[style*="mso-list"], p.MsoListParagraph');
+  if (listPs.length > 0) {
+    var currentList = null;
+    listPs.forEach(function(p) {
+      var style = p.getAttribute('style') || '';
+      var cls = p.getAttribute('class') || '';
+      if (style.indexOf('mso-list') !== -1 || cls.indexOf('MsoListParagraph') !== -1) {
+        if (!currentList) { currentList = doc.createElement('ul'); p.parentNode.insertBefore(currentList, p); }
+        var li = doc.createElement('li');
+        var t = p.innerHTML;
+        t = t.replace(/<span[^>]*font-family\s*:\s*Symbol[^>]*>[\s\S]*?<\/span>/gi, '');
+        t = t.replace(/<span[^>]*font-family\s*:\s*"Symbol"[^>]*>[\s\S]*?<\/span>/gi, '');
+        t = t.replace(/^(\s|&nbsp;|\u00B7|\u2022|o|\u00A7|\u25AA)+(\s|&nbsp;)*/i, '');
+        li.innerHTML = t.trim();
+        currentList.appendChild(li);
+        p.remove();
+      } else { currentList = null; }
+    });
+  }
+
+  var processed = doc.body.innerHTML;
+  processed = processed.replace(/mso-[a-z-]+\s*:[^;"]+;?/gi, '');
+  processed = processed.replace(/\s*class="Mso[^"]*"/gi, '');
+
+  var doc2 = parser.parseFromString(processed, 'text/html');
+  doc2.querySelectorAll('table').forEach(function(table) {
+    if (!table.querySelector('thead')) {
+      var firstRow = table.querySelector('tr');
+      if (firstRow) {
+        firstRow.querySelectorAll('td').forEach(function(td) {
+          var th = doc2.createElement('th');
+          th.innerHTML = td.innerHTML;
+          var s = td.getAttribute('style'); if (s) th.setAttribute('style', s);
+          var a = td.getAttribute('align'); if (a) th.setAttribute('align', a);
+          td.replaceWith(th);
+        });
+        var thead = doc2.createElement('thead');
+        thead.appendChild(firstRow.cloneNode(true));
+        firstRow.remove();
+        table.insertBefore(thead, table.firstChild);
+        var remaining = table.querySelectorAll('tr');
+        if (remaining.length > 0 && !table.querySelector('tbody')) {
+          var tbody = doc2.createElement('tbody');
+          remaining.forEach(function(r) { tbody.appendChild(r); });
+          table.appendChild(tbody);
+        }
+      }
+    }
+  });
+
+  return doc2.body.innerHTML;
+}
+
+function convertHtmlToMd(html) { return turndown.turndown(preProcessHtml(html)); }
+function convertMdToHtml(md) { return mdi.render(md); }
+
+// ============ CLIPBOARD ============
+function copyTextFallback(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  return ok;
+}
+function copyRichFallback(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html; el.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+  document.body.appendChild(el);
+  var range = document.createRange(); range.selectNodeContents(el);
+  var sel = window.getSelection(); if (!sel) { document.body.removeChild(el); return false; }
+  sel.removeAllRanges(); sel.addRange(range);
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) {}
+  sel.removeAllRanges(); document.body.removeChild(el);
+  return ok;
+}
+
+async function copyMd(markdown) {
+  if (copyTextFallback(markdown)) return true;
+  try { await navigator.clipboard.writeText(markdown); return true; } catch(e) { return false; }
+}
+async function copyRich(html) {
+  if (copyRichFallback(html)) return true;
+  try {
+    var htmlBlob = new Blob([html], { type: 'text/html' });
+    var textBlob = new Blob([html], { type: 'text/plain' });
+    await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })]);
+    return true;
+  } catch(e) { return copyTextFallback(html); }
+}
+
+// ============ STATE ============
+var state = {
+  direction: null,
+  outputMarkdown: '',
+  outputHtml: '',
+  copyStatus: 'idle'
+};
+var statusTimeout = null;
+var typingTimeout = null;
+
+var inputArea = document.getElementById('inputArea');
+var clearBtn = document.getElementById('clearBtn');
+var directionBadge = document.getElementById('directionBadge');
+var badgeText = document.getElementById('badgeText');
+var swapHint = document.getElementById('swapHint');
+var outputSection = document.getElementById('outputSection');
+var outputLabel = document.getElementById('outputLabel');
+var outputBox = document.getElementById('outputBox');
+var hintText = document.getElementById('hintText');
+var copyBtn = document.getElementById('copyBtn');
+
+// ============ UI ============
+var ICONS = ['badgeIconDefault','badgeIconHash','badgeIconType','badgeIconCheck','badgeIconError','badgeIconSwap'];
+
+function updateBadge() {
+  ICONS.forEach(function(id) { document.getElementById(id).classList.add('hidden'); });
+  directionBadge.className = 'direction-badge';
+  directionBadge.removeAttribute('data-interactive');
+  swapHint.classList.add('hidden');
+
+  if (state.copyStatus === 'error') {
+    directionBadge.classList.add('error');
+    document.getElementById('badgeIconError').classList.remove('hidden');
+    badgeText.textContent = 'Copy failed \u2014 tap to retry';
+    directionBadge.setAttribute('data-interactive', '');
+    directionBadge.setAttribute('aria-label', 'Copy failed. Click to retry.');
+  } else if (state.copyStatus === 'copied') {
+    directionBadge.classList.add('copied');
+    document.getElementById('badgeIconCheck').classList.remove('hidden');
+    badgeText.textContent = 'Copied to clipboard';
+  } else if (state.direction) {
+    directionBadge.classList.add('active');
+    directionBadge.setAttribute('data-interactive', '');
+    swapHint.classList.remove('hidden');
+    if (state.direction === 'html-to-md') {
+      document.getElementById('badgeIconHash').classList.remove('hidden');
+      badgeText.textContent = 'Rich Text \u2192 Markdown';
+      document.getElementById('badgeIconSwap').classList.remove('hidden');
+    } else {
+      document.getElementById('badgeIconType').classList.remove('hidden');
+      badgeText.textContent = 'Markdown \u2192 Rich Text';
+      document.getElementById('badgeIconSwap').classList.remove('hidden');
+    }
+    directionBadge.setAttribute('aria-label', badgeText.textContent + '. Click to swap direction.');
+  } else {
+    directionBadge.classList.add('idle');
+    document.getElementById('badgeIconDefault').classList.remove('hidden');
+    badgeText.textContent = 'Paste or type to begin';
+    directionBadge.setAttribute('aria-label', 'Conversion direction. Paste or type to begin.');
+  }
+}
+
+function updateOutput() {
+  var hasOutput = state.direction === 'html-to-md' ? !!state.outputMarkdown : !!state.outputHtml;
+  clearBtn.classList.toggle('hidden', !inputArea.value);
+  outputSection.classList.toggle('hidden', !hasOutput);
+  hintText.classList.toggle('hidden', hasOutput);
+
+  if (hasOutput) {
+    if (state.direction === 'html-to-md') {
+      outputLabel.textContent = 'Markdown';
+      outputBox.className = 'output-box';
+      outputBox.textContent = state.outputMarkdown;
+    } else {
+      outputLabel.textContent = 'Rich Text';
+      outputBox.className = 'output-box preview-content';
+      outputBox.innerHTML = state.outputHtml;
+    }
+  }
+  updateBadge();
+}
+
+async function autoCopy(dir, mdResult, htmlResult) {
+  var ok = false;
+  if (dir === 'html-to-md' && mdResult) ok = await copyMd(mdResult);
+  else if (dir === 'md-to-html' && htmlResult) ok = await copyRich(htmlResult);
+
+  if (ok) {
+    state.copyStatus = 'copied';
+  } else {
+    state.copyStatus = 'error';
+  }
+  updateBadge();
+
+  if (statusTimeout) clearTimeout(statusTimeout);
+  statusTimeout = setTimeout(function() {
+    state.copyStatus = 'idle';
+    updateBadge();
+  }, 2500);
+}
+
+function flashCopied() {
+  state.copyStatus = 'copied';
+  updateBadge();
+  if (statusTimeout) clearTimeout(statusTimeout);
+  statusTimeout = setTimeout(function() { state.copyStatus = 'idle'; updateBadge(); }, 2500);
+}
+
+async function manualCopy() {
+  if (state.copyStatus === 'error') {
+    await autoCopy(state.direction, state.outputMarkdown, state.outputHtml);
+  } else {
+    await autoCopy(state.direction, state.outputMarkdown, state.outputHtml);
+  }
+}
+
+function clearAll() {
+  inputArea.value = '';
+  state.direction = null;
+  state.outputMarkdown = '';
+  state.outputHtml = '';
+  state.copyStatus = 'idle';
+  updateOutput();
+  inputArea.focus();
+}
+
+// ============ DIRECTION SWAP ============
+function swapDirection() {
+  if (!state.direction) return;
+
+  var textarea = inputArea;
+  var currentInput = textarea.value || '';
+
+  if (!currentInput.trim()) return;
+
+  if (state.direction === 'html-to-md') {
+    var mdText = state.outputMarkdown;
+    if (!mdText.trim()) return;
+    textarea.value = mdText;
+    state.direction = 'md-to-html';
+    state.outputHtml = convertMdToHtml(mdText);
+    state.outputMarkdown = '';
+    state.copyStatus = 'idle';
+    updateOutput();
+    autoCopy('md-to-html', '', state.outputHtml);
+  } else {
+    // For md-to-html, we can't easily feed HTML back (it would be interpreted as markdown)
+    // Show a message indicating round-trip limitation
+    // Instead, clear and let user paste HTML
+    state.copyStatus = 'idle';
+    updateBadge();
+    // Brief visual hint that swap isn't available for this direction
+    // (valid: pasting HTML rich text triggers html-to-md naturally)
+  }
+
+  textarea.focus();
+}
+
+directionBadge.addEventListener('click', function(e) {
+  e.preventDefault();
+  if (state.copyStatus === 'error') { manualCopy(); return; }
+  if (!state.direction || !inputArea.value.trim()) return;
+  swapDirection();
+});
+
+directionBadge.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    if (state.copyStatus === 'error') { manualCopy(); return; }
+    if (!state.direction || !inputArea.value.trim()) return;
+    swapDirection();
+  }
+});
+
+// ============ PASTE & INPUT ============
+inputArea.addEventListener('paste', function(e) {
+  var htmlData = e.clipboardData.getData('text/html');
+  var textData = e.clipboardData.getData('text/plain');
+  var det = detectDirection(htmlData, textData);
+
+  if (det === 'html-to-md' && htmlData) {
+    e.preventDefault();
+    inputArea.value = htmlData;
+    state.direction = det;
+    state.outputMarkdown = convertHtmlToMd(htmlData);
+    state.outputHtml = '';
+    state.copyStatus = 'idle';
+    updateOutput();
+    autoCopy(det, state.outputMarkdown, '');
+  } else if (det === 'md-to-html' && textData) {
+    e.preventDefault();
+    inputArea.value = textData;
+    state.direction = det;
+    state.outputHtml = convertMdToHtml(textData);
+    state.outputMarkdown = '';
+    state.copyStatus = 'idle';
+    updateOutput();
+    autoCopy(det, '', state.outputHtml);
+  }
+});
+
+inputArea.addEventListener('input', function() {
+  var val = inputArea.value;
+  var dir = state.direction || 'md-to-html';
+  if (!state.direction) state.direction = dir;
+
+  if (!val.trim()) {
+    state.outputMarkdown = '';
+    state.outputHtml = '';
+    state.copyStatus = 'idle';
+    updateOutput();
+    return;
+  }
+
+  if (dir === 'html-to-md') {
+    state.outputMarkdown = convertHtmlToMd(val);
+    state.outputHtml = '';
+  } else {
+    state.outputHtml = convertMdToHtml(val);
+    state.outputMarkdown = '';
+  }
+  state.copyStatus = 'idle';
+  updateOutput();
+
+  if (typingTimeout) clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(function() {
+    if (dir === 'html-to-md') autoCopy(dir, convertHtmlToMd(val), '');
+    else autoCopy(dir, '', convertMdToHtml(val));
+  }, 600);
+});
+
+// Keyboard shortcut: Cmd/Ctrl+Shift+C
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'C') {
+    e.preventDefault();
+    manualCopy();
+  }
+});
+</script>
+</body>
 </html>

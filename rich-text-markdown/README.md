@@ -7,8 +7,10 @@ A browser-only converter for moving content between rich text editors and Markdo
 - Paste rich text from tools like Google Docs, Notion, or web pages and get Markdown.
 - Type or paste Markdown and get copy-ready rich text.
 - Automatically copies converted output to the clipboard.
-- Supports light and dark mode.
-- Runs entirely in the browser.
+- Swap direction: click the direction badge to feed output back as input (MD → RT round-trip).
+- Visible error state when clipboard copy fails, with tap-to-retry.
+- Supports light and dark mode with persisted preference.
+- Runs entirely in the browser — no server calls.
 
 ## Local Development
 
@@ -24,13 +26,12 @@ Then visit http://localhost:8080/rich-text-markdown/
 
 ```text
 rich-text-markdown/
-├── index.html
-├── README.md
-└── assets/
-    ├── index-CUrMMMOm.js
-    └── index-DlXNN6VD.css
+├── index.html    # Self-contained tool (HTML + CSS + JS)
+└── README.md
 ```
 
-## Notes
+## Dependencies (loaded from CDN)
 
-The current checked-in tool is a built static bundle. If the original source project exists, future changes should ideally be made there and rebuilt so the generated assets stay reproducible.
+- [Turndown](https://github.com/mixmark-io/turndown) — HTML to Markdown
+- [turndown-plugin-gfm](https://github.com/mixmark-io/turndown-plugin-gfm) — GFM tables, strikethrough, task lists
+- [markdown-it](https://github.com/markdown-it/markdown-it) — Markdown to HTML
