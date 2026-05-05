@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ergonomic Set</title>
+  <meta name="description" content="Plan a computer workstation from body measurements, hardware, and lighting constraints.">
+  <link rel="stylesheet" href="styles.css">
+  <script src="planner.js" defer></script>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="../" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      All Tools
+    </a>
+    <span class="tool-title">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 17h18"/>
+        <path d="M5 17V8h14v9"/>
+        <path d="M8 21h8"/>
+        <path d="M9 4h6"/>
+        <path d="M12 4v4"/>
+      </svg>
+      Ergonomic Set
+    </span>
+    <div class="unit-toggle" role="radiogroup" aria-label="Units">
+      <label>
+        <input type="radio" name="units" value="imperial" checked>
+        <span>In</span>
+      </label>
+      <label>
+        <input type="radio" name="units" value="metric">
+        <span>Cm</span>
+      </label>
+    </div>
+  </div>
+
+  <main class="shell">
+    <header class="intro">
+      <div>
+        <p class="eyebrow">Computer workstation planner</p>
+        <h1>Ergonomic Set</h1>
+      </div>
+      <p>Enter body dimensions, equipment, and light direction. Recommendations update live and show the source band or heuristic behind each number.</p>
+    </header>
+
+    <form id="plannerForm" novalidate>
+      <details class="input-panel" id="inputPanel" open>
+        <summary>
+          <span>Input form</span>
+          <span class="summary-hint">collapsible after first submit</span>
+        </summary>
+
+        <div class="panel-body">
+          <section class="form-section" aria-labelledby="userHeading">
+            <h2 id="userHeading">User</h2>
+            <div class="field-grid">
+              <label class="field">
+                <span>Height</span>
+                <span class="number-wrap">
+                  <input id="height" type="number" min="48" max="84" step="0.25" value="68" data-length-input="true">
+                  <span class="unit-label" data-unit-label>in</span>
+                </span>
+              </label>
+
+              <label class="field">
+                <span>Vision</span>
+                <select id="vision">
+                  <option value="none">None</option>
+                  <option value="computer">Single-vision computer</option>
+                  <option value="progressives">Progressives</option>
+                  <option value="bifocals">Bifocals</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Preferred viewing distance</span>
+                <span class="number-wrap">
+                  <input id="viewingDistance" type="number" min="0" step="0.25" data-length-input="true" placeholder="auto">
+                  <span class="unit-label" data-unit-label>in</span>
+                </span>
+              </label>
+
+              <label class="field">
+                <span>Pointing side</span>
+                <select id="pointingSide">
+                  <option value="right">Right</option>
+                  <option value="left">Left</option>
+                  <option value="ambidextrous">Ambidextrous / centered</option>
+                </select>
+              </label>
+            </div>
+
+            <details class="subdetails">
+              <summary>Optional direct body measurements</summary>
+              <div class="field-grid compact">
+                <label class="field">
+                  <span>Popliteal height</span>
+                  <span class="number-wrap">
+                    <input id="poplitealHeight" type="number" min="0" step="0.25" data-length-input="true" placeholder="auto">
+                    <span class="unit-label" data-unit-label>in</span>
+                  </span>
+                </label>
+                <label class="field">
+                  <span>Seated eye height</span>
+                  <span class="number-wrap">
+                    <input id="seatedEyeHeight" type="number" min="0" step="0.25" data-length-input="true" placeholder="auto">
+                    <span class="unit-label" data-unit-label>in</span>
+                  </span>
+                </label>
+                <label class="field">
+                  <span>Seated elbow height</span>
+                  <span class="number-wrap">
+                    <input id="seatedElbowHeight" type="number" min="0" step="0.25" data-length-input="true" placeholder="auto">
+                    <span class="unit-label" data-unit-label>in</span>
+                  </span>
+                </label>
+                <label class="field">
+                  <span>Standing elbow height</span>
+                  <span class="number-wrap">
+                    <input id="standingElbowHeight" type="number" min="0" step="0.25" data-length-input="true" placeholder="auto">
+                    <span class="unit-label" data-unit-label>in</span>
+                  </span>
+                </label>
+                <label class="field">
+                  <span>Forearm-hand reach</span>
+                  <span class="number-wrap">
+                    <input id="forearmReach" type="number" min="0" step="0.25" data-length-input="true" placeholder="auto">
+                    <span class="unit-label" data-unit-label>in</span>
+                  </span>
+                </label>
+              </div>
+            </details>
+          </section>
+
+          <section class="form-section" aria-labelledby="workspaceHeading">
+            <h2 id="workspaceHeading">Workspace</h2>
+            <div class="field-grid">
+              <label class="field">
+                <span>Natural light direction</span>
+                <select id="naturalLight">
+                  <option value="front">Front</option>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                  <option value="behind">Behind</option>
+                  <option value="none">None</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Wall-to-desk-back clearance</span>
+                <span class="number-wrap">
+                  <input id="wallClearance" type="number" min="0" step="0.25" value="6" data-length-input="true">
+                  <span class="unit-label" data-unit-label>in</span>
+                </span>
+              </label>
+              <label class="field">
+                <span>Desk depth</span>
+                <span class="number-wrap">
+                  <input id="deskDepth" type="number" min="12" step="0.25" value="30" data-length-input="true">
+                  <span class="unit-label" data-unit-label>in</span>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <section class="form-section" aria-labelledby="hardwareHeading">
+            <h2 id="hardwareHeading">Hardware</h2>
+            <div class="hardware-grid">
+              <div class="hardware-card">
+                <h3>Desk</h3>
+                <label class="field">
+                  <span>Type</span>
+                  <select id="deskType">
+                    <option value="sitstand">Sit/stand adjustable</option>
+                    <option value="fixed">Fixed-height</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Fixed height</span>
+                  <span class="number-wrap">
+                    <input id="fixedDeskHeight" type="number" min="20" step="0.25" value="29" data-length-input="true">
+                    <span class="unit-label" data-unit-label>in</span>
+                  </span>
+                </label>
+                <label class="check-field">
+                  <input id="keyboardTray" type="checkbox">
+                  <span>Keyboard tray attached</span>
+                </label>
+              </div>
+
+              <div class="hardware-card">
+                <h3>Chair</h3>
+                <label class="check-field">
+                  <input id="chairAdjustable" type="checkbox" checked>
+                  <span>Height-adjustable</span>
+                </label>
+                <label class="field">
+                  <span>Armrests</span>
+                  <select id="armrests">
+                    <option value="none">None</option>
+                    <option value="fixed">Fixed</option>
+                    <option value="4d">4D</option>
+                  </select>
+                </label>
+                <label class="check-field">
+                  <input id="lumbarAdjustable" type="checkbox" checked>
+                  <span>Lumbar adjustable</span>
+                </label>
+              </div>
+
+              <div class="hardware-card wide">
+                <h3>Display</h3>
+                <div class="field-grid compact">
+                  <label class="field">
+                    <span>Setup</span>
+                    <select id="displaySetup">
+                      <option value="laptop">Laptop only</option>
+                      <option value="laptop-external">Laptop + external(s)</option>
+                      <option value="dual">Dual external</option>
+                      <option value="ultrawide">Ultrawide</option>
+                      <option value="triple">Triple external</option>
+                    </select>
+                  </label>
+                  <label class="field" id="externalCountField">
+                    <span>External count</span>
+                    <select id="externalCount">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>Laptop screen</span>
+                    <span class="number-wrap">
+                      <input id="laptopSize" type="number" min="10" max="18" step="0.1" value="14">
+                      <span class="unit-label">in diag</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="monitor-grid" id="monitorInputs">
+                  <fieldset class="monitor-card" data-monitor-card="0">
+                    <legend>External 1</legend>
+                    <label class="mini-field">
+                      <span>Size</span>
+                      <input id="monitor1Size" type="number" min="13" max="60" step="0.1" value="27">
+                    </label>
+                    <label class="mini-field">
+                      <span>Aspect</span>
+                      <select id="monitor1Aspect">
+                        <option value="16:9">16:9</option>
+                        <option value="16:10">16:10</option>
+                        <option value="21:9">21:9</option>
+                        <option value="32:9">32:9</option>
+                      </select>
+                    </label>
+                    <label class="mini-field">
+                      <span>Stand depth</span>
+                      <span class="number-wrap">
+                        <input id="monitor1StandDepth" type="number" min="0" step="0.25" value="8" data-length-input="true">
+                        <span class="unit-label" data-unit-label>in</span>
+                      </span>
+                    </label>
+                    <label class="check-field tight">
+                      <input id="monitor1Arm" type="checkbox" checked>
+                      <span>Adjustable arm</span>
+                    </label>
+                  </fieldset>
+
+                  <fieldset class="monitor-card" data-monitor-card="1">
+                    <legend>External 2</legend>
+                    <label class="mini-field">
+                      <span>Size</span>
+                      <input id="monitor2Size" type="number" min="13" max="60" step="0.1" value="27">
+                    </label>
+                    <label class="mini-field">
+                      <span>Aspect</span>
+                      <select id="monitor2Aspect">
+                        <option value="16:9">16:9</option>
+                        <option value="16:10">16:10</option>
+                        <option value="21:9">21:9</option>
+                        <option value="32:9">32:9</option>
+                      </select>
+                    </label>
+                    <label class="mini-field">
+                      <span>Stand depth</span>
+                      <span class="number-wrap">
+                        <input id="monitor2StandDepth" type="number" min="0" step="0.25" value="8" data-length-input="true">
+                        <span class="unit-label" data-unit-label>in</span>
+                      </span>
+                    </label>
+                    <label class="check-field tight">
+                      <input id="monitor2Arm" type="checkbox" checked>
+                      <span>Adjustable arm</span>
+                    </label>
+                  </fieldset>
+
+                  <fieldset class="monitor-card" data-monitor-card="2">
+                    <legend>External 3</legend>
+                    <label class="mini-field">
+                      <span>Size</span>
+                      <input id="monitor3Size" type="number" min="13" max="60" step="0.1" value="27">
+                    </label>
+                    <label class="mini-field">
+                      <span>Aspect</span>
+                      <select id="monitor3Aspect">
+                        <option value="16:9">16:9</option>
+                        <option value="16:10">16:10</option>
+                        <option value="21:9">21:9</option>
+                        <option value="32:9">32:9</option>
+                      </select>
+                    </label>
+                    <label class="mini-field">
+                      <span>Stand depth</span>
+                      <span class="number-wrap">
+                        <input id="monitor3StandDepth" type="number" min="0" step="0.25" value="8" data-length-input="true">
+                        <span class="unit-label" data-unit-label>in</span>
+                      </span>
+                    </label>
+                    <label class="check-field tight">
+                      <input id="monitor3Arm" type="checkbox" checked>
+                      <span>Adjustable arm</span>
+                    </label>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="hardware-card">
+                <h3>Keyboard</h3>
+                <label class="field">
+                  <span>Type</span>
+                  <select id="keyboardType">
+                    <option value="standard">Standard</option>
+                    <option value="split-flat">Split flat</option>
+                    <option value="split-tented">Split tented</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Tent angle</span>
+                  <span class="number-wrap">
+                    <input id="tentAngle" type="number" min="0" max="45" step="1" value="10">
+                    <span class="unit-label">deg</span>
+                  </span>
+                </label>
+                <div class="field-grid compact">
+                  <label class="field">
+                    <span>Width</span>
+                    <span class="number-wrap">
+                      <input id="keyboardWidth" type="number" min="6" step="0.25" value="17" data-length-input="true">
+                      <span class="unit-label" data-unit-label>in</span>
+                    </span>
+                  </label>
+                  <label class="field">
+                    <span>Depth</span>
+                    <span class="number-wrap">
+                      <input id="keyboardDepth" type="number" min="3" step="0.25" value="6" data-length-input="true">
+                      <span class="unit-label" data-unit-label>in</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="hardware-card">
+                <h3>Pointing</h3>
+                <div class="check-list" aria-label="Pointing devices">
+                  <label class="check-field"><input class="pointing-device" type="checkbox" value="standard" checked><span>Standard mouse</span></label>
+                  <label class="check-field"><input class="pointing-device" type="checkbox" value="vertical"><span>Vertical mouse</span></label>
+                  <label class="check-field"><input class="pointing-device" type="checkbox" value="trackball"><span>Trackball</span></label>
+                  <label class="check-field"><input class="pointing-device" type="checkbox" value="trackpad"><span>Trackpad</span></label>
+                  <label class="check-field"><input class="pointing-device" type="checkbox" value="multiple"><span>Multiple</span></label>
+                </div>
+                <div class="field-grid compact">
+                  <label class="field">
+                    <span>Device width</span>
+                    <span class="number-wrap">
+                      <input id="pointerWidth" type="number" min="1" step="0.25" value="3" data-length-input="true">
+                      <span class="unit-label" data-unit-label>in</span>
+                    </span>
+                  </label>
+                  <label class="field">
+                    <span>Device depth</span>
+                    <span class="number-wrap">
+                      <input id="pointerDepth" type="number" min="1" step="0.25" value="4.5" data-length-input="true">
+                      <span class="unit-label" data-unit-label>in</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="form-actions">
+            <button type="submit">Generate plan</button>
+            <p id="status" role="status" aria-live="polite">Live plan is using the defaults.</p>
+          </div>
+        </div>
+      </details>
+    </form>
+
+    <section class="diagram-section" aria-labelledby="sideHeading">
+      <div class="section-header">
+        <h2 id="sideHeading">Side elevation</h2>
+        <p>Computed from eye, elbow, seat, desk, and display geometry.</p>
+      </div>
+      <div class="svg-frame" id="sideDiagram" aria-label="Side elevation ergonomic schematic"></div>
+    </section>
+
+    <section class="diagram-section" aria-labelledby="planHeading">
+      <div class="section-header">
+        <h2 id="planHeading">Plan view</h2>
+        <p>Keyboard, pointing device, monitor arc, natural light, and task light.</p>
+      </div>
+      <div class="svg-frame" id="planDiagram" aria-label="Plan view ergonomic schematic"></div>
+    </section>
+
+    <section class="table-section" aria-labelledby="measurementsHeading">
+      <div class="section-header">
+        <h2 id="measurementsHeading">Measurements</h2>
+        <p>Each numeric target is tied to a public source band or a labeled heuristic.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Recommended</th>
+              <th scope="col">Source band</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="measurementsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="conflicts-section" id="conflictsSection" aria-labelledby="conflictsHeading" hidden>
+      <h2 id="conflictsHeading">Conflicts</h2>
+      <div id="conflictsList"></div>
+    </section>
+
+    <section class="lighting-note" aria-labelledby="lightingHeading">
+      <h2 id="lightingHeading">Lighting note</h2>
+      <p id="lightingNote"></p>
+    </section>
+
+    <section class="source-note" aria-labelledby="sourceHeading">
+      <h2 id="sourceHeading">Sources</h2>
+      <p>
+        Numeric bands use public primary guidance from
+        <a href="https://www.osha.gov/etools/computer-workstations" target="_blank" rel="noreferrer">OSHA Computer Workstations eTool</a>
+        and the
+        <a href="https://www.hfes.org/Portals/0/Uploads/BSR%20HFES%20100-2026%20Draft%20%28003%29.pdf" target="_blank" rel="noreferrer">HFES 100-2026 public draft</a>.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
