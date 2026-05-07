@@ -18,3 +18,12 @@
 - Confirmed the inventory reads `3 Showcase tools` and `2 Experimental`.
 - Confirmed there is no horizontal overflow at either viewport and no console messages during page load.
 - Captured temporary screenshots outside the repository at `/private/tmp/atomic-tools-index-desktop-experiments.png` and `/private/tmp/atomic-tools-index-mobile-experiments.png`.
+
+## 2026-05-07: Weighted experimental tools
+
+- Served the site from the repository root with `python3 -m http.server 8767`.
+- Checked `http://127.0.0.1:8767/` in Playwright at 1365x900 and 390x844.
+- Confirmed the experimental cards remain linked to `/ai-coding-subscriptions/` and `/ergonomic-set/`.
+- Confirmed there is no horizontal overflow and no console output at either viewport.
+- Confirmed the first experimental card is visually shorter than the first showcase card: 182px vs 248px on desktop, 250px vs 318px on mobile.
+- Captured temporary screenshots outside the repository at `/private/tmp/atomic-tools-index-desktop-weighted-experiments.png` and `/private/tmp/atomic-tools-index-mobile-weighted-experiments.png`.
