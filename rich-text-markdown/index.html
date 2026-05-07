@@ -631,7 +631,8 @@ function copyTextFallback(text) {
 }
 function copyRichFallback(html) {
   var el = document.createElement('div');
-  el.innerHTML = html; el.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
+  el.innerHTML = html;
+  el.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;color:initial;background:transparent';
   document.body.appendChild(el);
   var range = document.createRange(); range.selectNodeContents(el);
   var sel = window.getSelection(); if (!sel) { document.body.removeChild(el); return false; }
@@ -646,14 +647,39 @@ async function copyMd(markdown) {
   if (copyTextFallback(markdown)) return true;
   try { await navigator.clipboard.writeText(markdown); return true; } catch(e) { return false; }
 }
+
+function neutralizeRichHtml(html) {
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(html, 'text/html');
+  doc.body.querySelectorAll('*').forEach(function(el) {
+    el.removeAttribute('class');
+    el.removeAttribute('style');
+    el.removeAttribute('bgcolor');
+    el.removeAttribute('color');
+    Array.from(el.attributes).forEach(function(attr) {
+      if (attr.name.indexOf('data-') === 0) el.removeAttribute(attr.name);
+    });
+  });
+  return doc.body.innerHTML;
+}
+
+function richTextPlainFallback(html) {
+  var parser = new DOMParser();
+  return parser.parseFromString(html, 'text/html').body.textContent || html;
+}
+
 async function copyRich(html) {
-  if (copyRichFallback(html)) return true;
+  var cleanHtml = neutralizeRichHtml(html);
+  var plainText = richTextPlainFallback(cleanHtml);
   try {
-    var htmlBlob = new Blob([html], { type: 'text/html' });
-    var textBlob = new Blob([html], { type: 'text/plain' });
+    var htmlBlob = new Blob([cleanHtml], { type: 'text/html' });
+    var textBlob = new Blob([plainText], { type: 'text/plain' });
     await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })]);
     return true;
-  } catch(e) { return copyTextFallback(html); }
+  } catch(e) {
+    if (copyRichFallback(cleanHtml)) return true;
+    return copyTextFallback(plainText);
+  }
 }
 
 // ============ STATE ============
