@@ -54,6 +54,8 @@
       --blue-soft: oklch(91% 0.041 244);
       --rose: oklch(54% 0.128 24);
       --rose-soft: oklch(92% 0.049 24);
+      --violet: oklch(50% 0.09 292);
+      --violet-soft: oklch(92% 0.035 292);
       --shadow: 0 1px 0 oklch(100% 0.004 86 / 0.88), 0 16px 34px oklch(22% 0.017 252 / 0.08);
       --header: "Monaspace Argon Var", "SF Mono", Menlo, monospace;
       --body: "Monaspace Neon Var", "SF Mono", Menlo, monospace;
@@ -182,6 +184,37 @@
       margin-top: 22px;
     }
 
+    .section-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-family: var(--header);
+      font-size: 1.22rem;
+      font-stretch: 104%;
+      font-weight: 720;
+      letter-spacing: 0;
+      line-height: 1.1;
+    }
+
+    .section-header p {
+      max-width: 44ch;
+      margin: 0;
+      color: var(--ink-muted);
+      font-family: var(--label);
+      font-size: 0.84rem;
+      font-weight: 500;
+      line-height: 1.45;
+      text-align: right;
+    }
+
     .tool-card {
       --tone: var(--accent);
       --tone-soft: var(--accent-soft);
@@ -214,6 +247,26 @@
     .tool-card.is-wide {
       grid-column: span 6;
       min-height: 218px;
+    }
+
+    .tool-card.is-experimental {
+      min-height: 206px;
+      background: color-mix(in oklch, var(--surface), var(--surface-warm) 34%);
+      box-shadow: none;
+    }
+
+    .tool-card.is-experimental .tool-title {
+      font-size: 1.42rem;
+    }
+
+    .tool-card.is-experimental .tool-description {
+      font-size: 0.91rem;
+    }
+
+    .tool-card.is-experimental::after {
+      width: 58px;
+      height: 58px;
+      opacity: 0.22;
     }
 
     .tool-card::before {
@@ -382,6 +435,11 @@
       --tone-soft: var(--rose-soft);
     }
 
+    .tool-card[data-tone="violet"] {
+      --tone: var(--violet);
+      --tone-soft: var(--violet-soft);
+    }
+
     @media (max-width: 860px) {
       .masthead {
         grid-template-columns: 1fr;
@@ -395,6 +453,16 @@
       .tool-card,
       .tool-card.is-wide {
         grid-column: span 6;
+      }
+
+      .section-header {
+        align-items: start;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .section-header p {
+        text-align: left;
       }
     }
 
@@ -484,17 +552,17 @@
       </div>
       <div class="inventory" aria-label="Tool inventory">
         <div class="inventory-item">
-          <span class="inventory-value">5</span>
-          <span class="inventory-label">Available tools</span>
+          <span class="inventory-value">3</span>
+          <span class="inventory-label">Showcase tools</span>
         </div>
         <div class="inventory-item">
           <span class="inventory-value">2</span>
-          <span class="inventory-label">Categories</span>
+          <span class="inventory-label">Experimental</span>
         </div>
       </div>
     </header>
 
-    <section class="tool-grid" id="toolGrid" aria-label="Tools">
+    <section class="tool-grid" id="toolGrid" aria-label="Showcase tools">
       <a href="wordle-checker/" class="tool-card" data-category="games" data-tone="green">
         <div class="card-top">
           <div class="window-dots" aria-hidden="true">
@@ -582,14 +650,22 @@
         </div>
       </a>
 
-      <a href="ai-coding-subscriptions/" class="tool-card" data-category="utilities" data-tone="rose">
+    </section>
+
+    <section class="section-header" aria-labelledby="experimentalToolsTitle">
+      <h2 id="experimentalToolsTitle">Experimental tools</h2>
+      <p>Active workbench items. Useful for testing and iteration, but not presented as finished showcase tools yet.</p>
+    </section>
+
+    <section class="tool-grid" aria-label="Experimental tools">
+      <a href="ai-coding-subscriptions/" class="tool-card is-experimental" data-category="utilities" data-tone="rose">
         <div class="card-top">
           <div class="window-dots" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </div>
-          <span class="tool-type">Utilities</span>
+          <span class="tool-type">Experimental</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -608,18 +684,18 @@
         </div>
         <div class="tool-meta">
           <span>Plan comparison</span>
-          <span class="open-link">Open</span>
+          <span class="open-link">Preview</span>
         </div>
       </a>
 
-      <a href="ergonomic-set/" class="tool-card" data-category="utilities" data-tone="green">
+      <a href="ergonomic-set/" class="tool-card is-experimental" data-category="utilities" data-tone="violet">
         <div class="card-top">
           <div class="window-dots" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </div>
-          <span class="tool-type">Utilities</span>
+          <span class="tool-type">Experimental</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -639,7 +715,7 @@
         </div>
         <div class="tool-meta">
           <span>Setup planning</span>
-          <span class="open-link">Open</span>
+          <span class="open-link">Preview</span>
         </div>
       </a>
     </section>
