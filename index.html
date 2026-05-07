@@ -24,15 +24,6 @@
     }
 
     @font-face {
-      font-family: "Monaspace Radon Var";
-      src: url("assets/fonts/MonaspaceRadonVarVF.woff") format("woff");
-      font-display: swap;
-      font-stretch: 75% 125%;
-      font-style: oblique -11deg 0deg;
-      font-weight: 200 800;
-    }
-
-    @font-face {
       font-family: "GT America";
       src: url("assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
            url("assets/fonts/GT-America-Standard-Medium.woff") format("woff");
@@ -40,136 +31,197 @@
       font-weight: 500;
     }
 
-    @font-face {
-      font-family: "GT America";
-      src: url("assets/fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
-           url("assets/fonts/GT-America-Expanded-Regular.woff") format("woff");
-      font-display: swap;
-      font-weight: 400;
-      font-stretch: expanded;
-    }
-
     *, *::before, *::after {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     :root {
       color-scheme: light;
-      --paper: oklch(97.7% 0.006 92);
-      --surface: oklch(99.4% 0.004 92);
-      --surface-soft: oklch(95.2% 0.011 92);
-      --ink: oklch(20% 0.014 255);
-      --ink-soft: oklch(37% 0.017 255);
-      --ink-muted: oklch(60% 0.016 255);
-      --line: oklch(84% 0.012 92);
-      --line-strong: oklch(61% 0.017 92);
-      --green: oklch(46% 0.12 160);
-      --green-soft: oklch(91% 0.044 160);
-      --amber: oklch(61% 0.135 72);
-      --amber-soft: oklch(91% 0.056 72);
-      --blue: oklch(51% 0.108 244);
-      --blue-soft: oklch(91% 0.042 244);
-      --rose: oklch(55% 0.13 25);
-      --rose-soft: oklch(92% 0.05 25);
-      --shadow: 0 12px 26px oklch(20% 0.014 255 / 0.08);
+      --paper: oklch(97.6% 0.008 86);
+      --surface: oklch(99% 0.005 86);
+      --surface-raised: oklch(98.2% 0.007 86);
+      --surface-warm: oklch(94.8% 0.013 86);
+      --ink: oklch(20.4% 0.017 252);
+      --ink-soft: oklch(38% 0.019 252);
+      --ink-muted: oklch(56% 0.018 252);
+      --line: oklch(84.5% 0.014 86);
+      --line-strong: oklch(68% 0.019 86);
+      --accent: oklch(48% 0.12 165);
+      --accent-soft: oklch(91% 0.044 165);
+      --amber: oklch(59% 0.13 72);
+      --amber-soft: oklch(91% 0.053 72);
+      --blue: oklch(50% 0.112 244);
+      --blue-soft: oklch(91% 0.041 244);
+      --rose: oklch(54% 0.128 24);
+      --rose-soft: oklch(92% 0.049 24);
+      --shadow: 0 1px 0 oklch(100% 0.004 86 / 0.88), 0 16px 34px oklch(22% 0.017 252 / 0.08);
       --header: "Monaspace Argon Var", "SF Mono", Menlo, monospace;
       --body: "Monaspace Neon Var", "SF Mono", Menlo, monospace;
-      --support: "Monaspace Radon Var", "SF Mono", Menlo, monospace;
-      --label: "GT America", "Satoshi", system-ui, sans-serif;
+      --label: "GT America", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     body {
       min-height: 100vh;
+      margin: 0;
       background:
-        linear-gradient(90deg, oklch(87% 0.01 92 / 0.4) 1px, transparent 1px),
-        linear-gradient(0deg, oklch(87% 0.01 92 / 0.4) 1px, transparent 1px),
-        radial-gradient(circle at 12% 16%, oklch(91% 0.06 92 / 0.5), transparent 18rem),
+        linear-gradient(90deg, oklch(86% 0.012 86 / 0.44) 1px, transparent 1px),
+        linear-gradient(0deg, oklch(86% 0.012 86 / 0.44) 1px, transparent 1px),
         var(--paper);
-      background-size: 38px 38px, 38px 38px, auto, auto;
+      background-size: 40px 40px, 40px 40px, auto;
       color: var(--ink);
       font-family: var(--body);
+      font-size: 16px;
       font-kerning: normal;
       font-synthesis: none;
-      font-weight: 430;
       line-height: 1.5;
       text-rendering: optimizeLegibility;
     }
 
-    button,
     a {
       -webkit-tap-highlight-color: transparent;
     }
 
-    button:focus-visible,
     a:focus-visible {
-      outline: 3px solid oklch(67% 0.12 164 / 0.72);
-      outline-offset: 3px;
+      outline: 3px solid oklch(65% 0.13 165 / 0.72);
+      outline-offset: 4px;
     }
 
     .shell {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: clamp(24px, 4vw, 52px) 0 44px;
+      padding: 34px 0 48px;
     }
 
     .masthead {
-      margin-bottom: clamp(24px, 4vw, 40px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: end;
+      padding: 8px 0 24px;
+      border-bottom: 1px solid var(--line);
     }
 
-    .brand-block {
-      display: grid;
-      gap: 14px;
-      max-width: 58rem;
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      margin-bottom: 14px;
+      padding: 0 10px;
+      background: var(--surface-warm);
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-family: var(--label);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-transform: uppercase;
     }
 
     h1 {
-      max-width: 11ch;
+      max-width: 12ch;
+      margin: 0;
       font-family: var(--header);
-      font-size: clamp(2.45rem, 5.4vw, 4.25rem);
-      font-stretch: 106%;
+      font-size: 4rem;
+      font-stretch: 108%;
       font-weight: 780;
       letter-spacing: 0;
       line-height: 0.94;
     }
 
     .lede {
-      max-width: 56ch;
+      max-width: 64ch;
+      margin: 16px 0 0;
       color: var(--ink-soft);
-      font-size: 1.0625rem;
-      line-height: 1.58;
+      font-size: 1.02rem;
+      line-height: 1.62;
+    }
+
+    .inventory {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(92px, 1fr));
+      min-width: 228px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .inventory-item {
+      min-height: 78px;
+      padding: 14px;
+      border-right: 1px solid var(--line);
+    }
+
+    .inventory-item:last-child {
+      border-right: 0;
+    }
+
+    .inventory-value {
+      display: block;
+      font-family: var(--header);
+      font-size: 1.55rem;
+      font-weight: 750;
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .inventory-label {
+      display: block;
+      margin-top: 8px;
+      color: var(--ink-muted);
+      font-family: var(--label);
+      font-size: 0.78rem;
+      font-weight: 500;
+      line-height: 1.2;
     }
 
     .tool-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
     }
 
     .tool-card {
-      --tone: var(--green);
-      --tone-soft: var(--green-soft);
+      --tone: var(--accent);
+      --tone-soft: var(--accent-soft);
       position: relative;
       display: grid;
+      grid-column: span 3;
       grid-template-rows: auto 1fr auto;
-      min-height: 17rem;
+      min-height: 248px;
       padding: 16px;
-      background: var(--surface);
+      overflow: hidden;
       border: 1px solid var(--line);
+      background: var(--surface);
       box-shadow: var(--shadow);
       color: inherit;
-      overflow: hidden;
       text-decoration: none;
-      transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+      transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tool-card:hover {
+      border-color: color-mix(in oklch, var(--tone), var(--ink) 12%);
+      box-shadow: 6px 6px 0 color-mix(in oklch, var(--tone), transparent 78%), var(--shadow);
+      transform: translate(-2px, -2px);
+    }
+
+    .tool-card:active {
+      box-shadow: 2px 2px 0 color-mix(in oklch, var(--tone), transparent 72%), var(--shadow);
+      transform: translate(0, 0);
+    }
+
+    .tool-card.is-wide {
+      grid-column: span 6;
+      min-height: 218px;
     }
 
     .tool-card::before {
       content: "";
       position: absolute;
       inset: 0 0 auto;
-      height: 2.1rem;
-      background: color-mix(in oklch, var(--tone-soft), white 34%);
+      height: 34px;
+      background: color-mix(in oklch, var(--tone-soft), var(--surface) 34%);
       border-bottom: 1px solid var(--line);
       pointer-events: none;
     }
@@ -177,33 +229,50 @@
     .tool-card::after {
       content: "";
       position: absolute;
-      inset: 3rem 15px 15px;
-      border: 1px dashed color-mix(in oklch, var(--tone), transparent 58%);
-      opacity: 0.42;
+      right: 16px;
+      bottom: 16px;
+      width: 74px;
+      height: 74px;
+      border: 1px solid color-mix(in oklch, var(--tone), transparent 54%);
+      background:
+        linear-gradient(90deg, transparent 31px, color-mix(in oklch, var(--tone), transparent 70%) 32px, transparent 33px),
+        linear-gradient(0deg, transparent 31px, color-mix(in oklch, var(--tone), transparent 70%) 32px, transparent 33px);
+      opacity: 0.34;
       pointer-events: none;
     }
 
-    .tool-card:hover {
-      border-color: color-mix(in oklch, var(--tone), black 10%);
-      box-shadow: 8px 8px 0 color-mix(in oklch, var(--tone), transparent 78%), var(--shadow);
-      transform: translate(-2px, -2px);
-    }
-
-    .window-dots {
+    .card-top {
       position: relative;
       z-index: 1;
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 18px;
+      gap: 12px;
+    }
+
+    .window-dots {
+      display: flex;
       gap: 6px;
       align-items: center;
-      height: 0.72rem;
     }
 
     .window-dots span {
-      width: 0.46rem;
-      height: 0.46rem;
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
       background: var(--tone);
       opacity: 0.72;
+    }
+
+    .tool-type {
+      color: color-mix(in oklch, var(--tone), var(--ink) 18%);
+      font-family: var(--label);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-transform: uppercase;
     }
 
     .tool-main {
@@ -211,58 +280,57 @@
       z-index: 1;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
-      gap: 14px;
+      gap: 16px;
       align-items: start;
-      padding-top: 28px;
+      padding-top: 31px;
     }
 
     .tool-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 3.75rem;
-      height: 3.75rem;
+      width: 54px;
+      height: 54px;
+      border: 1px solid color-mix(in oklch, var(--tone), var(--ink) 10%);
       background: var(--tone-soft);
-      border: 1px solid color-mix(in oklch, var(--tone), black 12%);
-      box-shadow: 4px 4px 0 color-mix(in oklch, var(--tone), transparent 80%);
+      box-shadow: 3px 3px 0 color-mix(in oklch, var(--tone), transparent 78%);
       color: var(--tone);
       flex: 0 0 auto;
     }
 
     .tool-icon svg {
-      width: 1.7rem;
-      height: 1.7rem;
+      width: 25px;
+      height: 25px;
     }
 
     .tool-kicker {
       display: block;
-      color: var(--tone);
-      font-family: var(--support);
-      font-size: 0.75rem;
-      font-stretch: 106%;
-      font-weight: 720;
-      letter-spacing: 0.05em;
+      color: color-mix(in oklch, var(--tone), var(--ink) 8%);
+      font-family: var(--label);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.07em;
       line-height: 1.15;
       text-transform: uppercase;
     }
 
     .tool-title {
       max-width: 100%;
-      margin-top: 6px;
+      margin: 7px 0 0;
       font-family: var(--header);
-      font-size: clamp(1.42rem, 2.35vw, 2rem);
-      font-stretch: 102%;
+      font-size: 1.72rem;
+      font-stretch: 103%;
       font-weight: 720;
       letter-spacing: 0;
       line-height: 1.08;
     }
 
     .tool-description {
-      max-width: 56ch;
-      margin-top: 11px;
+      max-width: 58ch;
+      margin: 11px 0 0;
       color: var(--ink-soft);
-      font-size: 1rem;
-      line-height: 1.55;
+      font-size: 0.96rem;
+      line-height: 1.58;
     }
 
     .tool-meta {
@@ -272,34 +340,31 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 8px;
-      margin-top: 18px;
+      margin-top: 20px;
       color: var(--ink-muted);
-      font-family: var(--support);
-      font-size: 0.75rem;
-      font-feature-settings: "tnum";
-      font-stretch: 104%;
-      font-weight: 700;
-      letter-spacing: 0.01em;
+      font-family: var(--label);
+      font-size: 0.77rem;
+      font-weight: 500;
       line-height: 1.15;
     }
 
     .tool-meta span {
       display: inline-flex;
       align-items: center;
-      min-height: 1.55rem;
-      padding: 0 8px;
-      background: color-mix(in oklch, var(--tone-soft), white 42%);
+      min-height: 28px;
+      padding: 0 9px;
       border: 1px solid color-mix(in oklch, var(--tone), transparent 58%);
+      background: color-mix(in oklch, var(--tone-soft), var(--surface) 38%);
+      color: color-mix(in oklch, var(--tone), var(--ink) 20%);
     }
 
     .open-link {
       margin-left: auto;
-      color: var(--tone);
     }
 
     .tool-card[data-tone="green"] {
-      --tone: var(--green);
-      --tone-soft: var(--green-soft);
+      --tone: var(--accent);
+      --tone-soft: var(--accent-soft);
     }
 
     .tool-card[data-tone="amber"] {
@@ -317,31 +382,81 @@
       --tone-soft: var(--rose-soft);
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 860px) {
+      .masthead {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .inventory {
+        width: min(100%, 360px);
+      }
+
+      .tool-card,
+      .tool-card.is-wide {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 560px) {
       .shell {
         width: min(100% - 24px, 38rem);
+        padding-top: 22px;
+      }
+
+      .masthead {
+        gap: 20px;
+        padding-bottom: 20px;
       }
 
       h1 {
-        font-size: clamp(2.55rem, 12vw, 3.4rem);
+        font-size: 3rem;
+      }
+
+      .lede {
+        font-size: 0.98rem;
+      }
+
+      .inventory {
+        grid-template-columns: 1fr 1fr;
+        min-width: 0;
+      }
+
+      .inventory-item {
+        min-height: 68px;
+        padding: 12px;
       }
 
       .tool-grid {
-        grid-template-columns: 1fr;
+        gap: 10px;
       }
 
-      .tool-card {
+      .tool-card,
+      .tool-card.is-wide {
         min-height: 0;
-        padding: 15px;
+        padding: 14px;
       }
 
       .tool-main {
         grid-template-columns: 1fr;
+        gap: 13px;
       }
 
       .tool-icon {
-        width: 3.5rem;
-        height: 3.5rem;
+        width: 50px;
+        height: 50px;
+      }
+
+      .tool-title {
+        font-size: 1.48rem;
+      }
+
+      .tool-description {
+        font-size: 0.94rem;
+      }
+
+      .tool-card::after {
+        display: none;
       }
 
       .open-link {
@@ -362,18 +477,32 @@
 <body>
   <main class="shell">
     <header class="masthead">
-      <div class="brand-block">
+      <div>
+        <span class="eyebrow">Local utility bench</span>
         <h1>Atomic Tools</h1>
-        <p class="lede">Small web utilities for quick checks, conversion, play, and comparison. Each tool stays independent; this index is the shared workbench.</p>
+        <p class="lede">Small web utilities for quick checks, conversion, play, and comparison. Open the exact tool you need, use it, and move on.</p>
+      </div>
+      <div class="inventory" aria-label="Tool inventory">
+        <div class="inventory-item">
+          <span class="inventory-value">5</span>
+          <span class="inventory-label">Available tools</span>
+        </div>
+        <div class="inventory-item">
+          <span class="inventory-value">2</span>
+          <span class="inventory-label">Categories</span>
+        </div>
       </div>
     </header>
 
     <section class="tool-grid" id="toolGrid" aria-label="Tools">
       <a href="wordle-checker/" class="tool-card" data-category="games" data-tone="green">
-        <div class="window-dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="card-top">
+          <div class="window-dots" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="tool-type">Games</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -392,16 +521,19 @@
           </div>
         </div>
         <div class="tool-meta">
-          <span>Games</span>
-          <span class="open-link">open →</span>
+          <span>Word lookup</span>
+          <span class="open-link">Open</span>
         </div>
       </a>
 
       <a href="madlib-maker/" class="tool-card" data-category="games" data-tone="amber">
-        <div class="window-dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="card-top">
+          <div class="window-dots" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="tool-type">Games</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -417,16 +549,19 @@
           </div>
         </div>
         <div class="tool-meta">
-          <span>Games</span>
-          <span class="open-link">open →</span>
+          <span>Share links</span>
+          <span class="open-link">Open</span>
         </div>
       </a>
 
-      <a href="rich-text-markdown/" class="tool-card" data-category="utilities" data-tone="blue">
-        <div class="window-dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+      <a href="rich-text-markdown/" class="tool-card is-wide" data-category="utilities" data-tone="blue">
+        <div class="card-top">
+          <div class="window-dots" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="tool-type">Utilities</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -442,16 +577,19 @@
           </div>
         </div>
         <div class="tool-meta">
-          <span>Utilities</span>
-          <span class="open-link">open →</span>
+          <span>Paste and copy</span>
+          <span class="open-link">Open</span>
         </div>
       </a>
 
       <a href="ai-coding-subscriptions/" class="tool-card" data-category="utilities" data-tone="rose">
-        <div class="window-dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="card-top">
+          <div class="window-dots" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="tool-type">Utilities</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -469,16 +607,19 @@
           </div>
         </div>
         <div class="tool-meta">
-          <span>Utilities</span>
-          <span class="open-link">open →</span>
+          <span>Plan comparison</span>
+          <span class="open-link">Open</span>
         </div>
       </a>
 
       <a href="ergonomic-set/" class="tool-card" data-category="utilities" data-tone="green">
-        <div class="window-dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="card-top">
+          <div class="window-dots" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="tool-type">Utilities</span>
         </div>
         <div class="tool-main">
           <span class="tool-icon" aria-hidden="true">
@@ -497,8 +638,8 @@
           </div>
         </div>
         <div class="tool-meta">
-          <span>Utilities</span>
-          <span class="open-link">open →</span>
+          <span>Setup planning</span>
+          <span class="open-link">Open</span>
         </div>
       </a>
     </section>
