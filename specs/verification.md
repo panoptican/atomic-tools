@@ -27,3 +27,13 @@
 - Confirmed there is no horizontal overflow and no console output at either viewport.
 - Confirmed the first experimental card is visually shorter than the first showcase card: 182px vs 248px on desktop, 250px vs 318px on mobile.
 - Captured temporary screenshots outside the repository at `/private/tmp/atomic-tools-index-desktop-weighted-experiments.png` and `/private/tmp/atomic-tools-index-mobile-weighted-experiments.png`.
+
+## 2026-05-07: Private testing tiles
+
+- Served the site from the repository root with `python3 -m http.server 8768`.
+- Checked `http://127.0.0.1:8768/` in Playwright at 1365x900 and 390x844.
+- Confirmed private testing tiles link to `/ai-coding-subscriptions/` and `/ergonomic-set/`.
+- Confirmed the private tile text contains only the `Testing` status and the tool name.
+- Confirmed the private testing section has no icons and no descriptions.
+- Confirmed there is no horizontal overflow and no console output at either viewport.
+- Captured temporary screenshots outside the repository at `/private/tmp/atomic-tools-index-desktop-private-tiles.png` and `/private/tmp/atomic-tools-index-mobile-private-tiles.png`.
