@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Rich Text ↔ Markdown</title>
 <meta name="description" content="Convert pasted rich text to Markdown, or turn Markdown into copy-ready rich text.">
+<link rel="icon" href="data:,">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400;500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/turndown@7.2.0/dist/turndown.js"></script>
@@ -68,6 +69,8 @@
   --error-soft: oklch(92% 0.05 25);
   --error-bg: oklch(92% 0.05 25);
   --error-text: oklch(40% 0.18 25);
+  --warning-bg: oklch(93% 0.05 74);
+  --warning-text: oklch(36% 0.08 74);
   --radius: 0.5rem;
   --font-heading: "Monaspace Argon Var", "SF Mono", Menlo, monospace;
   --font-label: "GT America", "Satoshi", system-ui, sans-serif;
@@ -102,6 +105,8 @@
   --error-soft: oklch(30% 0.06 25);
   --error-bg: oklch(30% 0.06 25);
   --error-text: oklch(72% 0.16 25);
+  --warning-bg: oklch(28% 0.045 74);
+  --warning-text: oklch(80% 0.105 74);
   --top-bar-bg: oklch(11% 0.012 92);
   --top-bar-border: oklch(25% 0.01 92 / 0.5);
   --top-bar-text: oklch(93% 0.008 92);
@@ -143,7 +148,8 @@ body {
   grid-column: 2; min-width: 0;
   display: inline-flex; align-items: center; gap: 0.5rem;
   font-family: var(--font-label);
-  font-size: 0.875rem; font-weight: 500; white-space: nowrap;
+  font-size: 0.875rem; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .tool-title svg { width: 1.125rem; height: 1.125rem; color: var(--primary); flex: 0 0 auto; }
 .theme-btn-top {
@@ -211,6 +217,7 @@ textarea {
   font-size: 0.875rem; line-height: 1.625;
   resize: vertical;
   transition: border-color 0.15s, box-shadow 0.15s;
+  overflow-wrap: break-word;
 }
 textarea::placeholder { color: var(--text-faint); }
 textarea:focus {
@@ -301,6 +308,7 @@ textarea:focus {
 .preview-content img { max-width: 100%; border-radius: 0.5rem; margin: 0.75rem 0; }
 .preview-content hr { margin: 1rem 0; border: none; border-top: 1px solid var(--border); }
 .preview-content table { margin-bottom: 0.75rem; width: 100%; border-collapse: collapse; }
+.preview-content table { display: block; overflow-x: auto; white-space: nowrap; }
 .preview-content th {
   border: 1px solid var(--border); padding: 0.5rem 0.75rem;
   background: var(--muted-bg); font-weight: 600; text-align: left; font-size: 0.875rem;
@@ -311,6 +319,15 @@ textarea:focus {
 .hint {
   text-align: center; font-size: 0.75rem; color: var(--text-faint); margin-top: 0.25rem; line-height: 1.6;
   font-family: var(--font-label);
+}
+.status-note {
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius);
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }
 footer { max-width: 52rem; margin: 0 auto; padding: 0.25rem 1rem 1.5rem; text-align: center; }
 footer p { font-size: 0.75rem; color: var(--text-faint); font-family: var(--font-label); }
@@ -326,6 +343,7 @@ footer p { font-size: 0.75rem; color: var(--text-faint); font-family: var(--font
 @media (max-width: 480px) {
   .top-bar { padding-inline: 1rem; }
   .back-link, .tool-title { font-size: 0.75rem; }
+  .back-link { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tool-title svg { width: 1rem; height: 1rem; }
   main { padding: 0.75rem; gap: 0.625rem; }
   textarea { min-height: 140px; padding: 0.75rem; font-size: 0.8125rem; }
@@ -401,6 +419,8 @@ footer p { font-size: 0.75rem; color: var(--text-faint); font-family: var(--font
     Paste markdown and get back rich text.<br>
     Output is automatically copied to your clipboard.
   </p>
+
+  <p class="status-note hidden" id="statusNote" role="status" aria-live="polite"></p>
 </main>
 
 <footer>
@@ -431,48 +451,56 @@ document.getElementById('themeToggle').addEventListener('click', function() {
 });
 
 // ============ CONVERTER SETUP ============
-var turndown = new TurndownService({
-  headingStyle: 'atx', codeBlockStyle: 'fenced',
-  bulletListMarker: '-', emDelimiter: '*', strongDelimiter: '**', hr: '---'
-});
-turndown.use(turndownPluginGfm.gfm);
+var convertersReady = Boolean(window.TurndownService && window.turndownPluginGfm && window.markdownit);
+var turndown = null;
+var mdi = null;
 
-turndown.addRule('strikethrough', {
-  filter: ['del', 's', 'strike'],
-  replacement: function(content) { return '~~' + content + '~~'; }
-});
+if (convertersReady) {
+  turndown = new TurndownService({
+    headingStyle: 'atx', codeBlockStyle: 'fenced',
+    bulletListMarker: '-', emDelimiter: '*', strongDelimiter: '**', hr: '---'
+  });
+  turndown.use(turndownPluginGfm.gfm);
 
-turndown.addRule('fencedCodeBlock', {
-  filter: function(node) {
-    return node.nodeName === 'PRE' && node.firstChild && node.firstChild.nodeName === 'CODE';
-  },
-  replacement: function(_content, node) {
-    var code = node.firstChild;
-    var className = code.getAttribute('class') || '';
-    var langMatch = className.match(/(?:lang(?:uage)?|highlight)-(\w+)/);
-    var lang = langMatch ? langMatch[1] : '';
-    var text = code.textContent || '';
-    return '\n```' + lang + '\n' + text + '\n```\n';
-  }
-});
+  turndown.addRule('strikethrough', {
+    filter: ['del', 's', 'strike'],
+    replacement: function(content) { return '~~' + content + '~~'; }
+  });
 
-turndown.addRule('styledBold', {
-  filter: function(node) {
-    if (node.nodeName !== 'SPAN') return false;
-    var style = node.getAttribute('style') || '';
-    return /font-weight\s*:\s*(bold|[7-9]\d{2})/i.test(style);
-  },
-  replacement: function(content) { return '**' + content + '**'; }
-});
+  turndown.addRule('fencedCodeBlock', {
+    filter: function(node) {
+      return node.nodeName === 'PRE' && node.firstChild && node.firstChild.nodeName === 'CODE';
+    },
+    replacement: function(_content, node) {
+      var code = node.firstChild;
+      var className = code.getAttribute('class') || '';
+      var langMatch = className.match(/(?:lang(?:uage)?|highlight)-(\w+)/);
+      var lang = langMatch ? langMatch[1] : '';
+      var text = code.textContent || '';
+      return '\n```' + lang + '\n' + text + '\n```\n';
+    }
+  });
 
-turndown.addRule('styledItalic', {
-  filter: function(node) {
-    if (node.nodeName !== 'SPAN') return false;
-    var style = node.getAttribute('style') || '';
-    return /font-style\s*:\s*italic/i.test(style) && !/font-weight\s*:\s*(bold|[7-9]\d{2})/i.test(style);
-  },
-  replacement: function(content) { return '*' + content + '*'; }
-});
+  turndown.addRule('styledBold', {
+    filter: function(node) {
+      if (node.nodeName !== 'SPAN') return false;
+      var style = node.getAttribute('style') || '';
+      return /font-weight\s*:\s*(bold|[7-9]\d{2})/i.test(style);
+    },
+    replacement: function(content) { return '**' + content + '**'; }
+  });
+
+  turndown.addRule('styledItalic', {
+    filter: function(node) {
+      if (node.nodeName !== 'SPAN') return false;
+      var style = node.getAttribute('style') || '';
+      return /font-style\s*:\s*italic/i.test(style) && !/font-weight\s*:\s*(bold|[7-9]\d{2})/i.test(style);
+    },
+    replacement: function(content) { return '*' + content + '*'; }
+  });
+
+  mdi = window.markdownit({ html: false, linkify: true, typographer: false, breaks: false });
+}
 
 function getAlignment(node) {
   var style = node.getAttribute('style') || '';
@@ -529,8 +557,6 @@ turndown.addRule('table', {
     return '\n' + result + '\n';
   }
 });
-
-var mdi = window.markdownit({ html: false, linkify: true, typographer: false, breaks: false });
 
 // ============ DETECTION ============
 var SEMANTIC_TAGS = /<(h[1-6]|ul|ol|li|table|thead|tbody|tr|th|td|strong|em|del|blockquote|pre|code|a\s|img\s|hr)[^>]*>/i;
@@ -616,8 +642,51 @@ function preProcessHtml(html) {
   return doc2.body.innerHTML;
 }
 
-function convertHtmlToMd(html) { return turndown.turndown(preProcessHtml(html)); }
-function convertMdToHtml(md) { return mdi.render(md); }
+function assertConvertersReady() {
+  if (!convertersReady || !turndown || !mdi) {
+    throw new Error('Conversion libraries did not load. Check your connection and reload.');
+  }
+}
+
+function sanitizePreviewHtml(html) {
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(html, 'text/html');
+  var allowedTags = {
+    A: true, BLOCKQUOTE: true, BR: true, CODE: true, DEL: true, EM: true, H1: true, H2: true,
+    H3: true, H4: true, H5: true, H6: true, HR: true, IMG: true, LI: true, OL: true, P: true,
+    PRE: true, S: true, STRONG: true, TABLE: true, TBODY: true, TD: true, TH: true, THEAD: true,
+    TR: true, UL: true
+  };
+  doc.body.querySelectorAll('*').forEach(function(el) {
+    if (!allowedTags[el.tagName]) {
+      el.replaceWith(doc.createTextNode(el.textContent || ''));
+      return;
+    }
+    Array.from(el.attributes).forEach(function(attr) {
+      var name = attr.name.toLowerCase();
+      var value = attr.value || '';
+      var isSafeHref = name === 'href' && /^(https?:|mailto:|#|\/)/i.test(value);
+      var isSafeImg = el.tagName === 'IMG' && name === 'src' && /^(https?:|data:image\/(?:png|gif|jpeg|webp);|\/)/i.test(value);
+      var isAlt = el.tagName === 'IMG' && name === 'alt';
+      if (!isSafeHref && !isSafeImg && !isAlt) el.removeAttribute(attr.name);
+    });
+    if (el.tagName === 'A') {
+      el.setAttribute('rel', 'noopener noreferrer');
+      el.setAttribute('target', '_blank');
+    }
+  });
+  return doc.body.innerHTML;
+}
+
+function convertHtmlToMd(html) {
+  assertConvertersReady();
+  return turndown.turndown(preProcessHtml(html));
+}
+
+function convertMdToHtml(md) {
+  assertConvertersReady();
+  return sanitizePreviewHtml(mdi.render(md));
+}
 
 // ============ CLIPBOARD ============
 function copyTextFallback(text) {
@@ -645,6 +714,7 @@ function copyRichFallback(html) {
 
 async function copyMd(markdown) {
   if (copyTextFallback(markdown)) return true;
+  if (!navigator.clipboard || !navigator.clipboard.writeText) return false;
   try { await navigator.clipboard.writeText(markdown); return true; } catch(e) { return false; }
 }
 
@@ -671,15 +741,18 @@ function richTextPlainFallback(html) {
 async function copyRich(html) {
   var cleanHtml = neutralizeRichHtml(html);
   var plainText = richTextPlainFallback(cleanHtml);
-  try {
-    var htmlBlob = new Blob([cleanHtml], { type: 'text/html' });
-    var textBlob = new Blob([plainText], { type: 'text/plain' });
-    await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })]);
-    return true;
-  } catch(e) {
-    if (copyRichFallback(cleanHtml)) return true;
-    return copyTextFallback(plainText);
+  if (navigator.clipboard && navigator.clipboard.write && window.ClipboardItem) {
+    try {
+      var htmlBlob = new Blob([cleanHtml], { type: 'text/html' });
+      var textBlob = new Blob([plainText], { type: 'text/plain' });
+      await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })]);
+      return true;
+    } catch(e) {
+      // Browser or permission fallback below.
+    }
   }
+  if (copyRichFallback(cleanHtml)) return true;
+  return copyTextFallback(plainText);
 }
 
 // ============ STATE ============
@@ -702,6 +775,7 @@ var outputLabel = document.getElementById('outputLabel');
 var outputBox = document.getElementById('outputBox');
 var hintText = document.getElementById('hintText');
 var copyBtn = document.getElementById('copyBtn');
+var statusNote = document.getElementById('statusNote');
 
 // ============ UI ============
 var ICONS = ['badgeIconDefault','badgeIconHash','badgeIconType','badgeIconCheck','badgeIconError','badgeIconSwap'];
@@ -748,7 +822,11 @@ function updateOutput() {
   var hasOutput = state.direction === 'html-to-md' ? !!state.outputMarkdown : !!state.outputHtml;
   clearBtn.classList.toggle('hidden', !inputArea.value);
   outputSection.classList.toggle('hidden', !hasOutput);
-  hintText.classList.toggle('hidden', hasOutput);
+  hintText.classList.toggle('hidden', hasOutput || !convertersReady);
+  statusNote.classList.toggle('hidden', convertersReady);
+  if (!convertersReady) {
+    statusNote.textContent = 'Conversion libraries are unavailable. Reload when you are back online.';
+  }
 
   if (hasOutput) {
     if (state.direction === 'html-to-md') {
@@ -761,6 +839,17 @@ function updateOutput() {
       outputBox.innerHTML = state.outputHtml;
     }
   }
+  updateBadge();
+}
+
+function showConversionError(message) {
+  state.outputMarkdown = '';
+  state.outputHtml = '';
+  state.copyStatus = 'error';
+  statusNote.textContent = message || 'Conversion failed. Clear the input or try a smaller paste.';
+  statusNote.classList.remove('hidden');
+  outputSection.classList.add('hidden');
+  hintText.classList.add('hidden');
   updateBadge();
 }
 
@@ -804,6 +893,7 @@ function clearAll() {
   state.outputMarkdown = '';
   state.outputHtml = '';
   state.copyStatus = 'idle';
+  statusNote.textContent = '';
   updateOutput();
   inputArea.focus();
 }
@@ -822,7 +912,12 @@ function swapDirection() {
     if (!mdText.trim()) return;
     textarea.value = mdText;
     state.direction = 'md-to-html';
-    state.outputHtml = convertMdToHtml(mdText);
+    try {
+      state.outputHtml = convertMdToHtml(mdText);
+    } catch(err) {
+      showConversionError(err.message);
+      return;
+    }
     state.outputMarkdown = '';
     state.copyStatus = 'idle';
     updateOutput();
@@ -858,6 +953,10 @@ directionBadge.addEventListener('keydown', function(e) {
 
 // ============ PASTE & INPUT ============
 inputArea.addEventListener('paste', function(e) {
+  if (!convertersReady) {
+    showConversionError('Conversion libraries are unavailable. Reload when you are back online.');
+    return;
+  }
   var htmlData = e.clipboardData.getData('text/html');
   var textData = e.clipboardData.getData('text/plain');
   var det = detectDirection(htmlData, textData);
@@ -866,7 +965,12 @@ inputArea.addEventListener('paste', function(e) {
     e.preventDefault();
     inputArea.value = htmlData;
     state.direction = det;
-    state.outputMarkdown = convertHtmlToMd(htmlData);
+    try {
+      state.outputMarkdown = convertHtmlToMd(htmlData);
+    } catch(err) {
+      showConversionError(err.message);
+      return;
+    }
     state.outputHtml = '';
     state.copyStatus = 'idle';
     updateOutput();
@@ -875,7 +979,12 @@ inputArea.addEventListener('paste', function(e) {
     e.preventDefault();
     inputArea.value = textData;
     state.direction = det;
-    state.outputHtml = convertMdToHtml(textData);
+    try {
+      state.outputHtml = convertMdToHtml(textData);
+    } catch(err) {
+      showConversionError(err.message);
+      return;
+    }
     state.outputMarkdown = '';
     state.copyStatus = 'idle';
     updateOutput();
@@ -884,6 +993,10 @@ inputArea.addEventListener('paste', function(e) {
 });
 
 inputArea.addEventListener('input', function() {
+  if (!convertersReady) {
+    showConversionError('Conversion libraries are unavailable. Reload when you are back online.');
+    return;
+  }
   var val = inputArea.value;
   var dir = state.direction || 'md-to-html';
   if (!state.direction) state.direction = dir;
@@ -897,10 +1010,20 @@ inputArea.addEventListener('input', function() {
   }
 
   if (dir === 'html-to-md') {
-    state.outputMarkdown = convertHtmlToMd(val);
+    try {
+      state.outputMarkdown = convertHtmlToMd(val);
+    } catch(err) {
+      showConversionError(err.message);
+      return;
+    }
     state.outputHtml = '';
   } else {
-    state.outputHtml = convertMdToHtml(val);
+    try {
+      state.outputHtml = convertMdToHtml(val);
+    } catch(err) {
+      showConversionError(err.message);
+      return;
+    }
     state.outputMarkdown = '';
   }
   state.copyStatus = 'idle';
@@ -908,8 +1031,12 @@ inputArea.addEventListener('input', function() {
 
   if (typingTimeout) clearTimeout(typingTimeout);
   typingTimeout = setTimeout(function() {
-    if (dir === 'html-to-md') autoCopy(dir, convertHtmlToMd(val), '');
-    else autoCopy(dir, '', convertMdToHtml(val));
+    try {
+      if (dir === 'html-to-md') autoCopy(dir, convertHtmlToMd(val), '');
+      else autoCopy(dir, '', convertMdToHtml(val));
+    } catch(err) {
+      showConversionError(err.message);
+    }
   }, 600);
 });
 
@@ -920,6 +1047,8 @@ document.addEventListener('keydown', function(e) {
     manualCopy();
   }
 });
+
+updateOutput();
 </script>
 </body>
 </html>
