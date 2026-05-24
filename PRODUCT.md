@@ -29,6 +29,12 @@ Avoid landing-page polish, sales copy, ornamental introductions, decorative grad
 - Preserve tool-specific character while sharing basic quality standards for spacing, responsive behavior, keyboard flow, contrast, and readable type.
 - Use spacing, contrast, type hierarchy, data state, and domain-relevant interaction for emphasis before decoration.
 
+## Tool Identity Model
+
+Atomic Tools should work as a consistent product shell with distinct tool-level experiences. Shared shell elements should remain consistent: the root index, return navigation, baseline accessibility, responsive behavior, focus states, and core interaction quality. Individual tools may vary in palette, density, typography, layout rhythm, and mood when that difference makes the task clearer or more pleasant. Do not homogenize every tool into one visual theme; use the parent product to set quality standards and the specific tool context to drive aesthetic choices.
+
+When using Impeccable, run top-level commands for shared system work such as the index, navigation, audit, accessibility, and documentation. Run per-tool commands for tool-specific shaping, critique, polish, copy, layout, color, and interaction choices.
+
 ## Accessibility & Inclusion
 
 Use WCAG AA as the baseline. Interfaces should be keyboard-friendly, screen-reader-legible, reduced-motion-safe, and understandable without relying on color alone. Interactive states need visible focus, clear labels, explicit errors, and responsive layouts that keep controls usable on phone and desktop viewports.
