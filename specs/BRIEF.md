@@ -8,9 +8,8 @@ A launcher for one person's bench of small, sharp web utilities. Open the index,
 
 ## What the index actually does
 
-- Lists tools by name, category, and one-line description
+- Lists tools by name, with a one-line description on hover/focus
 - Provides a stable URL for each tool as a subpath
-- Distinguishes public/showcase tools from private/experimental ones
 - Survives being bookmarked, opened on a phone, and ignored for six months
 
 That is the whole job.
@@ -52,7 +51,8 @@ Swiss-system, applied with discipline:
 
 ## Out of scope for the index
 
-- Search, filtering, tagging UI (there are six tools)
+- Search, filtering, tagging UI (there are three tools)
+- An "experimental" or "private" section — if a tool isn't ready for the bench, it doesn't belong on the index
 - Login, theming toggle, settings
 - Any per-tool preview, screenshot, or live data
 - Analytics or telemetry surfaced to the user
