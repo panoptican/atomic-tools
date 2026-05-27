@@ -4,35 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Was it a Wordle?</title>
+  <link rel="stylesheet" href="../assets/atomic-shell.css">
+  <script src="../assets/atomic-theme.js"></script>
   <script>
-    // Set theme before paint to avoid a light/dark flash on load.
-    (function () {
-      try {
-        var stored = localStorage.getItem('wordle-checker-theme');
-        var preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.dataset.theme = stored || preferred;
-      } catch (e) {
-        document.documentElement.dataset.theme = 'light';
-      }
-    })();
+    AtomicTheme.applyBeforePaint({ storageKey: 'wordle-checker-theme', mode: 'dataset' });
   </script>
   <style>
-    @font-face {
-      font-family: "GT America Expanded";
-      src: url("../assets/fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
-           url("../assets/fonts/GT-America-Expanded-Regular.woff") format("woff");
-      font-display: swap;
-      font-weight: 400;
-    }
-
-    @font-face {
-      font-family: "GT America";
-      src: url("../assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
-           url("../assets/fonts/GT-America-Standard-Medium.woff") format("woff");
-      font-display: swap;
-      font-weight: 500;
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -81,47 +58,6 @@
 
     a { color: inherit; -webkit-tap-highlight-color: transparent; }
     :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-
-    /* Top bar -------------------------------------------------------- */
-
-    .top-bar {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-      align-items: center;
-      padding: 18px 28px;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    .back-link {
-      justify-self: start;
-      display: inline-flex; align-items: center; gap: 6px;
-      color: var(--ink); text-decoration: none;
-      font-family: var(--text); font-size: 0.78rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
-    }
-    .back-link:hover { color: var(--ink-soft); }
-    .back-link svg { width: 14px; height: 14px; }
-
-    .tool-title {
-      grid-column: 2;
-      font-family: var(--text); font-size: 0.78rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--ink-muted);
-      white-space: nowrap;
-    }
-
-    .theme-toggle {
-      grid-column: 3; justify-self: end;
-      width: 32px; height: 32px;
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 0; border: 1px solid var(--rule); background: transparent;
-      color: var(--ink); cursor: pointer;
-    }
-    .theme-toggle:hover { background: var(--ink); color: var(--paper); }
-    .theme-toggle svg { width: 14px; height: 14px; }
-    .theme-toggle .moon-icon { display: none; }
-    :root[data-theme="dark"] .theme-toggle .sun-icon { display: none; }
-    :root[data-theme="dark"] .theme-toggle .moon-icon { display: block; }
 
     /* Main ----------------------------------------------------------- */
 
@@ -187,24 +123,6 @@
       width: 1px; height: 1px; padding: 0; margin: -1px;
       overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
-
-    /* Action / result ------------------------------------------------ */
-
-    .actions {
-      margin-top: 28px;
-      display: flex; gap: 10px; align-items: center;
-    }
-
-    .check-btn {
-      padding: 12px 28px;
-      border: 1px solid var(--rule); background: var(--ink); color: var(--paper);
-      font-family: var(--text); font-size: 0.85rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      cursor: pointer;
-      transition: opacity 120ms;
-    }
-    .check-btn:hover:not(:disabled) { opacity: 0.85; }
-    .check-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
     .result {
       margin-top: 32px; min-height: 60px;
@@ -296,10 +214,6 @@
       disabled
     >
 
-    <div class="actions">
-      <button class="check-btn" id="checkBtn" disabled>Check</button>
-    </div>
-
     <div class="result" id="result" aria-live="polite">
       <span class="result-headline" id="resultHeadline"></span>
       <span class="result-detail" id="resultDetail"></span>
@@ -311,14 +225,16 @@
 
   <footer class="foot">
     <span>Atomic Tools · Wordle Checker</span>
-    <span>Updated daily</span>
+    <span id="footerUpdated">Updated …</span>
   </footer>
 
   <script>
-    const API_URL = 'https://wordle-checker-api.spidleweb.workers.dev/api/check-word';
+    const API_BASE = 'https://wordle-checker-api.spidleweb.workers.dev';
+    const API_URL = `${API_BASE}/api/check-word`;
+    const META_URL = `${API_BASE}/api/meta`;
+    const footerUpdated = document.getElementById('footerUpdated');
 
     const wordInput = document.getElementById('wordInput');
-    const checkBtn = document.getElementById('checkBtn');
     const result = document.getElementById('result');
     const resultHeadline = document.getElementById('resultHeadline');
     const resultDetail = document.getElementById('resultDetail');
@@ -326,41 +242,43 @@
     const errorEl = document.getElementById('error');
     const tiles = document.querySelectorAll('.tile');
     const tilesContainer = document.getElementById('tiles');
-    const themeToggle = document.getElementById('themeToggle');
+    AtomicTheme.bind({
+      storageKey: 'wordle-checker-theme',
+      mode: 'dataset',
+      toggleId: 'themeToggle'
+    });
 
-    const systemDark = matchMedia('(prefers-color-scheme: dark)');
+    let checkAbort = null;
 
-    function getStoredTheme() {
-      try { return localStorage.getItem('wordle-checker-theme'); } catch (e) { return null; }
+    function formatDataDate(iso) {
+      const parts = iso.split('-').map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+      const date = new Date(parts[0], parts[1] - 1, parts[2]);
+      return date.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
     }
-    function preferredTheme() { return systemDark.matches ? 'dark' : 'light'; }
 
-    function applyTheme(theme, persist) {
-      const next = theme === 'dark' ? 'dark' : 'light';
-      document.documentElement.dataset.theme = next;
-      const label = next === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
-      themeToggle.setAttribute('aria-label', label);
-      themeToggle.setAttribute('title', label);
-      if (persist) {
-        try { localStorage.setItem('wordle-checker-theme', next); } catch (e) {}
+    async function loadFooterDate() {
+      try {
+        const response = await fetch(META_URL);
+        if (!response.ok) throw new Error(`meta ${response.status}`);
+        const data = await response.json();
+        const label = data.latestDate ? formatDataDate(data.latestDate) : null;
+        footerUpdated.textContent = label ? `Updated ${label}` : 'Updated daily';
+      } catch (err) {
+        console.warn('Could not load data date:', err);
+        footerUpdated.textContent = 'Updated daily';
       }
     }
-
-    applyTheme(getStoredTheme() || preferredTheme(), false);
-
-    // Follow system changes only while the user hasn't pinned a preference.
-    systemDark.addEventListener('change', (e) => {
-      if (!getStoredTheme()) applyTheme(e.matches ? 'dark' : 'light', false);
-    });
-
-    themeToggle.addEventListener('click', () => {
-      applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true);
-    });
 
     function init() {
       loading.style.display = 'none';
       wordInput.disabled = false;
       wordInput.focus();
+      loadFooterDate();
     }
 
     function clearResult() {
@@ -378,24 +296,19 @@
       });
     }
 
-    let activeWord = null;
-
     async function checkWord() {
       const word = wordInput.value.toUpperCase().trim();
       if (word.length !== 5) return;
 
-      // Token: a later keystroke supersedes this request.
-      activeWord = word;
-      const requestWord = word;
-      checkBtn.textContent = 'Checking…';
+      checkAbort?.abort();
+      checkAbort = new AbortController();
+      const { signal } = checkAbort;
       errorEl.textContent = '';
 
       try {
-        const response = await fetch(`${API_URL}?word=${encodeURIComponent(word)}`);
+        const response = await fetch(`${API_URL}?word=${encodeURIComponent(word)}`, { signal });
         if (!response.ok) throw new Error(`API error: ${response.status}`);
         const data = await response.json();
-
-        if (activeWord !== requestWord) return;
 
         if (data.used) {
           tiles.forEach(t => { t.classList.add('yes'); t.classList.remove('no'); });
@@ -407,29 +320,24 @@
           resultDetail.textContent = 'This word has not been a Wordle answer.';
         }
       } catch (err) {
-        if (activeWord !== requestWord) return;
+        if (err.name === 'AbortError') return;
         console.error('Error checking word:', err);
         errorEl.textContent = `Error: ${err.message}`;
-      } finally {
-        if (activeWord === requestWord) checkBtn.textContent = 'Check';
       }
     }
 
     wordInput.addEventListener('input', (e) => {
       e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 5);
       const len = e.target.value.length;
-      checkBtn.disabled = len !== 5;
       updateTiles(e.target.value);
       clearResult();
-      activeWord = null;
+      checkAbort?.abort();
       if (len === 5) checkWord();
     });
 
     wordInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && wordInput.value.length === 5) checkWord();
     });
-
-    checkBtn.addEventListener('click', checkWord);
 
     // Clicking tiles focuses the hidden input so the keyboard opens on mobile.
     tilesContainer.addEventListener('click', () => wordInput.focus());

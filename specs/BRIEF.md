@@ -49,6 +49,11 @@ Swiss-system, applied with discipline:
 - Zero JavaScript required to read or use the index
 - Print stylesheet not required, but the page should print legibly by accident
 
+## Dark mode (index vs tools)
+
+- **Index:** CSS-only via `prefers-color-scheme` — no toggle, no JavaScript.
+- **Tools:** May offer a manual theme toggle with `localStorage`; follow system preference until the user pins light or dark. Use `assets/atomic-theme.js` for shared behavior (`mode: "dataset"` or `mode: "class"`). Creator and player chrome on all bench tools share `assets/atomic-shell.css` tokens (`--paper`, `--ink`, `--rule`, GT America). Madlib no longer applies per-share color themes.
+
 ## Out of scope for the index
 
 - Search, filtering, tagging UI (there are three tools)
