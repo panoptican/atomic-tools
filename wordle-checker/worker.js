@@ -26,6 +26,31 @@ function getTodayGameNumber() {
 }
 
 /**
+ * Latest puzzle date present in the word list (YYYY-MM-DD).
+ * Prefers explicit dates from the API; falls back to the highest game number.
+ */
+function getLatestDataDate(wordList) {
+  let latestDate = '';
+  let maxGame = 0;
+
+  for (const entry of Object.values(wordList)) {
+    if (!entry) continue;
+    if (entry.date && entry.date > latestDate) latestDate = entry.date;
+    if (entry.game > maxGame) maxGame = entry.game;
+  }
+
+  if (latestDate) return latestDate;
+
+  if (maxGame > 0) {
+    const d = new Date(WORDLE_START_DATE);
+    d.setUTCDate(d.getUTCDate() + maxGame - 1);
+    return d.toISOString().slice(0, 10);
+  }
+
+  return null;
+}
+
+/**
  * Fetch word list from wordlehints.co.uk API
  */
 async function fetchWordList() {
@@ -99,6 +124,39 @@ async function getWordList(env) {
   } catch (error) {
     console.error('Error getting word list:', error);
     throw error;
+  }
+}
+
+/**
+ * Metadata for the cached word list (footer, health dashboards).
+ */
+async function handleMeta(env) {
+  try {
+    const wordList = await getWordList(env);
+    const { metadata } = await env.WORDLE_KV.getWithMetadata(KV_KEY);
+    const latestDate = getLatestDataDate(wordList);
+
+    return new Response(JSON.stringify({
+      latestDate,
+      wordCount: Object.keys(wordList).length,
+      updatedAt: metadata?.updatedAt ?? null
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=3600'
+      }
+    });
+  } catch (error) {
+    console.error('Error building meta:', error);
+    return new Response(JSON.stringify({
+      error: 'Internal server error',
+      message: error.message
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
 
@@ -240,6 +298,10 @@ export default {
     // Route to check-word endpoint
     if (url.pathname === '/api/check-word' && request.method === 'GET') {
       return handleCheckWord(request, env);
+    }
+
+    if (url.pathname === '/api/meta' && request.method === 'GET') {
+      return handleMeta(env);
     }
 
     // Health check endpoint
