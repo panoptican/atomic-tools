@@ -1,5 +1,5 @@
 /* =========================================================================
-   Madlib Maker — same shell tokens as Wordle Checker / Clipboard Markdown.
+   Madlib Maker — same shell tokens as Wordle Checker / Markdown ↔ Rich Text.
    ========================================================================= */
 
 :root {
@@ -88,7 +88,7 @@ a { -webkit-tap-highlight-color: transparent; }
 .page-intro h1 {
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(3rem, 4vw, 4.25rem);
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
   line-height: 1;
   letter-spacing: -0.01em;
   margin-bottom: 8px;
@@ -880,7 +880,6 @@ a { -webkit-tap-highlight-color: transparent; }
   .container { width: calc(100% - 32px); padding: 32px 0 48px; }
   .primary-section, .supporting-section { padding: 16px; }
   .page-intro { margin-bottom: 28px; }
-  .page-intro h1 { font-size: clamp(2.3rem, 12vw, 3rem); }
   .page-sub { font-size: 1rem; }
   .story-textarea { min-height: 320px; padding: 16px 18px; font-size: 1rem; }
   .player-container { width: calc(100% - 32px); padding: 32px 0 48px; }

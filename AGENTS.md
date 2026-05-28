@@ -19,7 +19,7 @@ A collection of single-purpose web tools. Each tool lives in its own directory w
 │   └── BRIEF.md                    # Design contract for the index
 ├── wordle-checker/                 # Wordle Checker (Cloudflare Worker API)
 ├── madlib-maker/                   # Madlib creator + player
-├── rich-text-markdown/             # Clipboard Markdown (converter.js + app.js)
+├── rich-text-markdown/             # Markdown ↔ Rich Text (converter.js + app.js)
 └── house-prep/                     # Private tool (not on index)
 ```
 
@@ -36,7 +36,7 @@ Then visit:
 - http://localhost:8080/ — Atomic Tools index
 - http://localhost:8080/wordle-checker/ — Wordle Checker
 - http://localhost:8080/madlib-maker/ — Madlib Maker
-- http://localhost:8080/rich-text-markdown/ — Clipboard Markdown
+- http://localhost:8080/rich-text-markdown/ — Markdown ↔ Rich Text
 
 ## Tool-Specific Commands
 

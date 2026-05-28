@@ -1,5 +1,5 @@
 /**
- * Clipboard Markdown — UI wiring (uses RtmConverter).
+ * Markdown ↔ Rich Text — UI wiring (uses RtmConverter).
  */
 (function () {
   'use strict';

@@ -1,5 +1,5 @@
 /**
- * Clipboard Markdown — conversion, detection, clipboard helpers.
+ * Markdown ↔ Rich Text — conversion, detection, clipboard helpers.
  * Depends on TurndownService, turndownPluginGfm, markdownit (CDN).
  */
 (function (global) {
