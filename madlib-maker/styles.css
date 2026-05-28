@@ -105,14 +105,6 @@ a { -webkit-tap-highlight-color: transparent; }
   max-width: 56ch;
 }
 
-.header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  margin-top: 30px;
-}
-
 /* Two-column layout for story + blanks ---------------------------------- */
 
 .editor-columns {
@@ -135,18 +127,13 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .new-madlib-btn {
-  padding: 16px 28px;
-  border: 1px solid var(--rule);
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--text);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
+  margin-left: auto;
 }
 
-.new-madlib-btn:hover { opacity: 0.88; }
+.new-madlib-btn:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
 
 /* Mode tabs -------------------------------------------------------------- */
 
@@ -155,6 +142,7 @@ a { -webkit-tap-highlight-color: transparent; }
   gap: 0;
   border-bottom: 1px solid var(--rule);
   margin-bottom: 34px;
+  align-items: flex-end;
 }
 
 .mode-tab {
