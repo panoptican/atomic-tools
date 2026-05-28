@@ -2,11 +2,11 @@
 
 ## 2026-05-24: Swiss-system index + tool redesign
 
-- Index lists three tools only: Wordle Checker, Madlib Maker, Clipboard Markdown (`/rich-text-markdown/`).
+- Index lists three tools only: Wordle Checker, Madlib Maker, Markdown ↔ Rich Text (`/rich-text-markdown/`).
 - House Prep remains at `/house-prep/` but is not linked from the index.
 - Removed from repo: `/ai-coding-subscriptions/`, `/ergonomic-set/`.
 - Shared shell: `assets/atomic-shell.css`, `assets/atomic-theme.js`.
-- Clipboard Markdown logic split: `rich-text-markdown/converter.js`, `rich-text-markdown/app.js`.
+- Markdown ↔ Rich Text logic split: `rich-text-markdown/converter.js`, `rich-text-markdown/app.js`.
 
 ## 2026-05-07: Root index polish
 

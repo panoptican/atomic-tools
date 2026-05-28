@@ -8,7 +8,7 @@ A collection of lightweight web utilities. Each does one thing well.
 |------|-------------|
 | [Wordle Checker](wordle-checker/) | Check if a 5-letter word has been a past Wordle solution |
 | [Madlib Maker](madlib-maker/) | Create and share custom madlibs with friends |
-| [Clipboard Markdown](rich-text-markdown/) | Convert between pasted rich text and Markdown |
+| [Markdown ↔ Rich Text](rich-text-markdown/) | Convert between Markdown and pasted rich text |
 
 ## Development
 
