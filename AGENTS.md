@@ -4,41 +4,39 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Project Overview
 
-A collection of single-purpose web tools, starting with the Wordle Checker. Each tool lives in its own directory with all related code, tests, and deployment configuration.
+A collection of single-purpose web tools. Each tool lives in its own directory with related code, tests, and deployment configuration where needed.
 
 ## Project Structure
 
 ```
 /
-├── index.html                      # Atomic Tools index - lists all available tools
-├── AGENTS.md                       # This file
-├── .gitignore
-└── wordle-checker/                 # Wordle Checker tool
-    ├── index.html                  # Frontend UI
-    ├── README.md                   # Tool documentation
-    ├── worker.js                   # Cloudflare Worker backend
-    ├── wrangler.toml               # Worker configuration
-    ├── package.json                # Dependencies
-    ├── CLOUDFLARE_DEPLOYMENT.md    # Deployment guide
-    ├── test-checker.js             # Test scripts
-    ├── analyze-wordlist.js
-    └── test-today-exclusion.js
-└── ai-coding-subscriptions/        # AI Coding Subscription Matrix
-    ├── index.html                  # Frontend UI
-    └── README.md                   # Tool documentation
+├── index.html                      # Atomic Tools index (launcher)
+├── assets/
+│   ├── atomic-shell.css            # Shared top bar + GT America fonts
+│   ├── atomic-theme.js             # Shared light/dark theme (tools with toggle)
+│   └── fonts/                      # Self-hosted GT America files
+├── specs/
+│   └── BRIEF.md                    # Design contract for the index
+├── wordle-checker/                 # Wordle Checker (Cloudflare Worker API)
+├── madlib-maker/                   # Madlib creator + player
+├── rich-text-markdown/             # Markdown ↔ Rich Text (converter.js + app.js)
+└── house-prep/                     # Private tool (not on index)
 ```
 
 ## Development
 
 Serve locally from repo root:
+
 ```bash
 python3 -m http.server 8080
 ```
 
 Then visit:
-- http://localhost:8080/ - Atomic Tools index
-- http://localhost:8080/wordle-checker/ - Wordle Checker
-- http://localhost:8080/ai-coding-subscriptions/ - AI Coding Subscription Matrix
+
+- http://localhost:8080/ — Atomic Tools index
+- http://localhost:8080/wordle-checker/ — Wordle Checker
+- http://localhost:8080/madlib-maker/ — Madlib Maker
+- http://localhost:8080/rich-text-markdown/ — Markdown ↔ Rich Text
 
 ## Tool-Specific Commands
 
@@ -47,12 +45,10 @@ Then visit:
 ```bash
 cd wordle-checker
 
-# Worker development
 npm install
 npm run dev           # Local worker at http://localhost:8787
 npm run deploy        # Deploy to Cloudflare
 
-# Testing
 node test-checker.js
 node analyze-wordlist.js
 node test-today-exclusion.js
@@ -62,17 +58,10 @@ node test-today-exclusion.js
 
 1. Create a new directory (e.g., `new-tool/`)
 2. Add `index.html` with the tool UI
-3. Include top bar with back link matching this pattern:
-   ```html
-   <div class="top-bar">
-     <a href="../" class="back-link">< All Tools</a>
-     <span class="top-bar-title">Tool Name</span>
-   </div>
-   ```
+3. Include top bar with back link; reuse `assets/atomic-shell.css` and `assets/atomic-theme.js` when the tool has a theme toggle
 4. Add tool-specific README, tests, and deployment config to the directory
-5. Update root `index.html` to add a card for the new tool
-6. Update category counts in the filter buttons
+5. Update root `index.html` to add a row for the new tool
 
 ## Deployment
 
-The repo is designed for GitHub Pages deployment from the main branch root directory. Each tool directory is accessible as a subpath (e.g., `/wordle-checker/`).
+GitHub Pages serves from the main branch root. Each tool is a subpath (e.g., `/wordle-checker/`).

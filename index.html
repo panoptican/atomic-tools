@@ -6,24 +6,6 @@
   <title>Atomic Tools</title>
   <style>
     @font-face {
-      font-family: "Monaspace Argon Var";
-      src: url("assets/fonts/MonaspaceArgonVarVF.woff") format("woff");
-      font-display: swap;
-      font-stretch: 75% 125%;
-      font-style: oblique -11deg 0deg;
-      font-weight: 200 800;
-    }
-
-    @font-face {
-      font-family: "Monaspace Neon Var";
-      src: url("assets/fonts/MonaspaceNeonVarVF.woff") format("woff");
-      font-display: swap;
-      font-stretch: 75% 125%;
-      font-style: oblique -11deg 0deg;
-      font-weight: 200 800;
-    }
-
-    @font-face {
       font-family: "GT America";
       src: url("assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
            url("assets/fonts/GT-America-Standard-Medium.woff") format("woff");
@@ -31,709 +13,172 @@
       font-weight: 500;
     }
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
 
     :root {
-      color-scheme: light;
-      --paper: oklch(97.6% 0.008 86);
-      --surface: oklch(99% 0.005 86);
-      --surface-raised: oklch(98.2% 0.007 86);
-      --surface-warm: oklch(94.8% 0.013 86);
-      --ink: oklch(20.4% 0.017 252);
-      --ink-soft: oklch(38% 0.019 252);
-      --ink-muted: oklch(56% 0.018 252);
-      --line: oklch(84.5% 0.014 86);
-      --line-strong: oklch(68% 0.019 86);
-      --accent: oklch(48% 0.12 165);
-      --accent-soft: oklch(91% 0.044 165);
-      --amber: oklch(59% 0.13 72);
-      --amber-soft: oklch(91% 0.053 72);
-      --blue: oklch(50% 0.112 244);
-      --blue-soft: oklch(91% 0.041 244);
-      --rose: oklch(54% 0.128 24);
-      --rose-soft: oklch(92% 0.049 24);
-      --violet: oklch(50% 0.09 292);
-      --violet-soft: oklch(92% 0.035 292);
-      --shadow: 0 1px 0 oklch(100% 0.004 86 / 0.88), 0 16px 34px oklch(22% 0.017 252 / 0.08);
-      --header: "Monaspace Argon Var", "SF Mono", Menlo, monospace;
-      --body: "Monaspace Neon Var", "SF Mono", Menlo, monospace;
-      --label: "GT America", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light dark;
+      --paper: #f5f4ef;
+      --ink: #111111;
+      --ink-muted: #8a8a85;
+      --ink-faint: #b8b6ae;
+      --rule: #1a1a1a;
+      --text: "GT America", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --glyph: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0f0f0e;
+        --ink: #ededea;
+        --ink-muted: #6f6e6a;
+        --ink-faint: #4a4a47;
+        --rule: #2a2a28;
+      }
+    }
+
+    html, body { margin: 0; }
     body {
-      min-height: 100vh;
-      margin: 0;
-      background:
-        linear-gradient(90deg, oklch(86% 0.012 86 / 0.44) 1px, transparent 1px),
-        linear-gradient(0deg, oklch(86% 0.012 86 / 0.44) 1px, transparent 1px),
-        var(--paper);
-      background-size: 40px 40px, 40px 40px, auto;
+      background: var(--paper);
       color: var(--ink);
-      font-family: var(--body);
-      font-size: 16px;
-      font-kerning: normal;
-      font-synthesis: none;
+      font-family: var(--text);
+      font-size: 17px;
+      font-weight: 500;
       line-height: 1.5;
-      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
 
-    a {
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    a:focus-visible {
-      outline: 3px solid oklch(65% 0.13 165 / 0.72);
-      outline-offset: 4px;
-    }
+    a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+    a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 
     .shell {
-      width: min(1180px, calc(100% - 32px));
+      width: min(720px, calc(100% - 48px));
       margin: 0 auto;
-      padding: 34px 0 48px;
+      padding: 96px 0 96px;
     }
 
-    .masthead {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 28px;
-      align-items: end;
-      padding: 8px 0 24px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      margin-bottom: 14px;
-      padding: 0 10px;
-      background: var(--surface-warm);
-      border: 1px solid var(--line);
-      color: var(--ink-soft);
-      font-family: var(--label);
-      font-size: 0.72rem;
+    .wordmark {
+      margin: 0 0 96px;
+      font-size: 17px;
       font-weight: 500;
-      letter-spacing: 0.08em;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      max-width: 12ch;
-      margin: 0;
-      font-family: var(--header);
-      font-size: 4rem;
-      font-stretch: 108%;
-      font-weight: 780;
       letter-spacing: 0;
-      line-height: 0.94;
     }
 
-    .lede {
-      max-width: 64ch;
-      margin: 16px 0 0;
-      color: var(--ink-soft);
-      font-size: 1.02rem;
-      line-height: 1.62;
-    }
+    .list { list-style: none; margin: 0; padding: 0; }
 
-    .inventory {
+    .list--tools { border-top: 1px solid var(--rule); }
+
+    .row {
       display: grid;
-      grid-template-columns: repeat(2, minmax(92px, 1fr));
-      min-width: 228px;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      box-shadow: var(--shadow);
-    }
-
-    .inventory-item {
-      min-height: 78px;
-      padding: 14px;
-      border-right: 1px solid var(--line);
-    }
-
-    .inventory-item:last-child {
-      border-right: 0;
-    }
-
-    .inventory-value {
-      display: block;
-      font-family: var(--header);
-      font-size: 1.55rem;
-      font-weight: 750;
-      letter-spacing: 0;
-      line-height: 1;
-    }
-
-    .inventory-label {
-      display: block;
-      margin-top: 8px;
-      color: var(--ink-muted);
-      font-family: var(--label);
-      font-size: 0.78rem;
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 22px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
+      grid-template-columns: auto 1fr auto;
+      align-items: baseline;
       gap: 24px;
-      margin-top: 34px;
-      padding-top: 22px;
-      border-top: 1px solid var(--line);
+      padding: 22px 0;
+      border-bottom: 1px solid var(--rule);
+      transition: transform 140ms var(--ease);
     }
 
-    .section-header h2 {
-      margin: 0;
-      font-family: var(--header);
-      font-size: 1.22rem;
-      font-stretch: 104%;
-      font-weight: 720;
-      letter-spacing: 0;
-      line-height: 1.1;
-    }
-
-    .section-header p {
-      max-width: 44ch;
-      margin: 0;
-      color: var(--ink-muted);
-      font-family: var(--label);
-      font-size: 0.84rem;
+    .row-name {
+      font-size: 17px;
       font-weight: 500;
-      line-height: 1.45;
-      text-align: right;
     }
 
-    .private-tools {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .private-tool {
-      display: grid;
-      align-content: space-between;
-      width: 112px;
-      min-height: 112px;
-      padding: 10px;
-      border: 1px solid color-mix(in oklch, var(--line), var(--paper) 18%);
-      background: color-mix(in oklch, var(--surface-warm), var(--surface) 46%);
-      color: inherit;
-      text-decoration: none;
-      transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), background 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .private-tool:hover {
-      border-color: var(--line-strong);
-      background: var(--surface);
-      transform: translateY(-1px);
-    }
-
-    .private-tool:active {
-      transform: translateY(0);
-    }
-
-    .private-tool-status {
-      color: var(--ink-muted);
-      font-family: var(--label);
-      font-size: 0.6rem;
+    .row-desc {
+      font-size: 17px;
       font-weight: 500;
-      letter-spacing: 0.07em;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-
-    .private-tool-name {
-      margin: 0;
-      font-family: var(--header);
-      font-size: 0.94rem;
-      font-stretch: 102%;
-      font-weight: 680;
-      letter-spacing: 0;
-      line-height: 1.05;
-    }
-
-    .tool-card {
-      --tone: var(--accent);
-      --tone-soft: var(--accent-soft);
-      position: relative;
-      display: grid;
-      grid-column: span 3;
-      grid-template-rows: auto 1fr auto;
-      min-height: 248px;
-      padding: 16px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      box-shadow: var(--shadow);
-      color: inherit;
-      text-decoration: none;
-      transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .tool-card:hover {
-      border-color: color-mix(in oklch, var(--tone), var(--ink) 12%);
-      box-shadow: 6px 6px 0 color-mix(in oklch, var(--tone), transparent 78%), var(--shadow);
-      transform: translate(-2px, -2px);
-    }
-
-    .tool-card:active {
-      box-shadow: 2px 2px 0 color-mix(in oklch, var(--tone), transparent 72%), var(--shadow);
-      transform: translate(0, 0);
-    }
-
-    .tool-card.is-wide {
-      grid-column: span 6;
-      min-height: 218px;
-    }
-
-    .tool-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 34px;
-      background: color-mix(in oklch, var(--tone-soft), var(--surface) 34%);
-      border-bottom: 1px solid var(--line);
+      color: var(--ink-faint);
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity 140ms var(--ease), transform 140ms var(--ease);
       pointer-events: none;
     }
 
-    .tool-card::after {
-      content: "";
-      position: absolute;
-      right: 16px;
-      bottom: 16px;
-      width: 74px;
-      height: 74px;
-      border: 1px solid color-mix(in oklch, var(--tone), transparent 54%);
-      background:
-        linear-gradient(90deg, transparent 31px, color-mix(in oklch, var(--tone), transparent 70%) 32px, transparent 33px),
-        linear-gradient(0deg, transparent 31px, color-mix(in oklch, var(--tone), transparent 70%) 32px, transparent 33px);
-      opacity: 0.34;
-      pointer-events: none;
-    }
-
-    .card-top {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 18px;
-      gap: 12px;
-    }
-
-    .window-dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .window-dots span {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--tone);
-      opacity: 0.72;
-    }
-
-    .tool-type {
-      color: color-mix(in oklch, var(--tone), var(--ink) 18%);
-      font-family: var(--label);
-      font-size: 0.68rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-
-    .tool-main {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 16px;
-      align-items: start;
-      padding-top: 31px;
-    }
-
-    .tool-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 54px;
-      height: 54px;
-      border: 1px solid color-mix(in oklch, var(--tone), var(--ink) 10%);
-      background: var(--tone-soft);
-      box-shadow: 3px 3px 0 color-mix(in oklch, var(--tone), transparent 78%);
-      color: var(--tone);
-      flex: 0 0 auto;
-    }
-
-    .tool-icon svg {
-      width: 25px;
-      height: 25px;
-    }
-
-    .tool-kicker {
-      display: block;
-      color: color-mix(in oklch, var(--tone), var(--ink) 8%);
-      font-family: var(--label);
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      line-height: 1.15;
-      text-transform: uppercase;
-    }
-
-    .tool-title {
-      max-width: 100%;
-      margin: 7px 0 0;
-      font-family: var(--header);
-      font-size: 1.72rem;
-      font-stretch: 103%;
-      font-weight: 720;
-      letter-spacing: 0;
-      line-height: 1.08;
-    }
-
-    .tool-description {
-      max-width: 58ch;
-      margin: 11px 0 0;
-      color: var(--ink-soft);
-      font-size: 0.96rem;
-      line-height: 1.58;
-    }
-
-    .tool-meta {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      margin-top: 20px;
+    .row-arrow {
+      font-family: var(--glyph);
+      font-weight: 400;
       color: var(--ink-muted);
-      font-family: var(--label);
-      font-size: 0.77rem;
-      font-weight: 500;
-      line-height: 1.15;
+      font-variant-numeric: tabular-nums;
+      transition: transform 140ms var(--ease);
     }
 
-    .tool-meta span {
-      display: inline-flex;
-      align-items: center;
-      min-height: 28px;
-      padding: 0 9px;
-      border: 1px solid color-mix(in oklch, var(--tone), transparent 58%);
-      background: color-mix(in oklch, var(--tone-soft), var(--surface) 38%);
-      color: color-mix(in oklch, var(--tone), var(--ink) 20%);
+    /* Keyboard focus */
+    .row:focus-visible {
+      transform: translateX(12px);
+      transition-duration: 200ms;
+    }
+    .row:focus-visible .row-desc {
+      opacity: 1;
+      transform: translateX(0);
+      transition-duration: 200ms;
+    }
+    .row:focus-visible .row-arrow {
+      transform: translateX(4px);
     }
 
-    .open-link {
-      margin-left: auto;
-    }
-
-    .tool-card[data-tone="green"] {
-      --tone: var(--accent);
-      --tone-soft: var(--accent-soft);
-    }
-
-    .tool-card[data-tone="amber"] {
-      --tone: var(--amber);
-      --tone-soft: var(--amber-soft);
-    }
-
-    .tool-card[data-tone="blue"] {
-      --tone: var(--blue);
-      --tone-soft: var(--blue-soft);
-    }
-
-    .tool-card[data-tone="rose"] {
-      --tone: var(--rose);
-      --tone-soft: var(--rose-soft);
-    }
-
-    .tool-card[data-tone="violet"] {
-      --tone: var(--violet);
-      --tone-soft: var(--violet-soft);
-    }
-
-    @media (max-width: 860px) {
-      .masthead {
-        grid-template-columns: 1fr;
-        align-items: start;
+    /* Pointer hover (skipped on touch) */
+    @media (hover: hover) and (pointer: fine) {
+      .row:hover {
+        transform: translateX(12px);
+        transition-duration: 200ms;
       }
-
-      .inventory {
-        width: min(100%, 360px);
+      .row:hover .row-desc {
+        opacity: 1;
+        transform: translateX(0);
+        transition-duration: 200ms;
       }
-
-      .tool-card,
-      .tool-card.is-wide {
-        grid-column: span 6;
-      }
-
-      .section-header {
-        align-items: start;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .section-header p {
-        text-align: left;
-      }
-
-      .private-tool {
-        width: calc(50% - 4px);
-        min-height: 104px;
+      .row:hover .row-arrow {
+        transform: translateX(4px);
       }
     }
 
-    @media (max-width: 560px) {
-      .shell {
-        width: min(100% - 24px, 38rem);
-        padding-top: 22px;
-      }
+    .label {
+      padding: 22px 0 22px;
+      color: var(--ink-muted);
+      font-size: 17px;
+    }
 
-      .masthead {
-        gap: 20px;
-        padding-bottom: 20px;
-      }
-
-      h1 {
-        font-size: 3rem;
-      }
-
-      .lede {
-        font-size: 0.98rem;
-      }
-
-      .inventory {
-        grid-template-columns: 1fr 1fr;
-        min-width: 0;
-      }
-
-      .inventory-item {
-        min-height: 68px;
-        padding: 12px;
-      }
-
-      .tool-grid {
-        gap: 10px;
-      }
-
-      .tool-card,
-      .tool-card.is-wide {
-        min-height: 0;
-        padding: 14px;
-      }
-
-      .tool-main {
-        grid-template-columns: 1fr;
-        gap: 13px;
-      }
-
-      .tool-icon {
-        width: 50px;
-        height: 50px;
-      }
-
-      .tool-title {
-        font-size: 1.48rem;
-      }
-
-      .tool-description {
-        font-size: 0.94rem;
-      }
-
-      .tool-card::after {
-        display: none;
-      }
-
-      .open-link {
-        margin-left: 0;
-      }
-
-      .private-tool {
-        width: calc(50% - 5px);
-      }
+    @media (max-width: 600px) {
+      .shell { padding: 64px 0; width: calc(100% - 32px); }
+      .wordmark { margin-bottom: 64px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
-        scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
       }
     }
   </style>
 </head>
 <body>
   <main class="shell">
-    <header class="masthead">
-      <div>
-        <span class="eyebrow">Local utility bench</span>
-        <h1>Atomic Tools</h1>
-        <p class="lede">Small web utilities for quick checks, conversion, play, and comparison. Open the exact tool you need, use it, and move on.</p>
-      </div>
-      <div class="inventory" aria-label="Tool inventory">
-        <div class="inventory-item">
-          <span class="inventory-value">4</span>
-          <span class="inventory-label">Showcase tools</span>
-        </div>
-        <div class="inventory-item">
-          <span class="inventory-value">2</span>
-          <span class="inventory-label">Experimental</span>
-        </div>
-      </div>
-    </header>
+    <h1 class="wordmark">Atomic Tools</h1>
 
-    <section class="tool-grid" id="toolGrid" aria-label="Showcase tools">
-      <a href="wordle-checker/" class="tool-card" data-category="games" data-tone="green">
-        <div class="card-top">
-          <div class="window-dots" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="tool-type">Games</span>
-        </div>
-        <div class="tool-main">
-          <span class="tool-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18"/>
-              <path d="M3 15h18"/>
-              <path d="M9 3v18"/>
-              <path d="M15 3v18"/>
-            </svg>
-          </span>
-          <div>
-            <span class="tool-kicker">quick check</span>
-            <h2 class="tool-title">Wordle Checker</h2>
-            <p class="tool-description">Check whether a five-letter word has already been used as a Wordle solution.</p>
-          </div>
-        </div>
-        <div class="tool-meta">
-          <span>Word lookup</span>
-          <span class="open-link">Open</span>
-        </div>
-      </a>
+    <p class="label">Tools</p>
 
-      <a href="madlib-maker/" class="tool-card" data-category="games" data-tone="amber">
-        <div class="card-top">
-          <div class="window-dots" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="tool-type">Games</span>
-        </div>
-        <div class="tool-main">
-          <span class="tool-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-              <path d="m15 5 4 4"/>
-            </svg>
-          </span>
-          <div>
-            <span class="tool-kicker">story builder</span>
-            <h2 class="tool-title">Madlib Maker</h2>
-            <p class="tool-description">Create custom madlibs, add placeholders, and share links for other people to play.</p>
-          </div>
-        </div>
-        <div class="tool-meta">
-          <span>Share links</span>
-          <span class="open-link">Open</span>
-        </div>
-      </a>
-
-      <a href="house-prep/" class="tool-card" data-category="utilities" data-tone="green">
-        <div class="card-top">
-          <div class="window-dots" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="tool-type">Utilities</span>
-        </div>
-        <div class="tool-main">
-          <span class="tool-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5Z"/>
-            </svg>
-          </span>
-          <div>
-            <span class="tool-kicker">move-in planner</span>
-            <h2 class="tool-title">House Prep</h2>
-            <p class="tool-description">Room-by-room move-in checklist built for two people to track, assign, and finish prep tasks together.</p>
-          </div>
-        </div>
-        <div class="tool-meta">
-          <span>Shared checklist</span>
-          <span class="open-link">Open</span>
-        </div>
-      </a>
-
-      <a href="rich-text-markdown/" class="tool-card is-wide" data-category="utilities" data-tone="blue">
-        <div class="card-top">
-          <div class="window-dots" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <span class="tool-type">Utilities</span>
-        </div>
-        <div class="tool-main">
-          <span class="tool-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
-              <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
-            </svg>
-          </span>
-          <div>
-            <span class="tool-kicker">clipboard utility</span>
-            <h2 class="tool-title">Clipboard Markdown</h2>
-            <p class="tool-description">Convert pasted rich text to Markdown, or turn Markdown into copy-ready rich text.</p>
-          </div>
-        </div>
-        <div class="tool-meta">
-          <span>Paste and copy</span>
-          <span class="open-link">Open</span>
-        </div>
-      </a>
-
-    </section>
-
-    <section class="section-header" aria-labelledby="experimentalToolsTitle">
-      <h2 id="experimentalToolsTitle">Experimental tools</h2>
-      <p>Private launch tiles for internal testing. They are reachable here, but intentionally not presented as public tools.</p>
-    </section>
-
-    <section class="private-tools" aria-label="Private testing tools">
-      <a href="ai-coding-subscriptions/" class="private-tool">
-        <span class="private-tool-status">Testing</span>
-        <h3 class="private-tool-name">AI Plan Matrix</h3>
-      </a>
-
-      <a href="ergonomic-set/" class="private-tool">
-        <span class="private-tool-status">Testing</span>
-        <h3 class="private-tool-name">Ergonomic Set</h3>
-      </a>
-    </section>
+    <ol class="list list--tools">
+      <li>
+        <a href="wordle-checker/" class="row">
+          <span class="row-name">Wordle Checker</span>
+          <span class="row-desc">Check if a five-letter word's been used</span>
+          <span class="row-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="madlib-maker/" class="row">
+          <span class="row-name">Madlib Maker</span>
+          <span class="row-desc">Build and share custom madlibs</span>
+          <span class="row-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li>
+        <a href="rich-text-markdown/" class="row">
+          <span class="row-name">Markdown ↔ Rich Text</span>
+          <span class="row-desc">Convert between rich text and Markdown</span>
+          <span class="row-arrow" aria-hidden="true">›</span>
+        </a>
+      </li>
+    </ol>
   </main>
 </body>
 </html>

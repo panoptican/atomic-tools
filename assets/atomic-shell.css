@@ -1,0 +1,125 @@
+/* Shared Atomic Tools shell: fonts, top bar, theme toggle */
+
+@font-face {
+  font-family: "GT America Expanded";
+  src: url("fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
+       url("fonts/GT-America-Expanded-Regular.woff") format("woff");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "GT America";
+  src: url("fonts/GT-America-Standard-Medium.woff2") format("woff2"),
+       url("fonts/GT-America-Standard-Medium.woff") format("woff");
+  font-display: swap;
+  font-weight: 500;
+}
+
+.top-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.back-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--text);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.back-link:hover {
+  color: var(--ink-soft);
+}
+
+.back-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tool-title {
+  grid-column: 2;
+  font-family: var(--text);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.tool-title--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-title--with-icon svg {
+  width: 14px;
+  height: 14px;
+  color: var(--ink);
+}
+
+.theme-toggle {
+  grid-column: 3;
+  justify-self: end;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.theme-toggle svg {
+  width: 14px;
+  height: 14px;
+}
+
+.theme-toggle .moon-icon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .sun-icon,
+.dark .theme-toggle .sun-icon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .moon-icon,
+.dark .theme-toggle .moon-icon {
+  display: block;
+}
+
+@media (max-width: 560px) {
+  .top-bar {
+    padding: 14px 18px;
+  }
+
+  .back-link,
+  .tool-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+
+  .tool-title--with-icon {
+    gap: 4px;
+  }
+}

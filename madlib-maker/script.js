@@ -703,265 +703,32 @@ const MetadataManager = (function() {
   };
 })();
 
-// Color Theme Manager Module
+// Player color themes are disabled; clear any legacy inline overrides from old shares.
 const ColorThemeManager = (function() {
-  // Theme presets
-  const PRESETS = {
-    brick: {
-      background: '#1c0001',
-      text: '#ddd5ba',
-      button: '#831a19',
-      highlight: '#eeb440'
-    },
-    ocean: {
-      background: '#0a1929',
-      text: '#b8d4e3',
-      button: '#1a4f6e',
-      highlight: '#4fc3f7'
-    },
-    forest: {
-      background: '#0d1f12',
-      text: '#c5d4b8',
-      button: '#2d5a3d',
-      highlight: '#f0b429'
-    },
-    midnight: {
-      background: '#0f0a1a',
-      text: '#d4c5e8',
-      button: '#4a1a6b',
-      highlight: '#bb86fc'
-    }
-  };
+  const COLOR_KEYS = ['background', 'text', 'button', 'highlight'];
 
-  // Current theme state
-  let currentTheme = { ...PRESETS.brick };
-  let activePreset = 'brick';
-
-  // DOM Elements
-  let colorInputs = {};
-  let hexDisplays = {};
-  let previewSwatches = {};
-  let presetButtons;
-  let resetBtn;
-
-  // Apply theme to CSS custom properties
-  function applyTheme() {
+  function clearOverrides() {
     const root = document.documentElement;
-    root.style.setProperty('--color-background', currentTheme.background);
-    root.style.setProperty('--color-text', currentTheme.text);
-    root.style.setProperty('--color-button', currentTheme.button);
-    root.style.setProperty('--color-highlight', currentTheme.highlight);
-
-    // Update preview swatches
-    updatePreviewSwatches();
-
-    // Update color inputs and hex displays
-    updateColorInputs();
+    COLOR_KEYS.forEach((key) => root.style.removeProperty(`--color-${key}`));
   }
 
-  // Update preview swatches
-  function updatePreviewSwatches() {
-    if (previewSwatches.background) {
-      previewSwatches.background.style.background = currentTheme.background;
-    }
-    if (previewSwatches.text) {
-      previewSwatches.text.style.background = currentTheme.text;
-    }
-    if (previewSwatches.button) {
-      previewSwatches.button.style.background = currentTheme.button;
-    }
-    if (previewSwatches.highlight) {
-      previewSwatches.highlight.style.background = currentTheme.highlight;
-    }
-  }
-
-  // Update color input values and hex displays
-  function updateColorInputs() {
-    if (colorInputs.background) {
-      colorInputs.background.value = currentTheme.background;
-      hexDisplays.background.textContent = currentTheme.background;
-    }
-    if (colorInputs.text) {
-      colorInputs.text.value = currentTheme.text;
-      hexDisplays.text.textContent = currentTheme.text;
-    }
-    if (colorInputs.button) {
-      colorInputs.button.value = currentTheme.button;
-      hexDisplays.button.textContent = currentTheme.button;
-    }
-    if (colorInputs.highlight) {
-      colorInputs.highlight.value = currentTheme.highlight;
-      hexDisplays.highlight.textContent = currentTheme.highlight;
-    }
-  }
-
-  // Update preset button active state
-  function updatePresetButtons() {
-    if (!presetButtons) return;
-
-    presetButtons.forEach(btn => {
-      if (btn.dataset.theme === activePreset) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
-  }
-
-  // Check if current theme matches a preset
-  function detectActivePreset() {
-    for (const [name, colors] of Object.entries(PRESETS)) {
-      if (
-        currentTheme.background === colors.background &&
-        currentTheme.text === colors.text &&
-        currentTheme.button === colors.button &&
-        currentTheme.highlight === colors.highlight
-      ) {
-        return name;
-      }
-    }
-    return null; // Custom theme
-  }
-
-  // Handle preset button click
-  function handlePresetClick(e) {
-    const themeName = e.currentTarget.dataset.theme;
-    if (themeName && PRESETS[themeName]) {
-      currentTheme = { ...PRESETS[themeName] };
-      activePreset = themeName;
-      applyTheme();
-      updatePresetButtons();
-      // Trigger auto-save
-      if (typeof DraftManager !== 'undefined') {
-        DraftManager.save();
-      }
-    }
-  }
-
-  // Handle color input change
-  function handleColorChange(colorKey) {
-    return function(e) {
-      currentTheme[colorKey] = e.target.value;
-      hexDisplays[colorKey].textContent = e.target.value;
-
-      // Update preview swatch
-      if (previewSwatches[colorKey]) {
-        previewSwatches[colorKey].style.background = e.target.value;
-      }
-
-      // Apply to CSS
-      const root = document.documentElement;
-      root.style.setProperty(`--color-${colorKey}`, e.target.value);
-
-      // Check if we still match a preset
-      activePreset = detectActivePreset();
-      updatePresetButtons();
-
-      // Trigger auto-save
-      if (typeof DraftManager !== 'undefined') {
-        DraftManager.save();
-      }
-    };
-  }
-
-  // Handle reset button click - resets to the currently selected preset
-  function handleReset() {
-    // If we have an active preset, reset to its colors
-    // Otherwise fall back to brick
-    const presetName = activePreset || 'brick';
-    if (PRESETS[presetName]) {
-      currentTheme = { ...PRESETS[presetName] };
-    } else {
-      currentTheme = { ...PRESETS.brick };
-      activePreset = 'brick';
-    }
-    applyTheme();
-    updatePresetButtons();
-    // Trigger auto-save
-    if (typeof DraftManager !== 'undefined') {
-      DraftManager.save();
-    }
-  }
-
-  // Get current theme (for URL encoding)
-  function getTheme() {
-    return { ...currentTheme };
-  }
-
-  // Set theme (for loading from URL)
-  function setTheme(theme) {
-    if (theme && theme.background && theme.text && theme.button && theme.highlight) {
-      currentTheme = { ...theme };
-      activePreset = detectActivePreset();
-      applyTheme();
-      updatePresetButtons();
-    }
-  }
-
-  // Check if using default theme
-  function isDefaultTheme() {
-    return activePreset === 'brick';
-  }
-
-  // Initialize
   function init() {
-    // Get color input elements
-    colorInputs = {
-      background: document.getElementById('color-background'),
-      text: document.getElementById('color-text'),
-      button: document.getElementById('color-button'),
-      highlight: document.getElementById('color-highlight')
-    };
-
-    // Get hex display elements
-    hexDisplays = {
-      background: document.getElementById('hex-background'),
-      text: document.getElementById('hex-text'),
-      button: document.getElementById('hex-button'),
-      highlight: document.getElementById('hex-highlight')
-    };
-
-    // Get preview swatch elements
-    previewSwatches = {
-      background: document.getElementById('preview-background'),
-      text: document.getElementById('preview-text'),
-      button: document.getElementById('preview-button'),
-      highlight: document.getElementById('preview-highlight')
-    };
-
-    // Get preset buttons
-    presetButtons = document.querySelectorAll('.theme-preset-btn');
-
-    // Get reset button
-    resetBtn = document.getElementById('reset-theme-btn');
-
-    // Add event listeners for color inputs
-    colorInputs.background.addEventListener('input', handleColorChange('background'));
-    colorInputs.text.addEventListener('input', handleColorChange('text'));
-    colorInputs.button.addEventListener('input', handleColorChange('button'));
-    colorInputs.highlight.addEventListener('input', handleColorChange('highlight'));
-
-    // Add event listeners for preset buttons
-    presetButtons.forEach(btn => {
-      btn.addEventListener('click', handlePresetClick);
-    });
-
-    // Add event listener for reset button
-    resetBtn.addEventListener('click', handleReset);
-
-    // Initial render
-    applyTheme();
-    updatePresetButtons();
+    clearOverrides();
   }
 
-  // Public API
-  return {
-    init,
-    getTheme,
-    setTheme,
-    isDefaultTheme,
-    PRESETS
-  };
+  function setTheme() {
+    clearOverrides();
+  }
+
+  function getTheme() {
+    return null;
+  }
+
+  function isDefaultTheme() {
+    return true;
+  }
+
+  return { init, getTheme, setTheme, isDefaultTheme, clear: clearOverrides, PRESETS: {} };
 })();
 
 // URL Manager Module
@@ -1009,17 +776,6 @@ const URLManager = (function() {
       placeholders: WordListManager.getPlaceholders(),
       story: StoryEditor.getStory()
     };
-
-    // Only include theme if not default (to keep URLs shorter)
-    if (!ColorThemeManager.isDefaultTheme()) {
-      const theme = ColorThemeManager.getTheme();
-      data.theme = {
-        bg: theme.background,
-        text: theme.text,
-        button: theme.button,
-        highlight: theme.highlight
-      };
-    }
 
     return data;
   }
@@ -1260,15 +1016,7 @@ const URLManager = (function() {
         StoryEditor.setStory(data.story);
       }
 
-      // Load theme
-      if (data.theme) {
-        ColorThemeManager.setTheme({
-          background: data.theme.bg,
-          text: data.theme.text,
-          button: data.theme.button,
-          highlight: data.theme.highlight
-        });
-      }
+      ColorThemeManager.clear();
 
       return true;
     } catch (e) {
@@ -1400,7 +1148,6 @@ const PlayerMode = (function() {
   let containerEl;
   let creatorEl;
   let playerContainerEl;
-  let topBarEl;
   let introScreen;
   let sequentialScreen;
   let allAtOnceScreen;
@@ -1482,9 +1229,9 @@ const PlayerMode = (function() {
 
     // Change next button text on last prompt
     if (currentPromptIndex === placeholders.length - 1) {
-      nextBtn.textContent = 'See My Story →';
+      nextBtn.textContent = 'See my story';
     } else {
-      nextBtn.textContent = 'Next →';
+      nextBtn.textContent = 'Next';
     }
 
     // Focus input
@@ -1662,10 +1409,6 @@ const PlayerMode = (function() {
       story,
       answers
     };
-    // Include theme if present in original data
-    if (originalData && originalData.theme) {
-      dataToShare.theme = originalData.theme;
-    }
     const url = await URLManager.generateStoryURL(dataToShare);
     if (!url) {
       URLManager.showToast('Failed to generate story link', true);
@@ -1724,21 +1467,11 @@ const PlayerMode = (function() {
     currentPromptIndex = 0;
     isActive = true;
 
-    // Apply theme if present
-    if (data.theme) {
-      ColorThemeManager.setTheme({
-        background: data.theme.bg,
-        text: data.theme.text,
-        button: data.theme.button,
-        highlight: data.theme.highlight
-      });
-    }
+    ColorThemeManager.clear();
 
     // For preview mode, don't hide the container (ModeManager handles section visibility)
-    // For player-only mode, hide the entire creator container and top bar
     if (!isPreview) {
       creatorEl.style.display = 'none';
-      if (topBarEl) topBarEl.style.display = 'none';
     }
     playerContainerEl.style.display = 'flex';
 
@@ -1760,7 +1493,6 @@ const PlayerMode = (function() {
     isActive = false;
     playerContainerEl.style.display = 'none';
     creatorEl.style.display = '';
-    if (topBarEl) topBarEl.style.display = '';
 
     // Reset player state for next activation
     answers = {};
@@ -1772,8 +1504,6 @@ const PlayerMode = (function() {
     // Get main containers
     creatorEl = document.querySelector('.container');
     playerContainerEl = document.getElementById('player-container');
-    topBarEl = document.querySelector('.top-bar');
-
     // Get screens
     introScreen = document.getElementById('player-intro');
     sequentialScreen = document.getElementById('player-sequential');
@@ -1783,7 +1513,7 @@ const PlayerMode = (function() {
     // Get intro elements
     titleEl = document.getElementById('player-title');
     subtitleEl = document.getElementById('player-subtitle');
-    toggleBtns = document.querySelectorAll('.toggle-btn');
+    toggleBtns = document.querySelectorAll('.player-tab');
     startBtn = document.getElementById('start-btn');
 
     // Get sequential elements
@@ -1846,8 +1576,7 @@ const DraftManager = (function() {
       title: MetadataManager.getRawTitle(),
       subtitle: MetadataManager.getSubtitle(),
       placeholders: WordListManager.getPlaceholders(),
-      story: StoryEditor.getStory(),
-      theme: ColorThemeManager.getTheme()
+      story: StoryEditor.getStory()
     };
   }
 
@@ -1931,10 +1660,7 @@ const DraftManager = (function() {
         StoryEditor.setStory(draft.story);
       }
 
-      // Restore theme
-      if (draft.theme) {
-        ColorThemeManager.setTheme(draft.theme);
-      }
+      ColorThemeManager.clear();
 
       return true;
     } catch (e) {
@@ -1949,7 +1675,7 @@ const DraftManager = (function() {
     MetadataManager.setSubtitle('');
     WordListManager.setPlaceholders([]);
     StoryEditor.setStory('');
-    ColorThemeManager.setTheme(ColorThemeManager.PRESETS.brick);
+    ColorThemeManager.clear();
   }
 
   // Handle "New Madlib" button click
@@ -2035,13 +1761,7 @@ const ModeManager = (function() {
       title: MetadataManager.getRawTitle(),
       subtitle: MetadataManager.getSubtitle(),
       placeholders: WordListManager.getPlaceholders(),
-      story: StoryEditor.getStory(),
-      theme: ColorThemeManager.isDefaultTheme() ? null : {
-        bg: ColorThemeManager.getTheme().background,
-        text: ColorThemeManager.getTheme().text,
-        button: ColorThemeManager.getTheme().button,
-        highlight: ColorThemeManager.getTheme().highlight
-      }
+      story: StoryEditor.getStory()
     };
   }
 
@@ -2090,10 +1810,8 @@ const ModeManager = (function() {
       });
     }
     // Show headers
-    const headerRow = document.querySelector('.container .header-row');
-    const h2 = document.querySelector('.container h2');
-    if (headerRow) headerRow.style.display = '';
-    if (h2) h2.style.display = '';
+    const pageIntro = document.querySelector('.container .page-intro');
+    if (pageIntro) pageIntro.style.display = '';
   }
 
   // Hide creator sections
@@ -2104,10 +1822,8 @@ const ModeManager = (function() {
       });
     }
     // Hide headers (player has its own title)
-    const headerRow = document.querySelector('.container .header-row');
-    const h2 = document.querySelector('.container h2');
-    if (headerRow) headerRow.style.display = 'none';
-    if (h2) h2.style.display = 'none';
+    const pageIntro = document.querySelector('.container .page-intro');
+    if (pageIntro) pageIntro.style.display = 'none';
   }
 
   // Switch to creator mode
@@ -2191,8 +1907,8 @@ const ModeManager = (function() {
     creatorEl = document.querySelector('.container');
     playerContainerEl = document.getElementById('player-container');
 
-    // Get all creator sections (not including the header and tabs)
-    creatorSections = document.querySelectorAll('.container .section');
+    // Get all creator sections (including column/bottom wrappers)
+    creatorSections = document.querySelectorAll('.container .section, .container .editor-columns, .container .bottom-sections');
 
     // Add tab click listeners
     modeTabs.forEach(tab => {

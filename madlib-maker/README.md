@@ -6,7 +6,6 @@ An interactive web tool for creating and sharing custom madlibs. Create stories 
 
 - **Interactive Story Editor**: Create stories with custom placeholders using simple `{id}` syntax
 - **Multiple Placeholder Types**: Use preset types (noun, verb, adjective, etc.) or create your own
-- **Color Themes**: Customize the look with built-in themes or create custom color schemes
 - **Three Sharing Modes**:
   - **Player Link**: Share a playable version where others fill in the blanks (no editing)
   - **Editor Link**: Share an editable copy so others can customize your madlib
@@ -30,8 +29,7 @@ An interactive web tool for creating and sharing custom madlibs. Create stories 
 
 1. **Create Placeholders**: Click preset buttons (noun, verb, etc.) or add custom ones
 2. **Write Your Story**: Use `{id}` syntax to reference placeholders (e.g., `{word01}`)
-3. **Customize Theme**: Optional - choose a color theme or create your own
-4. **Share**: Click "Share with Players" to get a link others can play
+3. **Share**: Click "Share with Players" to get a link others can play
 
 ## URL Shortening (Optional)
 

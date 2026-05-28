@@ -6,7 +6,7 @@ product
 
 ## Users
 
-Atomic Tools is a collection of lightweight, single-purpose web utilities. The primary user is Jason, with occasional public sharing when a tool naturally supports it. Each tool should respect its context of use: quick lookup for Wordle Checker, playful creation and sharing for Madlib Maker, focused clipboard conversion for Rich Text Markdown, and dense comparison work for AI Coding Subscriptions. The root index is a launcher, not a marketing site.
+Atomic Tools is a collection of lightweight, single-purpose web utilities. The primary user is Jason, with occasional public sharing when a tool naturally supports it. Each tool should respect its context of use: quick lookup for Wordle Checker, playful creation and sharing for Madlib Maker, and focused clipboard conversion for Markdown ↔ Rich Text. The root index is a launcher, not a marketing site.
 
 ## Product Purpose
 
