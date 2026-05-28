@@ -19,6 +19,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 
@@ -28,6 +29,7 @@ Thumbs.db
 .codex/
 .factory/
 .opencode/
+.specstory/
 .pi/
 skills-lock.json
 app/
@@ -36,7 +38,11 @@ app/
 # Local config
 .mcp.json
 opencode.json
+opencode.json.*
 _concepts/
+
+# QA scratch artifacts
+/qa/
 
 # Test specs
 **/spec/
