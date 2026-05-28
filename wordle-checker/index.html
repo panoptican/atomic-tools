@@ -66,8 +66,8 @@
       width: min(640px, calc(100% - 48px));
       margin: 0 auto;
       padding: 72px 0 64px;
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center;
+      display: flex; flex-direction: column; align-items: stretch;
+      text-align: left;
     }
 
     h1 {
@@ -81,7 +81,7 @@
       margin-top: 14px;
       color: var(--ink-muted);
       font-size: 0.95rem;
-      max-width: 38ch;
+      max-width: 56ch;
     }
 
     /* Tiles ---------------------------------------------------------- */
@@ -90,7 +90,7 @@
       display: grid;
       grid-template-columns: repeat(5, 64px);
       gap: 10px;
-      margin: 48px 0 0;
+      margin: 48px auto 0;
     }
 
     .tile {
@@ -127,6 +127,7 @@
     .result {
       margin-top: 32px; min-height: 60px;
       display: flex; flex-direction: column; align-items: center; gap: 4px;
+      text-align: center;
     }
     .result-headline {
       font-family: var(--display); font-weight: 400;

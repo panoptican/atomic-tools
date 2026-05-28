@@ -96,13 +96,13 @@ a { -webkit-tap-highlight-color: transparent; }
 
 .page-intro h1 em {
   font-style: normal;
-  color: var(--ink-muted);
+  color: var(--ink);
 }
 
 .page-sub {
   color: var(--ink-muted);
-  font-size: 1.25rem;
-  max-width: 62ch;
+  font-size: 0.95rem;
+  max-width: 56ch;
 }
 
 .header-actions {
@@ -880,7 +880,6 @@ a { -webkit-tap-highlight-color: transparent; }
   .container { width: calc(100% - 32px); padding: 32px 0 48px; }
   .primary-section, .supporting-section { padding: 16px; }
   .page-intro { margin-bottom: 28px; }
-  .page-sub { font-size: 1rem; }
   .story-textarea { min-height: 320px; padding: 16px 18px; font-size: 1rem; }
   .player-container { width: calc(100% - 32px); padding: 32px 0 48px; }
   .prompt-nav { flex-direction: column-reverse; align-items: stretch; }
