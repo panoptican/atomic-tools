@@ -1,4 +1,4 @@
-# Rich Text Markdown
+# Markdown ↔ Rich Text
 
 A browser-only converter for moving content between rich text editors and Markdown workflows.
 

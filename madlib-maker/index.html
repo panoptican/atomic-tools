@@ -5,19 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Madlib Creator</title>
   <meta name="description" content="Create and share custom madlibs with friends." />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Nabla&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/atomic-shell.css">
+  <script src="../assets/atomic-theme.js"></script>
+  <script>
+    AtomicTheme.applyBeforePaint({ storageKey: 'madlib-maker-theme', mode: 'class', className: 'dark' });
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    @font-face {
-      font-family: "GT America";
-      src: url("../assets/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
-           url("../assets/fonts/GT-America-Standard-Medium.woff") format("woff");
-      font-display: swap;
-      font-weight: 500;
-    }
-  </style>
 </head>
 
 <body>
@@ -35,232 +29,172 @@
       </svg>
       Madlib Maker
     </span>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/>
+        <path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/>
+        <path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+      </svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"/>
+      </svg>
+    </button>
   </div>
 
   <div class="container">
-    <div class="header-row">
-      <h1>Madlib Creator</h1>
-      <button type="button" class="new-madlib-btn" id="new-madlib-btn">New Madlib</button>
+    <div class="page-intro">
+      <h1>Fill the <em>blanks</em>.</h1>
+      <p class="page-sub">Write a story with placeholders in braces, then share a link for friends to play.</p>
     </div>
-    <h2>Story first</h2>
 
     <!-- Mode Toggle Tabs -->
     <div class="mode-tabs" id="mode-tabs" aria-label="Madlib mode">
       <button type="button" class="mode-tab active" data-mode="creator" aria-selected="true">Create</button>
       <button type="button" class="mode-tab" data-mode="preview" aria-selected="false">Preview</button>
+      <button type="button" class="mode-tab new-madlib-btn" id="new-madlib-btn">New madlib</button>
     </div>
 
-    <!-- Story Editor Section -->
-    <div class="section primary-section" id="story-editor-section">
-      <h3>Story</h3>
-      <p class="section-hint">Type blanks in braces, like <code>{noun}</code> or <code>{favorite-food}</code>. They appear below automatically.</p>
-      <textarea
-        id="story-editor"
-        class="story-textarea"
-        placeholder="Once upon a time, a {blank} walked into a {place}..."
-        rows="10"
-      ></textarea>
-      <div class="orphan-warning" id="orphan-warning">
-        <div class="orphan-warning-title">Orphaned placeholders found</div>
-        <div class="orphan-warning-list" id="orphan-list"></div>
+    <!-- Two-column editor layout -->
+    <div class="editor-columns">
+
+      <!-- Story Editor Section -->
+      <div class="section primary-section" id="story-editor-section">
+        <h3>Story</h3>
+        <p class="section-hint">Type blanks in braces, like <code>{noun}</code> or <code>{favorite-food}</code>. They appear in the sidebar automatically.</p>
+        <textarea
+          id="story-editor"
+          class="story-textarea"
+          placeholder="Once upon a time, a {blank} walked into a {place}..."
+          rows="12"
+        ></textarea>
+        <div class="orphan-warning" id="orphan-warning">
+          <div class="orphan-warning-title">Orphaned placeholders found</div>
+          <div class="orphan-warning-list" id="orphan-list"></div>
+        </div>
       </div>
+
+      <!-- Detected Blanks Section -->
+      <div class="section supporting-section" id="word-list-section">
+        <h3>Blanks</h3>
+
+        <!-- Placeholder List Display -->
+        <div id="word-list" class="word-list">
+          <!-- Empty state shown when no placeholders -->
+          <div class="empty-state" id="empty-state">
+            No blanks yet.
+          </div>
+        </div>
+
+        <!-- Preset Quick-Add Buttons -->
+        <div class="preset-buttons">
+          <button type="button" class="preset-btn" data-type="noun">+ Noun</button>
+          <button type="button" class="preset-btn" data-type="verb">+ Verb</button>
+          <button type="button" class="preset-btn" data-type="adjective">+ Adj</button>
+          <button type="button" class="preset-btn" data-type="name">+ Name</button>
+          <button type="button" class="preset-btn" data-type="place">+ Place</button>
+        </div>
+
+        <!-- Custom Label Input -->
+        <div class="custom-input-wrapper">
+          <input type="text" id="custom-label-input" placeholder="Custom blank">
+          <button type="button" id="add-custom-btn">Add</button>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Detected Blanks Section -->
-    <div class="section supporting-section" id="word-list-section">
-      <h3>Blanks</h3>
+    <!-- Bottom row: Title & Share side by side -->
+    <div class="bottom-sections">
 
-      <!-- Placeholder List Display -->
-      <div id="word-list" class="word-list">
-        <!-- Empty state shown when no placeholders -->
-        <div class="empty-state" id="empty-state">
-          No blanks yet.
+      <!-- Title & Metadata Section -->
+      <details class="section secondary-section" id="metadata-section">
+        <summary>Title & details</summary>
+        <div class="secondary-section-body">
+          <div class="metadata-fields">
+            <div class="field-group">
+              <label for="madlib-title">Title</label>
+              <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled Madlib">
+            </div>
+            <div class="field-group">
+              <label for="madlib-subtitle">Subtitle <span class="optional-label">(optional)</span></label>
+              <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by...">
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
 
-      <!-- Preset Quick-Add Buttons -->
-      <div class="preset-buttons">
-        <button type="button" class="preset-btn" data-type="noun">+ Noun</button>
-        <button type="button" class="preset-btn" data-type="verb">+ Verb</button>
-        <button type="button" class="preset-btn" data-type="adjective">+ Adjective</button>
-        <button type="button" class="preset-btn" data-type="name">+ Name</button>
-        <button type="button" class="preset-btn" data-type="place">+ Place</button>
-      </div>
+      <!-- Share Section -->
+      <details class="section secondary-section" id="share-section">
+        <summary>Share</summary>
+        <div class="secondary-section-body">
+          <div class="share-buttons">
+            <button type="button" class="share-btn share-btn-primary" id="share-player-btn">
+              Share with Players
+            </button>
+            <button type="button" class="share-btn share-btn-secondary" id="share-editor-btn">
+              Copy Editor Link
+            </button>
+          </div>
+        </div>
+      </details>
 
-      <!-- Custom Label Input -->
-      <div class="custom-input-wrapper">
-        <input type="text" id="custom-label-input" placeholder="Add a custom blank">
-        <button type="button" id="add-custom-btn">Add</button>
-      </div>
     </div>
-
-    <!-- Title & Metadata Section -->
-    <details class="section secondary-section" id="metadata-section">
-      <summary>Title & details</summary>
-      <div class="secondary-section-body">
-        <div class="metadata-fields">
-          <div class="field-group">
-            <label for="madlib-title">Title</label>
-            <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled Madlib">
-          </div>
-          <div class="field-group">
-            <label for="madlib-subtitle">Subtitle <span class="optional-label">(optional)</span></label>
-            <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by...">
-          </div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Color Theme Section -->
-    <details class="section secondary-section" id="color-theme-section">
-      <summary>Theme</summary>
-      <div class="secondary-section-body">
-        <!-- Preset Theme Buttons -->
-        <div class="theme-presets" id="theme-presets">
-          <button type="button" class="theme-preset-btn active" data-theme="brick">
-            <span class="theme-preset-swatch" style="background: #831a19;"></span>
-            Brick
-          </button>
-          <button type="button" class="theme-preset-btn" data-theme="ocean">
-            <span class="theme-preset-swatch" style="background: #1a4f6e;"></span>
-            Ocean
-          </button>
-          <button type="button" class="theme-preset-btn" data-theme="forest">
-            <span class="theme-preset-swatch" style="background: #2d5a3d;"></span>
-            Forest
-          </button>
-          <button type="button" class="theme-preset-btn" data-theme="midnight">
-            <span class="theme-preset-swatch" style="background: #4a1a6b;"></span>
-            Midnight
-          </button>
-        </div>
-
-        <!-- Live Preview Swatches -->
-        <div class="theme-preview" id="theme-preview">
-          <div class="preview-swatch">
-            <div class="preview-swatch-color" id="preview-background"></div>
-            <span class="preview-swatch-label">Background</span>
-          </div>
-          <div class="preview-swatch">
-            <div class="preview-swatch-color" id="preview-text"></div>
-            <span class="preview-swatch-label">Text</span>
-          </div>
-          <div class="preview-swatch">
-            <div class="preview-swatch-color" id="preview-button"></div>
-            <span class="preview-swatch-label">Button</span>
-          </div>
-          <div class="preview-swatch">
-            <div class="preview-swatch-color" id="preview-highlight"></div>
-            <span class="preview-swatch-label">Highlight</span>
-          </div>
-        </div>
-
-        <!-- Custom Color Pickers -->
-        <div class="color-pickers">
-          <div class="color-picker-group">
-            <label for="color-background">Background</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="color-background" value="#1c0001">
-              <span class="color-hex-value" id="hex-background">#1c0001</span>
-            </div>
-          </div>
-          <div class="color-picker-group">
-            <label for="color-text">Text</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="color-text" value="#ddd5ba">
-              <span class="color-hex-value" id="hex-text">#ddd5ba</span>
-            </div>
-          </div>
-          <div class="color-picker-group">
-            <label for="color-button">Button / UI</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="color-button" value="#831a19">
-              <span class="color-hex-value" id="hex-button">#831a19</span>
-            </div>
-          </div>
-          <div class="color-picker-group">
-            <label for="color-highlight">Highlight</label>
-            <div class="color-picker-wrapper">
-              <input type="color" id="color-highlight" value="#eeb440">
-              <span class="color-hex-value" id="hex-highlight">#eeb440</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="theme-actions">
-          <button type="button" class="reset-theme-btn" id="reset-theme-btn">Reset</button>
-        </div>
-      </div>
-    </details>
-
-    <!-- Share Section -->
-    <details class="section secondary-section" id="share-section">
-      <summary>Share</summary>
-      <div class="secondary-section-body">
-        <div class="share-buttons">
-          <button type="button" class="share-btn share-btn-primary" id="share-player-btn">
-            Share with Players
-          </button>
-          <button type="button" class="share-btn share-btn-secondary" id="share-editor-btn">
-            Copy Editor Link
-          </button>
-        </div>
-      </div>
-    </details>
   </div>
 
-  <!-- Player Mode Container (hidden in creator mode) -->
+  <!-- Player / preview (hidden in creator-only mode) -->
   <div class="player-container" id="player-container" style="display: none;">
 
-    <!-- Intro Screen -->
     <div class="player-screen" id="player-intro">
-      <h1 class="player-title" id="player-title">Untitled Madlib</h1>
-      <h2 class="player-subtitle" id="player-subtitle"></h2>
+      <header class="player-intro-header">
+        <h1 class="player-title" id="player-title">Untitled Madlib</h1>
+        <p class="player-subtitle" id="player-subtitle"></p>
+      </header>
 
-      <div class="mode-toggle">
-        <span class="mode-label">Input mode:</span>
-        <div class="toggle-buttons" role="group" aria-label="Input mode">
-          <button type="button" class="toggle-btn active" data-mode="sequential" aria-pressed="true">One at a time</button>
-          <button type="button" class="toggle-btn" data-mode="all-at-once" aria-pressed="false">All at once</button>
+      <div class="player-field">
+        <span class="player-field-label">Input mode</span>
+        <div class="player-tabs" role="group" aria-label="Input mode">
+          <button type="button" class="player-tab active" data-mode="sequential" aria-pressed="true">One at a time</button>
+          <button type="button" class="player-tab" data-mode="all-at-once" aria-pressed="false">All at once</button>
         </div>
       </div>
 
-      <button type="button" class="start-btn" id="start-btn">Start</button>
+      <button type="button" class="player-btn player-btn-primary" id="start-btn">Start</button>
     </div>
 
-    <!-- Sequential Prompt Screen -->
     <div class="player-screen" id="player-sequential" style="display: none;">
-      <div class="prompt-progress" id="prompt-progress">1 of 5</div>
-      <div class="prompt-label" id="prompt-label">noun</div>
-      <input type="text" class="prompt-input" id="prompt-input" placeholder="Enter a noun..." autocomplete="off">
-      <div class="prompt-hint">Press Enter to continue</div>
+      <header class="prompt-header">
+        <p class="prompt-progress" id="prompt-progress">1 of 5</p>
+        <h2 class="prompt-label" id="prompt-label">noun</h2>
+      </header>
+      <div class="prompt-field">
+        <input type="text" class="prompt-input" id="prompt-input" placeholder="Enter a noun…" autocomplete="off" aria-labelledby="prompt-label">
+        <p class="prompt-hint">Press Enter to continue</p>
+      </div>
       <div class="prompt-nav">
-        <button type="button" class="nav-btn" id="prev-btn" disabled>← Back</button>
-        <button type="button" class="nav-btn nav-btn-primary" id="next-btn">Next →</button>
+        <button type="button" class="player-btn" id="prev-btn" disabled>Back</button>
+        <button type="button" class="player-btn player-btn-primary" id="next-btn">Next</button>
       </div>
     </div>
 
-    <!-- All-at-Once Form Screen -->
     <div class="player-screen" id="player-all-at-once" style="display: none;">
-      <h3 class="form-title">Fill in the blanks</h3>
-      <div class="all-inputs-form" id="all-inputs-form">
-        <!-- Inputs will be dynamically generated -->
-      </div>
-      <button type="button" class="submit-btn" id="submit-all-btn">See My Story</button>
+      <header class="player-intro-header">
+        <h2 class="player-section-title">Fill in the blanks</h2>
+      </header>
+      <div class="all-inputs-form" id="all-inputs-form"></div>
+      <button type="button" class="player-btn player-btn-primary" id="submit-all-btn">See my story</button>
     </div>
 
-    <!-- Story Reveal Screen -->
     <div class="player-screen" id="player-reveal" style="display: none;">
-      <h3 class="reveal-title">Your Madlib</h3>
-      <div class="story-output" id="story-output">
-        <!-- Story with highlighted words will appear here -->
-      </div>
+      <header class="player-intro-header">
+        <h2 class="player-section-title">Your madlib</h2>
+      </header>
+      <div class="story-output" id="story-output"></div>
       <div class="reveal-actions">
-        <button type="button" class="action-btn action-btn-primary" id="copy-story-btn">Copy Story</button>
-        <button type="button" class="action-btn action-btn-primary" id="share-story-btn">Share Story Link</button>
-        <button type="button" class="action-btn" id="play-again-btn">Play Again</button>
-        <button type="button" class="action-btn" id="create-own-btn">Create Your Own</button>
+        <button type="button" class="player-btn player-btn-primary" id="copy-story-btn">Copy story</button>
+        <button type="button" class="player-btn player-btn-primary" id="share-story-btn">Share story link</button>
+        <button type="button" class="player-btn" id="play-again-btn">Play again</button>
+        <button type="button" class="player-btn" id="create-own-btn">Create your own</button>
       </div>
     </div>
   </div>
@@ -290,6 +224,14 @@
     </div>
   </div>
 
+  <script>
+    AtomicTheme.bind({
+      storageKey: 'madlib-maker-theme',
+      mode: 'class',
+      className: 'dark',
+      toggleId: 'themeToggle'
+    });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

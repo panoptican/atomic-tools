@@ -52,3 +52,4 @@ _concepts/
 
 # Cloudflare deployment docs
 **/CLOUDFLARE_DEPLOYMENT.md
+/qa/
