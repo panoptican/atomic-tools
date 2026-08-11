@@ -20,6 +20,7 @@ A collection of single-purpose web tools. Each tool lives in its own directory w
 ├── wordle-checker/                 # Wordle Checker (Cloudflare Worker API)
 ├── madlib-maker/                   # Madlib creator + player
 ├── rich-text-markdown/             # Markdown ↔ Rich Text (converter.js + app.js)
+├── text-diff/                      # Text Diff (@pierre/diffs via esm.sh)
 └── house-prep/                     # Private tool (not on index)
 ```
 
@@ -37,6 +38,7 @@ Then visit:
 - http://localhost:8080/wordle-checker/ — Wordle Checker
 - http://localhost:8080/madlib-maker/ — Madlib Maker
 - http://localhost:8080/rich-text-markdown/ — Markdown ↔ Rich Text
+- http://localhost:8080/text-diff/ — Text Diff
 
 ## Tool-Specific Commands
 
