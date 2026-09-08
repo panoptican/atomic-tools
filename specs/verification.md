@@ -27,6 +27,7 @@ Validation:
 
 - Index lists three tools only: Wordle Checker, Madlib Maker, Markdown ↔ Rich Text (`/rich-text-markdown/`).
 - House Prep remains at `/house-prep/` but is not linked from the index.
+  (House Prep was removed from the repo entirely on 2026-09-08.)
 - Removed from repo: `/ai-coding-subscriptions/`, `/ergonomic-set/`.
 - Shared shell: `assets/atomic-shell.css`, `assets/atomic-theme.js`.
 - Markdown ↔ Rich Text logic split: `rich-text-markdown/converter.js`, `rich-text-markdown/app.js`.

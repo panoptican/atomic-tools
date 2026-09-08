@@ -12,16 +12,14 @@ A collection of single-purpose web tools. Each tool lives in its own directory w
 /
 ├── index.html                      # Atomic Tools index (launcher)
 ├── assets/
-│   ├── atomic-shell.css            # Shared top bar + GT America fonts
-│   ├── atomic-theme.js             # Shared light/dark theme (tools with toggle)
-│   └── fonts/                      # Self-hosted GT America files
+│   ├── atomic-shell.css            # Shared top bar + @font-face (fonts hosted off-repo)
+│   └── atomic-theme.js             # Shared light/dark theme (tools with toggle)
 ├── specs/
 │   └── BRIEF.md                    # Design contract for the index
 ├── wordle-checker/                 # Wordle Checker (Cloudflare Worker API)
 ├── madlib-maker/                   # Madlib creator + player
 ├── rich-text-markdown/             # Markdown ↔ Rich Text (converter.js + app.js)
 ├── text-diff/                      # Text Diff (@pierre/diffs via esm.sh)
-├── house-prep/                     # Private tool (not on index)
 └── nothing/                        # Unlisted Easter egg (not on index)
 ```
 
@@ -77,21 +75,23 @@ and JS are served as-is. Do not run `wrangler pages deploy`; it uploads a
 one-off deployment out of band from git and leaves the dashboard's build
 history disagreeing with `main`.
 
-Two things deploy separately from the site:
+The site has no Pages Functions. The one exception was House Prep's state
+endpoint, removed in September 2026. The Wordle Checker's API is not part of
+this deploy either — it is its own Cloudflare Worker with its own
+`wrangler.toml`, shipped from `wordle-checker/` with `npm run deploy`.
 
-- `functions/house-prep/api/state.js` is a Pages Function on this same
-  project, so it ships with a normal push.
-- The Wordle Checker's API is its own Cloudflare Worker with its own
-  `wrangler.toml`, deployed from `wordle-checker/` with `npm run deploy`.
+Fonts are not in this repo. GT America is licensed and this repo is public, so
+both `@font-face` blocks load it from `https://spidleweb.net/fonts/`, which is
+a private repo that sends `Access-Control-Allow-Origin: *` on `/fonts/*`. Do
+not commit font binaries here.
 
 ### GitHub Pages is a leftover, not the deployment
 
-GitHub Pages is still enabled on the repo (`main` / root, cname
-`tools.spidleweb.net`) and still builds on every push, but DNS points
-`tools.spidleweb.net` at Cloudflare, so nothing it publishes is ever served.
-It predates the Cloudflare project, and the root `CNAME` file belongs to it,
-not to Cloudflare.
+GitHub Pages is still enabled on this repo and still rebuilds on every push,
+now publishing to `https://panoptican.github.io/atomic-tools/`. Its custom
+domain was removed in September 2026, so it no longer competes for
+`tools.spidleweb.net` — but it is still a live, public second copy of the site.
 
-Disable it in Settings → Pages rather than keeping it as a fallback. It cannot
-run Pages Functions, so a silent failover to it would serve a site with
-`/house-prep/` broken.
+If that copy is unwanted, turn it off in Settings → Pages by setting the source
+to None. The root `CNAME` file belongs to it, not to Cloudflare, and can go at
+the same time.
