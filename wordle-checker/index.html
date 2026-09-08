@@ -312,11 +312,11 @@
 
         if (data.used) {
           tiles.forEach(t => { t.classList.add('yes'); t.classList.remove('no'); });
-          resultHeadline.textContent = 'Yes — already used.';
+          resultHeadline.textContent = 'Yes. Already used.';
           resultDetail.textContent = `Wordle #${data.game} · ${data.date}`;
         } else {
           tiles.forEach(t => { t.classList.add('no'); t.classList.remove('yes'); });
-          resultHeadline.textContent = 'No — still safe to guess.';
+          resultHeadline.textContent = 'No. Still safe to guess.';
           resultDetail.textContent = 'This word has not been a Wordle answer.';
         }
       } catch (err) {

@@ -137,6 +137,13 @@
       font-size: 17px;
     }
 
+    .print-note { display: none; }
+
+    @media print {
+      body { background: white; color: black; }
+      .print-note { display: block; margin-top: 48px; }
+    }
+
     @media (max-width: 600px) {
       .shell { padding: 64px 0; width: calc(100% - 32px); }
       .wordmark { margin-bottom: 64px; }
@@ -156,6 +163,8 @@
 
     <p class="label">Tools</p>
 
+    <!-- Yes, all that CSS was for a list of links. -->
+    <!-- One more, if you need it: nothing/ -->
     <ol class="list list--tools">
       <li>
         <a href="wordle-checker/" class="row">
@@ -186,6 +195,7 @@
         </a>
       </li>
     </ol>
+    <footer class="print-note">The links work better on screen.</footer>
   </main>
 </body>
 </html>

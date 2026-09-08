@@ -26,6 +26,8 @@
   var outputBox = document.getElementById('outputBox');
   var hintText = document.getElementById('hintText');
   var statusNote = document.getElementById('statusNote');
+  var selfAside = document.getElementById('selfAside');
+  var pageTitle = document.querySelector('.page-title');
 
   var BADGE_ICONS = {
     hash: 'badgeIconHash',
@@ -117,6 +119,11 @@
         outputBox.innerHTML = state.outputHtml;
       }
     }
+    // Compare converted text so both a rich heading and a plain paste work.
+    var convertedText = state.direction === 'html-to-md'
+      ? state.outputMarkdown.replace(/^#{1,6}\s+/, '')
+      : outputBox.textContent;
+    selfAside.classList.toggle('hidden', !hasOutput || convertedText.trim() !== pageTitle.textContent.trim());
     updateBadge();
   }
 
@@ -129,6 +136,7 @@
     statusNote.classList.remove('hidden');
     outputSection.classList.add('hidden');
     hintText.classList.add('hidden');
+    selfAside.classList.add('hidden');
     updateBadge();
   }
 

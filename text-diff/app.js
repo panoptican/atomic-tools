@@ -7,6 +7,7 @@ const changedCount = document.getElementById('changedCount');
 const diffMount = document.getElementById('diffMount');
 const placeholder = document.getElementById('placeholder');
 const statusNote = document.getElementById('statusNote');
+const swapAside = document.getElementById('swapAside');
 const filenameInput = document.getElementById('filenameInput');
 
 const splitBtn = document.getElementById('splitBtn');
@@ -21,6 +22,13 @@ const DEFAULT_FILENAME = 'snippet.txt';
 
 const prefs = loadPrefs();
 let instance = null;
+let identicalSwaps = 0;
+let swapAsideShown = false;
+try {
+  swapAsideShown = sessionStorage.getItem('text-diff-swap-aside') === 'shown';
+} catch (e) {
+  /* If storage is unavailable, remember only until the page closes. */
+}
 
 function loadPrefs() {
   const defaults = { diffStyle: 'split', wrap: false, fullContext: true, filename: '' };
@@ -161,8 +169,18 @@ function setToggle(button, key, value) {
   render();
 }
 
-originalInput.addEventListener('input', scheduleRender);
-changedInput.addEventListener('input', scheduleRender);
+function resetSwapAside() {
+  identicalSwaps = 0;
+  swapAside.classList.add('hidden');
+}
+
+function onTextInput() {
+  resetSwapAside();
+  scheduleRender();
+}
+
+originalInput.addEventListener('input', onTextInput);
+changedInput.addEventListener('input', onTextInput);
 
 filenameInput.addEventListener('input', () => {
   prefs.filename = filenameInput.value;
@@ -180,11 +198,26 @@ swapBtn.addEventListener('click', () => {
   originalInput.value = changedInput.value;
   changedInput.value = held;
   render();
+
+  if (!held.trim() || originalInput.value !== changedInput.value) {
+    resetSwapAside();
+    return;
+  }
+  if (!swapAsideShown && ++identicalSwaps === 3) {
+    swapAside.classList.remove('hidden');
+    swapAsideShown = true;
+    try {
+      sessionStorage.setItem('text-diff-swap-aside', 'shown');
+    } catch (e) {
+      /* The in-memory flag still limits this to one appearance. */
+    }
+  }
 });
 
 clearBtn.addEventListener('click', () => {
   originalInput.value = '';
   changedInput.value = '';
+  resetSwapAside();
   render();
   originalInput.focus();
 });

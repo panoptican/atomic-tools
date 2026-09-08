@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Page not found · Atomic Tools</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/atomic-shell.css">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --paper: #f5f4ef;
+      --ink: #111111;
+      --ink-muted: #66665f;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root { --paper: #0f0f0e; --ink: #ededea; --ink-muted: #a4a39d; }
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "GT America", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      width: min(720px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 96px 0;
+    }
+
+    h1 { margin: 0 0 24px; font-size: inherit; font-weight: inherit; }
+    a { display: inline-block; padding: 8px 0; color: inherit; text-underline-offset: 4px; }
+    .hint { margin: 24px 0 0; color: var(--ink-muted); font-size: 0.85rem; line-height: 1.55; }
+    a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
+    @media (max-width: 600px) {
+      main { width: calc(100% - 32px); padding: 64px 0; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Page not found</h1>
+    <a href="/">All tools</a>
+    <p class="hint">The page that does nothing on purpose is at /nothing/.</p>
+  </main>
+</body>
+</html>
