@@ -21,7 +21,8 @@ A collection of single-purpose web tools. Each tool lives in its own directory w
 ├── madlib-maker/                   # Madlib creator + player
 ├── rich-text-markdown/             # Markdown ↔ Rich Text (converter.js + app.js)
 ├── text-diff/                      # Text Diff (@pierre/diffs via esm.sh)
-└── house-prep/                     # Private tool (not on index)
+├── house-prep/                     # Private tool (not on index)
+└── nothing/                        # Unlisted Easter egg (not on index)
 ```
 
 ## Development
@@ -66,4 +67,31 @@ node test-today-exclusion.js
 
 ## Deployment
 
-GitHub Pages serves from the main branch root. Each tool is a subpath (e.g., `/wordle-checker/`).
+Cloudflare Pages project **`atomic-tools`**, connected to GitHub
+**`panoptican/atomic-tools`**. Cloudflare builds and deploys on push;
+production tracks **`main`** and serves `tools.spidleweb.net`. Each tool is a
+subpath (e.g. `/wordle-checker/`).
+
+**Pushing to `main` is deploying.** There is no build step — plain HTML, CSS,
+and JS are served as-is. Do not run `wrangler pages deploy`; it uploads a
+one-off deployment out of band from git and leaves the dashboard's build
+history disagreeing with `main`.
+
+Two things deploy separately from the site:
+
+- `functions/house-prep/api/state.js` is a Pages Function on this same
+  project, so it ships with a normal push.
+- The Wordle Checker's API is its own Cloudflare Worker with its own
+  `wrangler.toml`, deployed from `wordle-checker/` with `npm run deploy`.
+
+### GitHub Pages is a leftover, not the deployment
+
+GitHub Pages is still enabled on the repo (`main` / root, cname
+`tools.spidleweb.net`) and still builds on every push, but DNS points
+`tools.spidleweb.net` at Cloudflare, so nothing it publishes is ever served.
+It predates the Cloudflare project, and the root `CNAME` file belongs to it,
+not to Cloudflare.
+
+Disable it in Settings → Pages rather than keeping it as a fallback. It cannot
+run Pages Functions, so a silent failover to it would serve a site with
+`/house-prep/` broken.

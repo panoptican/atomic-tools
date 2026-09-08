@@ -56,17 +56,14 @@ npm run kv:create
 npm run deploy
 ```
 
-### Frontend (GitHub Pages)
+### Frontend (Cloudflare Pages)
 
 1. Update `API_URL` in `index.html` with your Worker URL
-2. Push to GitHub
-3. Enable GitHub Pages:
-   - Settings → Pages
-   - Source: Deploy from a branch
-   - Branch: `main` / `/ (root)`
-   - Save
+2. Push to `main`
 
-Your site will be available at: `https://<username>.github.io/wordle-checker/`
+Cloudflare Pages builds the whole repo on push and serves this tool at
+<https://tools.spidleweb.net/wordle-checker/>. There is no separate frontend
+deploy step. See the repo's `AGENTS.md` for the full deployment picture.
 
 ## 🛠️ Local Development
 
