@@ -1,17 +1,22 @@
 /* Shared Atomic Tools shell: fonts, top bar, theme toggle */
 
+/* GT America is licensed (Grilli Type) and this repo is public, so the files
+   are not kept here. They are served from spidleweb.net, which is a private
+   repo; /fonts/* there sends Access-Control-Allow-Origin: *. If that origin is
+   unreachable, font-display: swap leaves the system stack in place. */
+
 @font-face {
   font-family: "GT America Expanded";
-  src: url("fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
-       url("fonts/GT-America-Expanded-Regular.woff") format("woff");
+  src: url("https://spidleweb.net/fonts/GT-America-Expanded-Regular.woff2") format("woff2"),
+       url("https://spidleweb.net/fonts/GT-America-Expanded-Regular.woff") format("woff");
   font-display: swap;
   font-weight: 400;
 }
 
 @font-face {
   font-family: "GT America";
-  src: url("fonts/GT-America-Standard-Medium.woff2") format("woff2"),
-       url("fonts/GT-America-Standard-Medium.woff") format("woff");
+  src: url("https://spidleweb.net/fonts/GT-America-Standard-Medium.woff2") format("woff2"),
+       url("https://spidleweb.net/fonts/GT-America-Standard-Medium.woff") format("woff");
   font-display: swap;
   font-weight: 500;
 }
