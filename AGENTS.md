@@ -93,5 +93,5 @@ domain was removed in September 2026, so it no longer competes for
 `tools.spidleweb.net` — but it is still a live, public second copy of the site.
 
 If that copy is unwanted, turn it off in Settings → Pages by setting the source
-to None. The root `CNAME` file belongs to it, not to Cloudflare, and can go at
-the same time.
+to None. The root `CNAME` file that pointed it at the custom domain has already
+been deleted; Cloudflare never used it, so nothing here needs to replace it.
