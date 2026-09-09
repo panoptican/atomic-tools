@@ -228,7 +228,7 @@ async function handleMeta(env) {
       wordCount: Object.keys(wordList).length,
       updatedAt: metadata?.updatedAt ?? null,
       refreshStatus: 'ok'
-    }, { cacheControl: 'public, max-age=300' });
+    }, { cacheControl: 'no-store' });
   } catch (error) {
     console.error('Error building meta:', error);
     return jsonResponse({ error: 'Internal server error' }, { status: 500 });

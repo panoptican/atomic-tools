@@ -177,9 +177,11 @@ This means:
 - Replaces KV only after the complete snapshot passes validation
 - Leaves the previous snapshot in place if the source is unavailable or malformed
 
-The frontend calls `/api/meta` to display `Current through <date>`. This is
-the latest puzzle date present in the cached snapshot, not the time the Worker
-last attempted a refresh. If the endpoint is unavailable, the UI says
+The frontend calls `/api/meta` to display `Current through <date>`. This endpoint
+is deliberately `no-store`, so different edge locations do not show different
+freshness dates. The date is the latest puzzle date present in the cached
+snapshot, not the time the Worker last attempted a refresh. If the endpoint is
+unavailable, the UI says
 `Current date unavailable` rather than claiming the data is current.
 
 ### Caching Strategy
