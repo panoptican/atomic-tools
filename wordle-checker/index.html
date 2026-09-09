@@ -143,25 +143,18 @@
     .loading { color: var(--ink-muted); font-size: 0.85rem; margin-top: 28px; }
     .error { color: #c93a3a; font-size: 0.85rem; margin-top: 12px; }
 
-    /* Footer --------------------------------------------------------- */
-
-    .foot {
-      margin-top: auto;
-      padding: 24px 28px;
-      border-top: 1px solid var(--rule);
-      display: flex; justify-content: space-between; gap: 16px;
+    .data-status {
+      min-height: 1.2em;
+      margin-top: 16px;
       color: var(--ink-muted);
       font-family: var(--text); font-size: 0.72rem;
       letter-spacing: 0.08em; text-transform: uppercase;
     }
-    .foot span:last-child { text-align: right; }
 
     @media (max-width: 480px) {
       .main { padding: 48px 0 48px; }
       .tiles { grid-template-columns: repeat(5, 54px); gap: 8px; }
       .tile { width: 54px; height: 54px; font-size: 1.5rem; }
-      .foot { padding: 18px 20px; }
-      .foot span:last-child { max-width: 15ch; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -193,7 +186,7 @@
 
   <main class="main">
     <h1>Was it a Wordle?</h1>
-    <p class="subtitle">Type a five-letter word and find out if the New York Times has already used it.</p>
+    <p class="subtitle">Type a five-letter word and find out if<br>the New York Times has already used it.</p>
 
     <div class="tiles" id="tiles" role="presentation">
       <div class="tile" data-i="0"></div>
@@ -202,6 +195,8 @@
       <div class="tile" data-i="3"></div>
       <div class="tile" data-i="4"></div>
     </div>
+
+    <p class="data-status" id="footerUpdated" aria-live="polite">Current through …</p>
 
     <label class="input-shroud" for="wordInput">Five-letter word</label>
     <input
@@ -224,11 +219,6 @@
     <p class="loading" id="loading">Loading…</p>
     <p class="error" id="error"></p>
   </main>
-
-  <footer class="foot">
-    <span>Atomic Tools · Wordle Checker</span>
-    <span id="footerUpdated" aria-live="polite">Current through …</span>
-  </footer>
 
   <script>
     const API_BASE = 'https://wordle-checker-api.spidleweb.workers.dev';
