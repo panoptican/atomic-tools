@@ -9,6 +9,6 @@ kv_namespaces = [
   { binding = "WORDLE_KV", id = "92dca682ece94b13b6e706a4a9f59e04" }
 ]
 
-# Cron trigger - runs daily at 3 AM UTC to refresh word list
+# Cron trigger - rechecks the source every six hours
 [triggers]
-crons = ["0 3 * * *"]
+crons = ["0 */6 * * *"]

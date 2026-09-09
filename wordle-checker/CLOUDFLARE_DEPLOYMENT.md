@@ -167,11 +167,11 @@ The Worker is configured with a cron trigger in `wrangler.toml`:
 
 ```toml
 [triggers]
-crons = ["0 3 * * *"]
+crons = ["0 */6 * * *"]
 ```
 
 This means:
-- **Runs daily at 3:00 AM UTC**
+- **Runs every six hours at minute 0 UTC**
 - Fetches the latest word list from wordlehints.co.uk
 - Validates every page and every answer before writing
 - Replaces KV only after the complete snapshot passes validation
@@ -188,7 +188,7 @@ unavailable, the UI says
 
 1. **On first request**: Worker fetches word list from API → stores in KV
 2. **Subsequent requests**: Worker reads from KV (blazing fast!)
-3. **Daily at 3 AM**: Cron attempts a validated cache refresh automatically
+3. **Every six hours**: Cron attempts a validated cache refresh automatically
 4. **Result caching**: API responses cached with HTTP headers
    - Past words: 24 hours
    - Today's word check: 5 minutes

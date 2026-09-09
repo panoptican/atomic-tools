@@ -28,14 +28,14 @@ This project consists of two parts:
 ### Backend (`worker.js`)
 - **Cloudflare Worker** running on the edge
 - **KV storage** for the last known-good word list
-- **Cron job** refreshes data daily at 3 AM UTC
+- **Cron job** rechecks the source every six hours
 - Fetches from wordlehints.co.uk API
 
 ```
 Frontend → Cloudflare Worker → validated KV snapshot → wordlehints.co.uk
                  ↑                 ↑
                  └─────────────────┘
-                  (Cron: Daily 3AM; failed refreshes keep the old snapshot)
+                  (Cron: Every 6 hours; failed refreshes keep the old snapshot)
 ```
 
 ## 🚀 Deployment
@@ -141,7 +141,7 @@ curl https://your-worker.workers.dev/api/check-word?word=CIGAR
 
 **After (v2 with Worker):**
 - ✅ Fast: Zero loading, instant results
-- ✅ Auto-updates: Daily cron job syncs new words
+- ✅ Auto-updates: Six-hour cron job syncs new words
 - ✅ No CORS: Worker fetches server-side
 - ✅ Safe refreshes: Failed or partial fetches leave the last good snapshot in place
 - ✅ Honest status: The UI shows the latest puzzle date actually present
