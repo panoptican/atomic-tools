@@ -12,8 +12,25 @@
 // Constants
 const WORDLE_START_DATE = new Date('2021-06-19'); // Wordle #1 launch date
 const API_BASE_URL = 'https://wordlehints.co.uk/wp-json/wordlehint/v1/answers';
-const MAX_PAGES = 40; // Fetch up to 40 pages (2000 words)
+const PAGE_SIZE = 50;
+const MAX_PAGES = 50;
+const MAX_WORDS = PAGE_SIZE * MAX_PAGES;
 const KV_KEY = 'wordle_solutions';
+
+const JSON_HEADERS = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*'
+};
+
+function jsonResponse(body, options = {}) {
+  return new Response(JSON.stringify(body), {
+    status: options.status ?? 200,
+    headers: {
+      ...JSON_HEADERS,
+      ...(options.cacheControl ? { 'Cache-Control': options.cacheControl } : {})
+    }
+  });
+}
 
 /**
  * Calculate today's Wordle game number
@@ -31,7 +48,7 @@ function getTodayGameNumber() {
  */
 function getLatestDataDate(wordList) {
   let latestDate = '';
-  let maxGame = 0;
+  let maxGame = -1;
 
   for (const entry of Object.values(wordList)) {
     if (!entry) continue;
@@ -50,48 +67,110 @@ function getLatestDataDate(wordList) {
   return null;
 }
 
+function isValidIsoDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+async function fetchSourcePage(page) {
+  const response = await fetch(`${API_BASE_URL}?page=${page}&per_page=${PAGE_SIZE}`, {
+    headers: { Accept: 'application/json' }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Wordle source returned HTTP ${response.status} on page ${page}`);
+  }
+
+  let payload;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new Error(`Wordle source returned invalid JSON on page ${page}`);
+  }
+
+  if (!payload || !Array.isArray(payload.results)) {
+    throw new Error(`Wordle source returned an invalid page ${page}`);
+  }
+
+  return payload;
+}
+
+function validateWordList(wordList, expectedCount = null) {
+  if (!wordList || typeof wordList !== 'object' || Array.isArray(wordList)) {
+    throw new Error('Word list is not an object');
+  }
+
+  const entries = Object.entries(wordList);
+  if (entries.length === 0) throw new Error('Word list is empty');
+  if (expectedCount !== null && entries.length !== expectedCount) {
+    throw new Error(`Word list contains ${entries.length} entries; expected ${expectedCount}`);
+  }
+
+  const games = new Map();
+  for (const [word, data] of entries) {
+    if (!/^[A-Z]{5}$/.test(word) || !data || !Number.isInteger(data.game) || data.game < 0) {
+      throw new Error(`Word list contains an invalid entry for ${word}`);
+    }
+    if (data.date && !isValidIsoDate(data.date)) {
+      throw new Error(`Word list contains an invalid date for ${word}`);
+    }
+    if (games.has(data.game) && games.get(data.game) !== word) {
+      throw new Error(`Word list contains conflicting answers for game ${data.game}`);
+    }
+    games.set(data.game, word);
+  }
+
+  return wordList;
+}
+
 /**
- * Fetch word list from wordlehints.co.uk API
+ * Fetch and validate the complete word list from wordlehints.co.uk.
+ *
+ * A refresh is all-or-nothing. The old implementation converted failed pages
+ * into empty results, then overwrote a good KV cache with a partial list.
  */
 async function fetchWordList() {
-  const wordMap = new Map();
+  const firstPage = await fetchSourcePage(1);
+  const total = Number(firstPage.total);
 
-  try {
-    // Fetch multiple pages in parallel
-    const pagePromises = [];
-    for (let page = 1; page <= MAX_PAGES; page++) {
-      pagePromises.push(
-        fetch(`${API_BASE_URL}?page=${page}&per_page=50`)
-          .then(res => res.ok ? res.json() : { results: [] })
-          .catch(() => ({ results: [] }))
-      );
-    }
-
-    const results = await Promise.all(pagePromises);
-
-    // Process all results
-    for (const response of results) {
-      const words = response.results || [];
-      if (!Array.isArray(words)) continue;
-
-      for (const item of words) {
-        if (item.answer && item.game) {
-          const word = item.answer.toUpperCase();
-          wordMap.set(word, {
-            game: parseInt(item.game),
-            date: item.date || ''
-          });
-        }
-      }
-    }
-
-    console.log(`Fetched ${wordMap.size} unique words`);
-    return Object.fromEntries(wordMap);
-
-  } catch (error) {
-    console.error('Error fetching word list:', error);
-    throw error;
+  if (!Number.isInteger(total) || total < 1 || total > MAX_WORDS) {
+    throw new Error(`Wordle source reported an unsafe total: ${firstPage.total}`);
   }
+
+  const pageCount = Math.ceil(total / PAGE_SIZE);
+  const remainingPages = await Promise.all(
+    Array.from({ length: pageCount - 1 }, (_, index) => fetchSourcePage(index + 2))
+  );
+  const pages = [firstPage, ...remainingPages];
+  const allItems = pages.flatMap(page => page.results);
+
+  if (allItems.length !== total) {
+    throw new Error(`Wordle source returned ${allItems.length} results; expected ${total}`);
+  }
+
+  const wordMap = new Map();
+  for (const item of allItems) {
+    const word = typeof item.answer === 'string' ? item.answer.toUpperCase() : '';
+    const game = Number(item.game);
+    const date = item.date || '';
+
+    if (!/^[A-Z]{5}$/.test(word) || !Number.isInteger(game) || game < 0) {
+      throw new Error('Wordle source returned an invalid answer entry');
+    }
+    if (date && !isValidIsoDate(date)) {
+      throw new Error(`Wordle source returned an invalid date for ${word}`);
+    }
+    const existing = wordMap.get(word);
+    if (!existing || game > existing.game || date > existing.date) {
+      wordMap.set(word, { game, date });
+    }
+  }
+
+  const wordList = Object.fromEntries(wordMap);
+  validateWordList(wordList);
+  console.log(`Fetched and validated ${allItems.length} source rows as ${wordMap.size} unique words across ${pageCount} pages`);
+  return wordList;
 }
 
 /**
@@ -103,6 +182,7 @@ async function getWordList(env) {
     const cached = await env.WORDLE_KV.get(KV_KEY, 'json');
 
     if (cached && Object.keys(cached).length > 0) {
+      validateWordList(cached);
       console.log('Using cached word list from KV');
       return cached;
     }
@@ -112,12 +192,7 @@ async function getWordList(env) {
     const wordList = await fetchWordList();
 
     // Store in KV with metadata
-    await env.WORDLE_KV.put(KV_KEY, JSON.stringify(wordList), {
-      metadata: {
-        updatedAt: new Date().toISOString(),
-        wordCount: Object.keys(wordList).length
-      }
-    });
+    await storeWordList(env, wordList);
 
     return wordList;
 
@@ -125,6 +200,18 @@ async function getWordList(env) {
     console.error('Error getting word list:', error);
     throw error;
   }
+}
+
+async function storeWordList(env, wordList) {
+  validateWordList(wordList);
+  const latestDate = getLatestDataDate(wordList);
+  await env.WORDLE_KV.put(KV_KEY, JSON.stringify(wordList), {
+    metadata: {
+      updatedAt: new Date().toISOString(),
+      latestDate,
+      wordCount: Object.keys(wordList).length
+    }
+  });
 }
 
 /**
@@ -136,27 +223,15 @@ async function handleMeta(env) {
     const { metadata } = await env.WORDLE_KV.getWithMetadata(KV_KEY);
     const latestDate = getLatestDataDate(wordList);
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
       latestDate,
       wordCount: Object.keys(wordList).length,
-      updatedAt: metadata?.updatedAt ?? null
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=3600'
-      }
-    });
+      updatedAt: metadata?.updatedAt ?? null,
+      refreshStatus: 'ok'
+    }, { cacheControl: 'public, max-age=300' });
   } catch (error) {
     console.error('Error building meta:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error.message
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return jsonResponse({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -169,17 +244,11 @@ async function handleCheckWord(request, env) {
 
   // Validate input
   if (!word) {
-    return new Response(JSON.stringify({ error: 'Missing word parameter' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return jsonResponse({ error: 'Missing word parameter' }, { status: 400 });
   }
 
   if (word.length !== 5 || !/^[A-Z]+$/.test(word)) {
-    return new Response(JSON.stringify({ error: 'Word must be 5 letters' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return jsonResponse({ error: 'Word must be 5 letters' }, { status: 400 });
   }
 
   try {
@@ -190,60 +259,34 @@ async function handleCheckWord(request, env) {
     const wordData = wordList[word];
 
     if (!wordData) {
-      return new Response(JSON.stringify({
+      return jsonResponse({
         used: false,
         word: word
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
-        }
-      });
+      }, { cacheControl: 'public, max-age=3600' });
     }
 
     // Exclude today's solution to avoid spoilers
     const todayGame = getTodayGameNumber();
-    if (wordData.game === todayGame) {
-      return new Response(JSON.stringify({
+    const todayDate = new Date().toISOString().slice(0, 10);
+    if (wordData.game === todayGame || wordData.date === todayDate) {
+      return jsonResponse({
         used: false,
         word: word,
         note: 'Today\'s solution excluded'
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Cache-Control': 'public, max-age=300' // Cache for 5 minutes (today changes)
-        }
-      });
+      }, { cacheControl: 'public, max-age=300' });
     }
 
     // Word was used in the past
-    return new Response(JSON.stringify({
+    return jsonResponse({
       used: true,
       word: word,
       game: wordData.game,
       date: wordData.date
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=86400' // Cache for 24 hours
-      }
-    });
+    }, { cacheControl: 'public, max-age=86400' });
 
   } catch (error) {
     console.error('Error checking word:', error);
-    return new Response(JSON.stringify({
-      error: 'Internal server error',
-      message: error.message
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return jsonResponse({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -255,12 +298,7 @@ async function handleScheduled(env) {
     console.log('Cron triggered: Refreshing word list');
     const wordList = await fetchWordList();
 
-    await env.WORDLE_KV.put(KV_KEY, JSON.stringify(wordList), {
-      metadata: {
-        updatedAt: new Date().toISOString(),
-        wordCount: Object.keys(wordList).length
-      }
-    });
+    await storeWordList(env, wordList);
 
     console.log(`Word list updated: ${Object.keys(wordList).length} words`);
   } catch (error) {
@@ -306,16 +344,16 @@ export default {
 
     // Health check endpoint
     if (url.pathname === '/health') {
-      return new Response(JSON.stringify({ status: 'ok' }), {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return jsonResponse({ status: 'ok' });
     }
 
     // 404 for other routes
-    return new Response('Not Found', { status: 404 });
+    return jsonResponse({ error: 'Not Found' }, { status: 404 });
   },
 
   async scheduled(event, env, ctx) {
     await handleScheduled(env);
   }
 };
+
+export { fetchWordList, getLatestDataDate, validateWordList };

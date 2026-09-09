@@ -121,14 +121,10 @@ Replace `YOUR-ACTUAL-SUBDOMAIN` with your actual Worker URL from Step 4.
 
 ## Step 7: Deploy Frontend
 
-Deploy your updated `index.html` to your hosting platform:
-
-### GitHub Pages:
-```bash
-git add index.html
-git commit -m "Update API URL for Cloudflare Worker"
-git push origin main
-```
+The frontend is part of the Atomic Tools Cloudflare Pages project. Update
+`index.html` there, then push the repository's `main` branch; Cloudflare Pages
+deploys the whole static site automatically. There is no separate frontend
+deploy command.
 
 ### Or test locally:
 ```bash
@@ -177,14 +173,20 @@ crons = ["0 3 * * *"]
 This means:
 - **Runs daily at 3:00 AM UTC**
 - Fetches the latest word list from wordlehints.co.uk
-- Updates the KV storage
-- Your frontend always has up-to-date data!
+- Validates every page and every answer before writing
+- Replaces KV only after the complete snapshot passes validation
+- Leaves the previous snapshot in place if the source is unavailable or malformed
+
+The frontend calls `/api/meta` to display `Current through <date>`. This is
+the latest puzzle date present in the cached snapshot, not the time the Worker
+last attempted a refresh. If the endpoint is unavailable, the UI says
+`Current date unavailable` rather than claiming the data is current.
 
 ### Caching Strategy
 
 1. **On first request**: Worker fetches word list from API → stores in KV
 2. **Subsequent requests**: Worker reads from KV (blazing fast!)
-3. **Daily at 3 AM**: Cron refreshes the cache automatically
+3. **Daily at 3 AM**: Cron attempts a validated cache refresh automatically
 4. **Result caching**: API responses cached with HTTP headers
    - Past words: 24 hours
    - Today's word check: 5 minutes

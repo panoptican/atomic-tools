@@ -2,10 +2,15 @@
 
 A fast, always-up-to-date web application to check if a word has ever been a Wordle solution.
 
+The answer source is a third-party archive, so the Worker treats each refresh
+as untrusted input. The UI reports the latest puzzle date present in the
+validated snapshot rather than implying that a scheduled refresh always
+succeeded.
+
 ## ✨ Features
 
 - ⚡ **Instant checks** - No loading, no delays
-- 🔄 **Always current** - Automatically syncs with latest Wordle solutions daily
+- 🔄 **Current through date** - Shows the latest puzzle date in the dataset
 - 🌍 **Blazing fast** - Powered by Cloudflare's global edge network
 - 🎨 **Visual tile preview** - Wordle-style color coding
 - 🎯 **Spoiler-free** - Automatically excludes today's solution
@@ -22,15 +27,15 @@ This project consists of two parts:
 
 ### Backend (`worker.js`)
 - **Cloudflare Worker** running on the edge
-- **KV storage** for caching word list
+- **KV storage** for the last known-good word list
 - **Cron job** refreshes data daily at 3 AM UTC
 - Fetches from wordlehints.co.uk API
 
 ```
-Frontend → Cloudflare Worker → KV Cache → wordlehints.co.uk
+Frontend → Cloudflare Worker → validated KV snapshot → wordlehints.co.uk
                  ↑                 ↑
                  └─────────────────┘
-                  (Cron: Daily 3AM)
+                  (Cron: Daily 3AM; failed refreshes keep the old snapshot)
 ```
 
 ## 🚀 Deployment
@@ -81,6 +86,17 @@ npm run dev
 # Worker runs at http://localhost:8787
 ```
 
+### Worker tests:
+```bash
+npm test
+```
+
+Refreshes are all-or-nothing. The Worker reads the source's total, fetches
+every required page, and rejects the refresh if a page fails, the result count
+is incomplete, an answer is malformed, or two answers claim the same game.
+KV is replaced only after the complete snapshot passes validation, so a source
+outage cannot turn a healthy cache into a partial list.
+
 ## 📝 Scripts
 
 All scripts should be run from the `wordle-checker/` directory:
@@ -127,7 +143,8 @@ curl https://your-worker.workers.dev/api/check-word?word=CIGAR
 - ✅ Fast: Zero loading, instant results
 - ✅ Auto-updates: Daily cron job syncs new words
 - ✅ No CORS: Worker fetches server-side
-- ✅ Always fresh: KV cache updated automatically
+- ✅ Safe refreshes: Failed or partial fetches leave the last good snapshot in place
+- ✅ Honest status: The UI shows the latest puzzle date actually present
 - ✅ Free: 100k requests/day on free tier
 
 ## 📄 License

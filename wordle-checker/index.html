@@ -161,6 +161,7 @@
       .tiles { grid-template-columns: repeat(5, 54px); gap: 8px; }
       .tile { width: 54px; height: 54px; font-size: 1.5rem; }
       .foot { padding: 18px 20px; }
+      .foot span:last-child { max-width: 15ch; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -226,7 +227,7 @@
 
   <footer class="foot">
     <span>Atomic Tools · Wordle Checker</span>
-    <span id="footerUpdated">Updated …</span>
+    <span id="footerUpdated" aria-live="polite">Current through …</span>
   </footer>
 
   <script>
@@ -252,9 +253,9 @@
     let checkAbort = null;
 
     function formatDataDate(iso) {
-      const parts = iso.split('-').map(Number);
-      if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
-      const date = new Date(parts[0], parts[1] - 1, parts[2]);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+      const date = new Date(`${iso}T00:00:00Z`);
+      if (Number.isNaN(date.getTime())) return null;
       return date.toLocaleDateString(undefined, {
         month: 'short',
         day: 'numeric',
@@ -264,14 +265,14 @@
 
     async function loadFooterDate() {
       try {
-        const response = await fetch(META_URL);
+        const response = await fetch(META_URL, { cache: 'no-store' });
         if (!response.ok) throw new Error(`meta ${response.status}`);
         const data = await response.json();
         const label = data.latestDate ? formatDataDate(data.latestDate) : null;
-        footerUpdated.textContent = label ? `Updated ${label}` : 'Updated daily';
+        footerUpdated.textContent = label ? `Current through ${label}` : 'Current date unavailable';
       } catch (err) {
         console.warn('Could not load data date:', err);
-        footerUpdated.textContent = 'Updated daily';
+        footerUpdated.textContent = 'Current date unavailable';
       }
     }
 
