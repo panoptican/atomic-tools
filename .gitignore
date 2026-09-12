@@ -47,6 +47,12 @@ _concepts/
 # Test specs
 **/spec/
 
+# Local specs and agent docs
+/specs/
+/AGENTS.md
+/CLAUDE.md
+/PRODUCT.md
+
 # Playwright MCP
 .playwright-mcp/
 
