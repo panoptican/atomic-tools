@@ -240,20 +240,8 @@
     font-size: 0.85rem;
   }
 
-  footer {
-    padding: 20px 28px;
-    border-top: 1px solid var(--rule);
-    color: var(--ink-muted);
-    font-family: var(--text); font-size: 0.72rem;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    display: flex; justify-content: space-between; gap: 16px;
-  }
-  footer span:last-child { text-align: right; }
-
   @media (max-width: 560px) {
     main { padding: 32px 0 48px; gap: 18px; }
-    footer { padding: 16px 18px; flex-direction: column; gap: 6px; }
-    footer span:last-child { text-align: left; }
     .swap-hint { display: none; }
   }
 
@@ -332,11 +320,6 @@
   <p class="hint" id="hintText">Tip: ⌘⇧C (Ctrl⇧C on Windows) copies the current output again.</p>
   <p class="status-note hidden" id="statusNote" role="status" aria-live="polite"></p>
 </main>
-
-<footer>
-  <span>Atomic Tools · Markdown ↔ Rich Text</span>
-  <span>All conversion happens in your browser</span>
-</footer>
 
 <script src="app.js"></script>
 </body>

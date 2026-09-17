@@ -177,16 +177,6 @@
   .hint { color: var(--ink-muted); font-size: 0.85rem; line-height: 1.55; }
   .swap-aside { color: var(--ink-soft); text-align: center; }
 
-  footer {
-    padding: 20px 28px;
-    border-top: 1px solid var(--rule);
-    color: var(--ink-muted);
-    font-family: var(--text); font-size: 0.72rem;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    display: flex; justify-content: space-between; gap: 16px;
-  }
-  footer span:last-child { text-align: right; }
-
   @media (max-width: 720px) {
     .panes { grid-template-columns: 1fr; }
     textarea { height: 180px; }
@@ -194,8 +184,6 @@
 
   @media (max-width: 560px) {
     main { padding: 32px 0 48px; gap: 18px; }
-    footer { padding: 16px 18px; flex-direction: column; gap: 6px; }
-    footer span:last-child { text-align: left; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -289,11 +277,6 @@
   <p class="hint swap-aside hidden" id="swapAside">Still identical. I checked the other way round.</p>
   <p class="hint">Rendering by <a href="https://diffs.com/docs" target="_blank" rel="noopener">Diffs</a>. Add a filename like <code>app.ts</code> to turn on syntax highlighting.</p>
 </main>
-
-<footer>
-  <span>Atomic Tools · Text Diff</span>
-  <span>Everything runs in your browser</span>
-</footer>
 
 <script type="module" src="app.js"></script>
 </body>
