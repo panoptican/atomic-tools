@@ -147,7 +147,9 @@
 
     @media (max-width: 600px) {
       .shell { padding: 64px 0; width: calc(100% - 32px); }
-      .wordmark { margin-bottom: 64px; }
+      .wordmark { margin-bottom: 32px; }
+      .row { grid-template-columns: minmax(0, 1fr) auto; }
+      .row-desc { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
