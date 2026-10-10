@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://tools.spidleweb.net/</loc>
+    <lastmod>2026-10-10</lastmod>
+  </url>
+  <url>
+    <loc>https://tools.spidleweb.net/madlib-maker/</loc>
+    <lastmod>2026-10-10</lastmod>
+  </url>
+  <url>
+    <loc>https://tools.spidleweb.net/rich-text-markdown/</loc>
+    <lastmod>2026-10-10</lastmod>
+  </url>
+  <url>
+    <loc>https://tools.spidleweb.net/text-diff/</loc>
+    <lastmod>2026-10-10</lastmod>
+  </url>
+  <url>
+    <loc>https://tools.spidleweb.net/wordle-checker/</loc>
+    <lastmod>2026-10-10</lastmod>
+  </url>
+</urlset>
