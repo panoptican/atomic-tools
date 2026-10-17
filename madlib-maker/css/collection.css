@@ -1,0 +1,151 @@
+/* My stories dialog contents. The dialog shell is the shared .mm-dialog. */
+
+.mc-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.mc-body { min-height: 0; }
+
+.mc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.mc-row {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mc-row:hover { border-color: var(--ink); }
+.mc-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.mc-row-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mc-row-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--display);
+  font-size: 1.05rem;
+}
+
+.mc-row-date {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.mc-row-excerpt {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.mc-footnote {
+  margin: 16px 0 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+}
+
+.mc-btn {
+  appearance: none;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.mc-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.mc-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mc-btn-danger { border-color: var(--rule-soft); color: var(--err); }
+.mc-btn-danger:hover { background: var(--err); color: var(--paper); border-color: var(--err); }
+
+.mc-back {
+  padding-left: 0;
+  padding-right: 10px;
+  border-color: transparent;
+}
+
+.mc-back:hover { background: transparent; color: var(--ink-soft); border-color: transparent; }
+
+.mc-story-head { margin: 4px 0 18px; }
+
+.mc-story-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.mc-story-subtitle { margin: 4px 0 0; color: var(--ink-soft); }
+
+.mc-story-date {
+  margin: 8px 0 0;
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.mc-story-text {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.mc-story-text p { margin: 0 0 1em; }
+
+.mc-word {
+  display: inline-block;
+  padding: 0 5px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.mc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+@media (max-width: 560px) {
+  .mc-row-top { flex-direction: column; gap: 2px; }
+}
