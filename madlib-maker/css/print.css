@@ -1,0 +1,164 @@
+/* Print: worksheet + finished story ------------------------------------- */
+
+/* Slot in the Share section */
+.print-sheet-slot { margin-top: 14px; }
+.print-sheet-hint {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+/* The print tree never shows on screen */
+.print-root { display: none; }
+
+@page { margin: 18mm; }
+
+@media print {
+  html.is-printing,
+  html.is-printing .dark,
+  html.is-printing body {
+    --paper: #fff;
+    --surface: #fff;
+    --ink: #000;
+    --ink-soft: #000;
+    --ink-muted: #000;
+    --rule: #000;
+    --rule-soft: #000;
+    color-scheme: light;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  html.is-printing body { display: block; min-height: 0; }
+  html.is-printing body > *:not(#print-root) { display: none !important; }
+  html.is-printing #print-root {
+    display: block;
+    background: #fff;
+    color: #000;
+    font-family: var(--text);
+    font-weight: 500;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  #print-root *, #print-root *::before, #print-root *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    color: #000;
+    background: transparent;
+  }
+
+  #print-root .print-head { margin-bottom: 8mm; }
+  #print-root .print-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28pt;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  #print-root .print-subtitle { margin-top: 2mm; font-size: 13pt; }
+
+  #print-root .print-meta {
+    display: flex;
+    gap: 14mm;
+    margin-bottom: 9mm;
+    font-size: 12pt;
+  }
+  #print-root .print-meta > span { display: flex; align-items: flex-end; gap: 2mm; flex: 1; }
+  #print-root .print-meta > span:first-child { flex: 2; }
+  #print-root .print-meta-line {
+    flex: 1;
+    border-bottom: 1px solid #000;
+    height: 1.2em;
+  }
+
+  #print-root .print-section { margin-bottom: 10mm; }
+  #print-root .print-heading {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11pt;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-bottom: 2mm;
+    margin-bottom: 5mm;
+    border-bottom: 2px solid #000;
+    break-after: avoid;
+  }
+
+  #print-root .print-prompts { list-style: none; }
+  #print-root .print-prompts.is-two-col { column-count: 2; column-gap: 12mm; }
+  #print-root .print-prompt {
+    display: flex;
+    align-items: flex-end;
+    gap: 2mm;
+    margin-bottom: 5mm;
+    break-inside: avoid;
+  }
+  #print-root .print-prompt-num { flex: 0 0 7mm; font-size: 11pt; text-align: right; }
+  #print-root .print-prompt-body { flex: 1; display: block; min-width: 0; }
+  #print-root .print-prompt-line {
+    display: block;
+    height: 9mm;
+    border-bottom: 1px solid #000;
+  }
+  #print-root .print-prompt-label {
+    display: block;
+    margin-top: 0.8mm;
+    font-size: 7.5pt;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #print-root .print-story p { margin-bottom: 5mm; line-height: 2.6; }
+  #print-root .print-gap {
+    display: inline-block;
+    position: relative;
+    min-width: 6em;
+    height: 1em;
+    margin: 0 0.15em;
+    vertical-align: baseline;
+    border-bottom: 1px solid #000;
+    break-inside: avoid;
+  }
+  #print-root .print-gap-num {
+    position: absolute;
+    left: 0;
+    top: -0.9em;
+    font-size: 0.6em;
+    line-height: 1;
+    font-weight: 700;
+  }
+  #print-root .print-gap-type {
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* Below the writing line; % of the gap, since em here is the label's own tiny size */
+    top: calc(100% + 1mm);
+    font-size: 6.5pt;
+    line-height: 1;
+    text-align: center;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Finished story: big and fridge-ready */
+  #print-root .print-finished .print-story { font-size: 16pt; }
+  #print-root .print-finished .print-story p { line-height: 1.7; margin-bottom: 6mm; }
+  #print-root .print-answer {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  #print-root .print-footer {
+    margin-top: 12mm;
+    padding-top: 3mm;
+    border-top: 1px solid #000;
+    font-size: 9pt;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+}
