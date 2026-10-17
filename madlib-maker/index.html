@@ -14,6 +14,12 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/highlight.css">
+  <link rel="stylesheet" href="css/share.css">
+  <link rel="stylesheet" href="css/suggest.css">
+  <link rel="stylesheet" href="css/print.css">
+  <link rel="stylesheet" href="css/collection.css">
+  <link rel="stylesheet" href="css/library.css">
 </head>
 
 <body>
@@ -47,14 +53,19 @@
   <div class="container">
     <div class="page-intro">
       <h1>Fill the <em>blanks</em>.</h1>
-      <p class="page-sub">Write a story with placeholders in braces, then share a link for friends to play.</p>
+      <p class="page-sub">Write a story, blank out a few words, then share a link for friends to play.</p>
     </div>
 
     <!-- Mode Toggle Tabs -->
     <div class="mode-tabs" id="mode-tabs" aria-label="Madlib mode">
       <button type="button" class="mode-tab active" data-mode="creator" aria-selected="true">Create</button>
       <button type="button" class="mode-tab" data-mode="preview" aria-selected="false">Preview</button>
-      <button type="button" class="mode-tab new-madlib-btn" id="new-madlib-btn">New madlib</button>
+      <div class="mode-tools">
+        <!-- Wired by js/drafts.js (library) and js/collection.js; hidden until then -->
+        <button type="button" class="mode-tab" id="library-btn" hidden>My madlibs</button>
+        <button type="button" class="mode-tab" id="stories-btn" hidden>My stories</button>
+        <button type="button" class="mode-tab new-madlib-btn" id="new-madlib-btn">New madlib</button>
+      </div>
     </div>
 
     <!-- Two-column editor layout -->
@@ -63,17 +74,30 @@
       <!-- Story Editor Section -->
       <div class="section primary-section" id="story-editor-section">
         <h3>Story</h3>
-        <p class="section-hint">Type blanks in braces, like <code>{noun}</code> or <code>{favorite-food}</code>. They appear in the sidebar automatically.</p>
+        <p class="section-hint">Write your story, then select a word and pick a type to blank it out. You can also type blanks in braces, like <code>{noun}</code>.</p>
+
+        <!-- Blank toolbar: turns the selection (or the cursor) into a blank -->
+        <div class="blank-toolbar" id="blank-toolbar" role="group" aria-labelledby="blank-toolbar-label">
+          <span class="blank-toolbar-label" id="blank-toolbar-label">Add a blank</span>
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" data-type="noun">Noun</button>
+            <button type="button" class="preset-btn" data-type="verb">Verb</button>
+            <button type="button" class="preset-btn" data-type="adjective">Adjective</button>
+            <button type="button" class="preset-btn" data-type="name">Name</button>
+            <button type="button" class="preset-btn" data-type="place">Place</button>
+          </div>
+          <form class="custom-input-wrapper" id="custom-blank-form">
+            <input type="text" id="custom-label-input" placeholder="Other type, e.g. animal" aria-label="Other blank type">
+            <button type="submit" id="add-custom-btn">Add</button>
+          </form>
+        </div>
+
         <textarea
           id="story-editor"
           class="story-textarea"
           placeholder="Once upon a time, a {blank} walked into a {place}..."
           rows="12"
         ></textarea>
-        <div class="orphan-warning" id="orphan-warning">
-          <div class="orphan-warning-title">Orphaned placeholders found</div>
-          <div class="orphan-warning-list" id="orphan-list"></div>
-        </div>
       </div>
 
       <!-- Detected Blanks Section -->
@@ -88,20 +112,7 @@
           </div>
         </div>
 
-        <!-- Preset Quick-Add Buttons -->
-        <div class="preset-buttons">
-          <button type="button" class="preset-btn" data-type="noun">+ Noun</button>
-          <button type="button" class="preset-btn" data-type="verb">+ Verb</button>
-          <button type="button" class="preset-btn" data-type="adjective">+ Adj</button>
-          <button type="button" class="preset-btn" data-type="name">+ Name</button>
-          <button type="button" class="preset-btn" data-type="place">+ Place</button>
-        </div>
-
-        <!-- Custom Label Input -->
-        <div class="custom-input-wrapper">
-          <input type="text" id="custom-label-input" placeholder="Custom blank">
-          <button type="button" id="add-custom-btn">Add</button>
-        </div>
+        <p class="blank-list-note">Players fill each blank separately, in story order. To use one answer in several places, press <strong>Reuse</strong> or give the blanks a shared name, like <code>{name:hero}</code>. For young kids, ask a question instead of naming the word type: <code>{noun|Something squishy?}</code>.</p>
       </div>
 
     </div>
@@ -127,17 +138,13 @@
       </details>
 
       <!-- Share Section -->
-      <details class="section secondary-section" id="share-section">
+      <details class="section secondary-section" id="share-section" open>
         <summary>Share</summary>
         <div class="secondary-section-body">
-          <div class="share-buttons">
-            <button type="button" class="share-btn share-btn-primary" id="share-player-btn">
-              Share with Players
-            </button>
-            <button type="button" class="share-btn share-btn-secondary" id="share-editor-btn">
-              Copy Editor Link
-            </button>
-          </div>
+          <!-- Built by js/share.js -->
+          <div id="share-panel"></div>
+          <!-- Built by js/print.js -->
+          <div id="print-sheet-slot"></div>
         </div>
       </details>
 
@@ -188,14 +195,29 @@
     </div>
 
     <div class="player-screen" id="player-reveal" style="display: none;">
-      <header class="player-intro-header">
-        <h2 class="player-section-title">Your madlib</h2>
+      <header class="reveal-header">
+        <div class="player-intro-header">
+          <p class="prompt-progress">Your madlib</p>
+          <h2 class="player-section-title" id="reveal-title">Untitled Madlib</h2>
+        </div>
+        <button type="button" class="player-btn reveal-read-btn" id="read-aloud-btn" aria-pressed="false">Read aloud</button>
       </header>
-      <div class="story-output" id="story-output"></div>
-      <div class="reveal-actions">
+      <div class="story-output" id="story-output" aria-live="polite"></div>
+      <p class="reveal-tip">Tap the story to skip ahead. Tap a word to see what it was.</p>
+      <div class="reveal-step-controls" id="reveal-step-controls">
+        <button type="button" class="player-btn player-btn-primary" id="reveal-pause-btn" aria-pressed="false">Pause</button>
+        <span class="reveal-progress" id="reveal-progress">1 of 1</span>
+        <button type="button" class="player-btn reveal-all-btn" id="reveal-all-btn">Show all</button>
+      </div>
+      <div class="reveal-actions" id="reveal-actions" hidden>
         <button type="button" class="player-btn player-btn-primary" id="copy-story-btn">Copy story</button>
         <button type="button" class="player-btn player-btn-primary" id="share-story-btn">Share story link</button>
+        <button type="button" class="player-btn" id="replay-btn">Replay reveal</button>
         <button type="button" class="player-btn" id="play-again-btn">Play again</button>
+        <!-- Wired by js/share.js, js/print.js and js/collection.js; hidden until then -->
+        <button type="button" class="player-btn" id="save-image-btn" hidden>Save as image</button>
+        <button type="button" class="player-btn" id="print-story-btn" hidden>Print</button>
+        <button type="button" class="player-btn" id="my-stories-btn" hidden>My stories</button>
         <button type="button" class="player-btn" id="create-own-btn">Create your own</button>
       </div>
     </div>
@@ -203,28 +225,6 @@
 
   <!-- Toast Notification -->
   <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Delete Confirmation Dialog -->
-  <div class="confirm-dialog-overlay" id="confirm-dialog-overlay" aria-hidden="true">
-    <div
-      class="confirm-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-dialog-title"
-      aria-describedby="confirm-dialog-message confirm-dialog-usage"
-      tabindex="-1"
-    >
-      <div class="confirm-dialog-title" id="confirm-dialog-title">Delete Placeholder?</div>
-      <div class="confirm-dialog-message" id="confirm-dialog-message">
-        This placeholder is used in your story.
-      </div>
-      <div class="confirm-dialog-usage" id="confirm-dialog-usage"></div>
-      <div class="confirm-dialog-buttons">
-        <button type="button" class="confirm-dialog-btn confirm-dialog-btn-cancel" id="confirm-cancel-btn">Cancel</button>
-        <button type="button" class="confirm-dialog-btn confirm-dialog-btn-delete" id="confirm-delete-btn">Delete</button>
-      </div>
-    </div>
-  </div>
 
   <script>
     AtomicTheme.bind({
@@ -234,6 +234,22 @@
       toggleId: 'themeToggle'
     });
   </script>
-  <script src="script.js"></script>
+  <!-- Plain scripts sharing globals; core modules first, features before main.js -->
+  <script src="js/core.js"></script>
+  <script src="js/grammar.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/highlight.js"></script>
+  <script src="js/metadata.js"></script>
+  <script src="js/url.js"></script>
+  <script src="js/share.js"></script>
+  <script src="js/suggest.js"></script>
+  <script src="js/print.js"></script>
+  <script src="js/reveal.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/collection.js"></script>
+  <script src="js/library.js"></script>
+  <script src="js/drafts.js"></script>
+  <script src="js/modes.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

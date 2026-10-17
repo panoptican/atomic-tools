@@ -4,13 +4,15 @@ An interactive web tool for creating and sharing custom madlibs. Create stories 
 
 ## Features
 
-- **Interactive Story Editor**: Create stories with custom placeholders using simple `{id}` syntax
-- **Multiple Placeholder Types**: Use preset types (noun, verb, adjective, etc.) or create your own
+- **Select-to-Blank Editor**: Write a story, select a word, and pick a type to turn it into a blank
+- **Blank Syntax**: `{noun}` is a new blank every time it appears; `{name:hero}` blanks share one answer wherever the name repeats; `{noun|Something squishy?}` asks players a question instead of naming the word type
+- **Step-Through Reveal**: The finished story plays back a sentence at a time, with optional read-aloud; tap a word to see what was asked
 - **Three Sharing Modes**:
   - **Player Link**: Share a playable version where others fill in the blanks (no editing)
   - **Editor Link**: Share an editable copy so others can customize your madlib
   - **Story Link**: Share a completed story with all answers filled in (view only)
 - **URL Shortening**: Optional integration with Cloudflare Workers for short, shareable links
+- **Older Links Keep Working**: Pre-2026 links and drafts (a placeholder list plus `{word01}` references) are converted on load
 - **Auto-save Drafts**: Never lose your work with automatic local storage backup
 - **Player Mode**: Clean, focused interface for playing madlibs
 
@@ -27,8 +29,8 @@ An interactive web tool for creating and sharing custom madlibs. Create stories 
 
 ### Basic Usage
 
-1. **Create Placeholders**: Click preset buttons (noun, verb, etc.) or add custom ones
-2. **Write Your Story**: Use `{id}` syntax to reference placeholders (e.g., `{word01}`)
+1. **Write Your Story**: Type it normally
+2. **Blank Out Words**: Select a word and click a type (Noun, Verb, …), or type `{plural noun}` yourself. Use **Reuse** in the Blanks list, or `{name:hero}`, to repeat one answer
 3. **Share**: Click "Share with Players" to get a link others can play
 
 ## URL Shortening (Optional)
@@ -67,7 +69,7 @@ https://your-site.com/madlib-maker/#s=aB3xY9
    - Copy the worker URL
 
 3. **Enable in Frontend**:
-   - Open `script.js`
+   - Open `js/url.js`
    - Find `SHORTENER_API_URL` (around line 763)
    - Add your worker URL:
      ```javascript
@@ -90,9 +92,21 @@ See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) for detailed deployment
 
 ```
 madlib-maker/
-├── index.html              # Main HTML structure
-├── script.js               # Application logic (7 modular components)
-├── styles.css              # Styling and themes
+├── index.html              # Page markup; loads the scripts below in order
+├── styles.css              # Core styles and shared dialog styles
+├── js/
+│   ├── core.js             # Shared helpers + MadlibFormat (blank syntax, finish())
+│   ├── editor.js           # Story editor, blank toolbar, blanks sidebar
+│   ├── metadata.js         # Title/subtitle (+ legacy color-theme cleanup)
+│   ├── url.js              # Share links, short links, loading links
+│   ├── reveal.js           # Auto-playing sentence-by-sentence reveal
+│   ├── player.js           # Prompt flow for filling in a madlib
+│   ├── drafts.js           # Auto-save into the madlib library
+│   ├── modes.js            # Create / Preview switching
+│   ├── main.js             # Start-up; starts optional features
+│   └── grammar.js, highlight.js, share.js, suggest.js, print.js,
+│       collection.js, library.js   # One file per optional feature
+├── css/                    # One stylesheet per optional feature
 ├── README.md               # This file
 ├── CLOUDFLARE_DEPLOYMENT.md # URL shortener deployment guide
 ├── worker.js               # Cloudflare Worker for URL shortening
@@ -124,16 +138,31 @@ The madlib-maker uses two URL formats:
 
 ## Architecture
 
-The application uses a modular architecture with 7 main components:
+The story text is the single source of truth for blanks; everything else is derived from it. The core modules (one or more per file in `js/`):
 
-1. **WordListManager**: Manages placeholder creation and deletion
-2. **StoryEditor**: Story text editing with live placeholder highlighting
-3. **MetadataManager**: Title and subtitle management
-4. **ColorThemeManager**: Theme selection and customization
-5. **URLManager**: Share links and URL shortening (if enabled)
-6. **PlayerMode**: Playing interface for filled-in stories
-7. **ModeManager**: Switches between creator and player views
-8. **DraftManager**: Auto-save and restore from local storage
+1. **MadlibFormat**: Parses blank tokens, migrates old data, splits the story into reveal steps
+2. **StoryEditor**: Story textarea; inserts and replaces text through undoable edits
+3. **BlankToolbar**: Turns the selected word (or the cursor) into a blank
+4. **BlankList**: Sidebar list of blanks with jump, rename, reuse and delete (with undo)
+5. **MetadataManager**: Title and subtitle management
+6. **ColorThemeManager**: Clears color overrides left by old shares (themes are disabled)
+7. **URLManager**: Share links and URL shortening (if enabled)
+8. **Reveal**: Sentence-by-sentence story playback and read-aloud
+9. **PlayerMode**: Prompt flow for filling in a madlib
+10. **ModeManager**: Switches between creator and player views
+11. **DraftManager**: Auto-saves into the madlib library; "New madlib" and the My madlibs dialog
+
+Optional features, one file each in `js/` (plus `css/`), started by `main.js` and skipped if missing:
+
+- **MadlibGrammar**: a/an agreement and sentence-start capitals in the finished story
+- **MadlibHighlight**: tinted chips behind blanks in the story editor
+- **MadlibSuggest**: "Stuck?" dice that fill in a random word for the blank's type
+- **MadlibShare**: share panel (phone share sheet or copy) and "Save as image" story cards
+- **MadlibPrint**: printable paper worksheet and printable finished story
+- **MadlibCollection**: "My stories", every finished story saved in this browser
+- **MadlibLibrary**: storage for "My madlibs" (several saved madlibs instead of one draft)
+
+Features talk through `MadlibFormat.finish()` (the finished-story shape) and two document events: `madlib:revealdone` and `madlib:storychange`.
 
 ## Browser Compatibility
 
