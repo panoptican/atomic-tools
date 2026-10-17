@@ -1,0 +1,72 @@
+/* Stuck? button: a square die beside an answer input */
+
+/* Row holding the input and the button; the button stretches to the input's height */
+.suggest-field {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Input shrinks to make room, in both the one-at-a-time and all-at-once screens */
+.suggest-field > input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.suggest-btn {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.suggest-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.suggest-btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.suggest-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.suggest-btn.is-rolling .suggest-icon {
+  animation: suggest-roll 0.5s ease-out;
+}
+
+@keyframes suggest-roll {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Screen-reader text only */
+.suggest-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggest-btn.is-rolling .suggest-icon { animation: none; }
+}
