@@ -1,0 +1,50 @@
+/* Share panel (creator) ------------------------------------------------- */
+
+.share-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.share-link[hidden] { display: none; }
+.share-link-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.share-link-field {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 16px;
+}
+.share-link-field:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.share-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+.share-open-link {
+  color: var(--ink);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.share-open-link:hover { text-decoration-thickness: 2px; }
+
+#share-panel .share-btn:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
