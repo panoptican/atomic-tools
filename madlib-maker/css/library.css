@@ -1,0 +1,143 @@
+/* My madlibs (library dialog) ------------------------------------------- */
+
+.library-toolbar {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.library-new-btn,
+.library-action,
+.library-status-action {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.library-new-btn {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.library-new-btn:hover { opacity: 0.88; }
+
+.library-action:hover,
+.library-status-action:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.library-action-danger { border-color: var(--rule-soft); color: var(--ink-soft); }
+
+.library-action-danger:hover {
+  border-color: var(--err);
+  background: var(--err-soft);
+  color: var(--err);
+}
+
+.library-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin: 0 0 16px;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+.library-status[hidden] { display: none; }
+
+.library-status-text { min-width: 0; overflow-wrap: anywhere; }
+
+.library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.library-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.library-item.is-active { border-color: var(--ink); background: var(--surface); }
+
+.library-main { flex: 1 1 auto; min-width: 0; }
+
+.library-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+}
+
+.library-title {
+  min-width: 0;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.library-badge {
+  padding: 2px 6px;
+  border: 1px solid var(--ink);
+  font-family: var(--text);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.library-meta {
+  margin: 6px 0 0;
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.library-excerpt {
+  margin: 8px 0 0;
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.library-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.library-note {
+  margin: 18px 0 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+}
+
+@media (min-width: 561px) {
+  .library-item { flex-direction: row; align-items: center; justify-content: space-between; }
+  .library-actions { flex-shrink: 0; }
+}
+
+@media (max-width: 560px) {
+  .library-actions .library-action { flex: 1 1 0; padding-left: 8px; padding-right: 8px; }
+}
