@@ -281,10 +281,6 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .story-textarea::placeholder { color: var(--ink-muted); }
-.story-textarea:focus {
-  outline: none;
-  border-color: var(--ink);
-}
 
 
 /* Blanks list ------------------------------------------------------------ */
@@ -483,10 +479,6 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--ink);
   min-width: 0;
 }
-.custom-input-wrapper input:focus {
-  outline: none;
-  border-color: var(--ink);
-}
 .custom-input-wrapper input::placeholder { color: var(--ink-muted); }
 .custom-input-wrapper button {
   padding: 12px 18px;
@@ -525,10 +517,6 @@ a { -webkit-tap-highlight-color: transparent; }
   font-family: var(--text);
   font-size: 1rem;
   color: var(--ink);
-}
-.metadata-input:focus {
-  outline: none;
-  border-color: var(--ink);
 }
 .metadata-input::placeholder { color: var(--ink-muted); }
 
@@ -769,10 +757,6 @@ a { -webkit-tap-highlight-color: transparent; }
   font-size: 1rem;
 }
 
-.prompt-input:focus {
-  outline: none;
-  border-color: var(--ink);
-}
 
 .prompt-input::placeholder { color: var(--ink-muted); }
 
@@ -816,10 +800,6 @@ a { -webkit-tap-highlight-color: transparent; }
   font-size: 1rem;
 }
 
-.form-field input:focus {
-  outline: none;
-  border-color: var(--ink);
-}
 
 .form-field input::placeholder { color: var(--ink-muted); }
 

@@ -24,10 +24,7 @@
   font-family: var(--mono);
   font-size: 16px;
 }
-.share-link-field:focus {
-  outline: none;
-  border-color: var(--ink);
-}
+.share-link-field:focus { border-color: var(--ink); }
 .share-link-actions {
   display: flex;
   flex-wrap: wrap;
