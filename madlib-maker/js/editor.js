@@ -319,10 +319,13 @@ const BlankList = (function() {
     StoryEditor.replaceStory(MadlibFormat.applyEdits(before, edits), edits[0].start);
 
     const label = prompt.count > 1 ? `Removed ${prompt.count} “${prompt.type}” blanks` : `Removed “${prompt.type}”`;
-    URLManager.showToast(label, false, {
+    const toast = URLManager.showToast(label, false, {
       label: 'Undo',
       onClick: () => StoryEditor.replaceStory(before, prompt.tokens[0].end)
     });
+    // Undo puts back the whole story as it was, so once the story changes again
+    // it would erase that edit: retire the toast instead (Cmd+Z still works)
+    document.addEventListener('madlib:storychange', () => URLManager.hideToast(toast), { once: true });
   }
 
   // Set the question players see for a blank (empty removes it). The question

@@ -333,12 +333,21 @@ const DraftManager = (function() {
       const btn = el('button', 'library-status-action', 'Undo');
       btn.type = 'button';
       btn.addEventListener('click', () => {
-        undo();
+        const restoredId = undo();
         setStatus('');
         renderList();
+        if (restoredId) focusEntry(restoredId, 'open');
       });
       statusEl.appendChild(btn);
     }
+  }
+
+  // Re-rendering the list replaces the focused button; put focus back on the
+  // same entry so keyboard users keep their place in the dialog
+  function focusEntry(id, action) {
+    const btn = Array.from(listEl.querySelectorAll('.library-action'))
+      .find(b => b.dataset.id === id && b.dataset.action === action);
+    if (btn) btn.focus();
   }
 
   function deleteEntry(id) {
@@ -358,8 +367,10 @@ const DraftManager = (function() {
     setStatus('Deleted “' + title + '”.', () => {
       MadlibLibrary.restore(result.entry, result.index);
       if (wasActive && !activeId) setActive(result.entry.id);
+      return result.entry.id;
     });
     renderList();
+    statusEl.querySelector('.library-status-action').focus();
   }
 
   function duplicateEntry(id) {
@@ -377,6 +388,7 @@ const DraftManager = (function() {
     }
     setStatus('Duplicated “' + (entry.title.trim() || UNTITLED) + '”.');
     renderList();
+    focusEntry(id, 'duplicate');
   }
 
   function handleListClick(e) {

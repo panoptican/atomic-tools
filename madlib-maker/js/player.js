@@ -279,9 +279,10 @@ const PlayerMode = (function() {
     answers = {};
     currentPromptIndex = 0;
 
-    // Go back to intro
+    // Go back to intro; the clicked button is now hidden, so focus Start
     renderIntro();
     showScreen('intro');
+    startBtn.focus();
   }
 
   function handleCreateOwn() {

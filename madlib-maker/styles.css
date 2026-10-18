@@ -606,7 +606,8 @@ a { -webkit-tap-highlight-color: transparent; }
   pointer-events: auto;
 }
 .toast.info { background: var(--ink); }
-.toast-action {
+.toast-action,
+.toast-dismiss {
   margin-left: 14px;
   padding: 0;
   border: 0;

@@ -6,15 +6,37 @@ const URLManager = (function() {
   // Toast element
   let toastEl;
   let toastTimeout;
+  let toastId = 0;
 
-  // Show toast notification, optionally with one action button (e.g. Undo)
+  function toastButton(className, label, onClick) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = className;
+    btn.textContent = label;
+    btn.addEventListener('click', onClick);
+    return btn;
+  }
+
+  // Fade the toast out, then empty it so no invisible button stays in the tab order.
+  // With an id (from showToast), only hides that toast, not a newer one.
+  function hideToast(id) {
+    if (!toastEl || (id !== undefined && id !== toastId)) return;
+    clearTimeout(toastTimeout);
+    toastEl.classList.remove('show');
+    toastTimeout = setTimeout(() => {
+      toastEl.textContent = '';
+    }, 200);
+  }
+
+  // Show toast notification, optionally with one action button (e.g. Undo).
+  // Plain messages fade after 3s. An error or an action stays until it is used,
+  // dismissed or replaced, so nobody loses an Undo or a message to a timer.
+  // Returns an id for hideToast.
   function showToast(message, isError = false, action = null) {
-    if (!toastEl) return;
+    if (!toastEl) return null;
+    toastId++;
 
-    // Clear existing timeout
-    if (toastTimeout) {
-      clearTimeout(toastTimeout);
-    }
+    clearTimeout(toastTimeout);
 
     // A modal dialog makes everything outside it inert, so show the toast inside
     // whichever dialog is open (it's position: fixed, so it stays put on screen)
@@ -31,15 +53,15 @@ const URLManager = (function() {
     }
 
     if (action) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'toast-action';
-      btn.textContent = action.label;
-      btn.addEventListener('click', () => {
-        toastEl.classList.remove('show');
+      toastEl.appendChild(toastButton('toast-action', action.label, () => {
+        hideToast();
         action.onClick();
-      });
-      toastEl.appendChild(btn);
+      }));
+    }
+
+    const persistent = isError || !!action;
+    if (persistent) {
+      toastEl.appendChild(toastButton('toast-dismiss', 'Dismiss', () => hideToast()));
     }
 
     // Force reflow for animation
@@ -47,9 +69,8 @@ const URLManager = (function() {
 
     toastEl.classList.add('show');
 
-    toastTimeout = setTimeout(() => {
-      toastEl.classList.remove('show');
-    }, action ? 6000 : 3000);
+    if (!persistent) toastTimeout = setTimeout(() => hideToast(), 3000);
+    return toastId;
   }
 
   // Collect all madlib data
@@ -332,6 +353,7 @@ const URLManager = (function() {
     copyToClipboard,
     loadData,
     parseHash,
-    showToast
+    showToast,
+    hideToast
   };
 })();

@@ -2,11 +2,13 @@
 const MadlibCollection = (function() {
   const STORAGE_KEY = 'madlib-stories';
   const MAX_ENTRIES = 200;
+  const UNTITLED = 'Untitled madlib';
 
   let dialog = null;
   let titleEl = null;
   let bodyEl = null;
   let saveErrorShown = false;
+  let pendingUndo = null; // { message, undo } for the last delete, until the dialog closes
 
   function readAll() {
     try {
@@ -55,7 +57,7 @@ const MadlibCollection = (function() {
     });
     if (list.length > MAX_ENTRIES) list.length = MAX_ENTRIES;
     if (writeAll(list)) {
-      URLManager.showToast('Saved to My stories', false, { label: 'View', onClick: open });
+      URLManager.showToast('Saved to My stories');
     }
   }
 
@@ -103,6 +105,13 @@ const MadlibCollection = (function() {
     dialog.addEventListener('click', (e) => {
       if (e.target === dialog) dialog.close();
     });
+    // A delete made in the dialog can still be undone from the toast
+    dialog.addEventListener('close', () => {
+      if (!pendingUndo) return;
+      const { message, undo } = pendingUndo;
+      pendingUndo = null;
+      URLManager.showToast(message, false, { label: 'Undo', onClick: undo });
+    });
     document.body.appendChild(dialog);
   }
 
@@ -125,9 +134,30 @@ const MadlibCollection = (function() {
     return node;
   }
 
-  function renderList() {
+  // Re-rendering replaces the focused button, so the list puts focus back where
+  // the user was: on a story's row, or on Undo right after a delete
+  function renderList(focusId) {
     const list = readAll();
     const wrap = el('div', 'mc-list-view');
+    let focusTarget = null;
+
+    if (pendingUndo) {
+      // Same inline status as My madlibs (css/library.css)
+      const status = el('p', 'library-status');
+      const text = el('span', 'library-status-text', pendingUndo.message);
+      text.id = 'mc-status-text';
+      const undoBtn = el('button', 'library-status-action', 'Undo');
+      undoBtn.type = 'button';
+      undoBtn.setAttribute('aria-describedby', text.id);
+      undoBtn.addEventListener('click', () => {
+        const restoredId = pendingUndo.undo();
+        pendingUndo = null;
+        renderList(restoredId);
+      });
+      status.append(text, undoBtn);
+      wrap.appendChild(status);
+      if (focusId === 'undo') focusTarget = undoBtn;
+    }
 
     if (!list.length) {
       wrap.appendChild(el('p', 'mm-empty', 'No stories yet. Finish a madlib and it’ll be saved here.'));
@@ -146,6 +176,7 @@ const MadlibCollection = (function() {
         try { excerpt = MadlibFormat.finish(entry).plainText.replace(/\s+/g, ' '); } catch (e) { /* ignore */ }
         row.append(top, el('span', 'mc-row-excerpt', excerpt));
         row.addEventListener('click', () => renderStory(entry.id));
+        if (entry.id === focusId) focusTarget = row;
         li.appendChild(row);
         ul.appendChild(li);
       });
@@ -154,6 +185,7 @@ const MadlibCollection = (function() {
 
     wrap.appendChild(el('p', 'mc-footnote', 'Stories are saved only in this browser.'));
     setView('My stories', wrap);
+    if (focusTarget) focusTarget.focus();
   }
 
   function actionButton(label, onClick, extra) {
@@ -175,7 +207,8 @@ const MadlibCollection = (function() {
     }
 
     const wrap = el('div', 'mc-story-view');
-    wrap.appendChild(actionButton('← All stories', renderList, 'mc-back'));
+    const back = actionButton('← All stories', () => renderList(id), 'mc-back');
+    wrap.appendChild(back);
 
     const head = el('div', 'mc-story-head');
     head.appendChild(el('h3', 'mc-story-title', entry.title || 'Untitled Madlib'));
@@ -220,6 +253,7 @@ const MadlibCollection = (function() {
     wrap.appendChild(actions);
 
     setView(entry.title || 'My stories', wrap);
+    back.focus();
   }
 
   function removeEntry(id) {
@@ -228,17 +262,20 @@ const MadlibCollection = (function() {
     if (index === -1) return;
     const [removed] = list.splice(index, 1);
     if (!writeAll(list)) return;
-    renderList();
-    URLManager.showToast('Story deleted', false, {
-      label: 'Undo',
-      onClick: () => {
+    // Undo stays in the dialog until it closes, then moves to a toast that stays
+    // until dismissed; nothing about it runs on a timer
+    pendingUndo = {
+      message: `Deleted “${removed.title || UNTITLED}”.`,
+      undo: () => {
         const current = readAll();
-        if (current.some(e => e.id === removed.id)) return;
-        current.splice(Math.min(index, current.length), 0, removed);
-        writeAll(current);
-        if (dialog && dialog.open) renderList();
+        if (!current.some(e => e.id === removed.id)) {
+          current.splice(Math.min(index, current.length), 0, removed);
+          writeAll(current);
+        }
+        return removed.id;
       }
-    });
+    };
+    renderList('undo');
   }
 
   // Wiring -----------------------------------------------------------------
