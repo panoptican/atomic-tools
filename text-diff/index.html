@@ -204,6 +204,8 @@
   @media (max-width: 720px) {
     .panes { grid-template-columns: 1fr; }
     textarea { height: 180px; }
+    /* Side by side doesn't fit once the panes stack; app.js renders unified */
+    .view-group { display: none; }
   }
 
   @media (max-width: 560px) {
@@ -260,7 +262,7 @@
   </section>
 
   <div class="toolbar">
-    <div class="toolbar-group" role="group" aria-label="Diff layout">
+    <div class="toolbar-group view-group" role="group" aria-label="Diff layout">
       <span class="section-label">View</span>
       <div class="segmented">
         <button type="button" id="splitBtn" aria-pressed="true">Split</button>

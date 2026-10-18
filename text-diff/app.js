@@ -31,6 +31,9 @@ const prefs = loadPrefs();
 let FileDiff = null;
 let libraryFailed = false;
 let instance = null;
+// Side by side stops fitting when the panes stack; below that the diff is
+// always unified and the View switch is hidden (CSS), keeping the saved choice.
+const narrowScreen = window.matchMedia('(max-width: 720px)');
 let identicalSwaps = 0;
 // What Clear removed, kept until the next edit so the button can undo it.
 // (Setting .value directly wipes the textareas' own undo history.)
@@ -82,7 +85,7 @@ function diffOptions() {
     // the tinted change lines; the pierre themes dropped to 1.8:1
     theme: { dark: 'github-dark-high-contrast', light: 'github-light-high-contrast' },
     themeType: currentThemeType(),
-    diffStyle: prefs.diffStyle,
+    diffStyle: narrowScreen.matches ? 'unified' : prefs.diffStyle,
     unsafeCSS: DIFF_CSS,
     overflow: prefs.wrap ? 'wrap' : 'scroll',
     expandUnchanged: prefs.fullContext,
@@ -332,6 +335,11 @@ AtomicTheme.bind({
   onChange: (dark) => {
     if (instance) instance.setThemeType(dark ? 'dark' : 'light');
   }
+});
+
+narrowScreen.addEventListener('change', () => {
+  resetInstance();
+  render();
 });
 
 render();

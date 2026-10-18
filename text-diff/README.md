@@ -40,7 +40,9 @@ Notes on the library that shaped the implementation:
 
 ## Controls
 
-- **Split / Unified** — side-by-side or single-column view
+- **Split / Unified** — side-by-side or single-column view. Below 720px the diff
+  is always unified and this switch is hidden; the saved choice returns on wider
+  screens.
 - **Wrap lines** — wrap long lines instead of scrolling horizontally
 - **Full context** — show every unchanged line; off collapses unchanged regions
   into expandable separators
