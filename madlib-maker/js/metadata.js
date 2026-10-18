@@ -11,6 +11,20 @@ const MetadataManager = (function() {
   // DOM Elements
   let titleInput;
   let subtitleInput;
+  let subtitleField;
+  let addSubtitleBtn;
+
+  // The subtitle input hides behind "Add subtitle" until it has a value
+  function showSubtitleField(visible) {
+    subtitleField.hidden = !visible;
+    addSubtitleBtn.hidden = visible;
+  }
+
+  // Grow the title textarea to fit its wrapped lines
+  function fitTitleHeight() {
+    titleInput.style.height = 'auto';
+    titleInput.style.height = `${titleInput.scrollHeight}px`;
+  }
 
   // Update internal state from inputs
   function syncFromInputs() {
@@ -49,6 +63,7 @@ const MetadataManager = (function() {
     title = text || '';
     if (titleInput) {
       titleInput.value = title;
+      fitTitleHeight();
       updatePageTitle();
     }
   }
@@ -58,6 +73,7 @@ const MetadataManager = (function() {
     subtitle = text || '';
     if (subtitleInput) {
       subtitleInput.value = subtitle;
+      showSubtitleField(Boolean(subtitle));
     }
   }
 
@@ -65,13 +81,51 @@ const MetadataManager = (function() {
   function init() {
     titleInput = document.getElementById('madlib-title');
     subtitleInput = document.getElementById('madlib-subtitle');
+    subtitleField = document.getElementById('subtitle-field');
+    addSubtitleBtn = document.getElementById('add-subtitle-btn');
 
-    // Sync state on input
-    titleInput.addEventListener('input', syncFromInputs);
+    // Sync state on input. The title is a textarea only so it can wrap:
+    // keep it one paragraph by dropping line breaks (typed or pasted).
+    titleInput.addEventListener('keydown', (e) => {
+      // Leave Enter alone while an IME composition is being confirmed
+      if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) e.preventDefault();
+    });
+    titleInput.addEventListener('input', () => {
+      if (/[\r\n]/.test(titleInput.value)) {
+        titleInput.value = titleInput.value.replace(/[\r\n]+/g, ' ');
+      }
+      fitTitleHeight();
+      syncFromInputs();
+    });
+    // Re-fit when the card's width changes or the display font arrives
+    if (typeof ResizeObserver !== 'undefined') {
+      let lastWidth = 0;
+      new ResizeObserver(([entry]) => {
+        const width = entry.contentRect.width;
+        if (width !== lastWidth) {
+          lastWidth = width;
+          fitTitleHeight();
+        }
+      }).observe(titleInput);
+    } else {
+      window.addEventListener('resize', fitTitleHeight);
+    }
+    if (document.fonts) document.fonts.ready.then(fitTitleHeight);
     subtitleInput.addEventListener('input', syncFromInputs);
+
+    addSubtitleBtn.addEventListener('click', () => {
+      showSubtitleField(true);
+      subtitleInput.focus();
+    });
+    // Leaving it empty folds it back into the link
+    subtitleInput.addEventListener('blur', () => {
+      if (!subtitleInput.value.trim()) showSubtitleField(false);
+    });
 
     // Initial sync
     syncFromInputs();
+    fitTitleHeight();
+    showSubtitleField(Boolean(subtitle));
   }
 
   // Public API
