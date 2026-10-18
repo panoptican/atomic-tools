@@ -30,6 +30,7 @@
 }
 
 .back-link {
+  position: relative;
   justify-self: start;
   display: inline-flex;
   align-items: center;
@@ -43,8 +44,36 @@
   white-space: nowrap;
 }
 
-.back-link:hover {
-  color: var(--ink-soft);
+.back-link svg,
+.theme-toggle svg {
+  flex-shrink: 0;
+}
+
+/* Hit areas: both controls draw small but take a 44px tap. The top bar's
+   padding leaves room for the overhang. */
+.back-link::before,
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+}
+
+.back-link::before {
+  inset: -13px -10px;
+}
+
+.theme-toggle::before {
+  inset: -6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .back-link:hover {
+    color: var(--ink-soft);
+  }
+
+  .theme-toggle:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
 }
 
 .back-link svg {
@@ -75,6 +104,7 @@
 }
 
 .theme-toggle {
+  position: relative;
   grid-column: 3;
   justify-self: end;
   width: 32px;
@@ -87,11 +117,6 @@
   background: transparent;
   color: var(--ink);
   cursor: pointer;
-}
-
-.theme-toggle:hover {
-  background: var(--ink);
-  color: var(--paper);
 }
 
 .theme-toggle svg {
