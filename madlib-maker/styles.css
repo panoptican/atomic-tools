@@ -9,11 +9,11 @@
   --surface: #fbfaf6;
   --ink: #111111;
   --ink-soft: #444444;
-  --ink-muted: #8a8a85;
+  --ink-muted: #6e6e69; /* 4.65:1 on paper, 4.91:1 on surface */
   --rule: #1a1a1a;
   --rule-soft: #d8d6cf;
   --focus: #2b5fff;
-  --err: #c93a3a;
+  --err: #b03030; /* 5.06:1 on err-soft */
   --err-soft: #f5e1e1;
 
   --display: "GT America Expanded", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -26,7 +26,7 @@
   --surface: #161614;
   --ink: #f3f1ea;
   --ink-soft: #cfccc4;
-  --ink-muted: #7f7d77;
+  --ink-muted: #858379; /* 4.76:1 on surface */
   --rule: #f3f1ea;
   --rule-soft: #2a2a28;
   --focus: #6f8dff;

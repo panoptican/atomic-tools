@@ -124,7 +124,7 @@ const MadlibShare = (function() {
       paper: get('--paper', '#f5f4ef'),
       ink: get('--ink', '#111111'),
       soft: get('--ink-soft', '#444444'),
-      muted: get('--ink-muted', '#8a8a85'),
+      muted: get('--ink-muted', '#6e6e69'),
       display: get('--display', 'sans-serif'),
       text: get('--text', 'sans-serif')
     };
