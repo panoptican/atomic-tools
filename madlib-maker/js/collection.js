@@ -4,6 +4,11 @@ const MadlibCollection = (function() {
   const MAX_ENTRIES = 200;
   const UNTITLED = 'Untitled madlib';
 
+  // Lucide icons. The width and height attributes keep them small even if the
+  // stylesheet hasn't loaded; CSS sets the real size.
+  const ARROW_LEFT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
+  const TRASH_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+
   let dialog = null;
   let titleEl = null;
   let bodyEl = null;
@@ -164,7 +169,7 @@ const MadlibCollection = (function() {
     } else {
       const ul = el('ul', 'mc-list');
       list.forEach(entry => {
-        const li = document.createElement('li');
+        const li = el('li', 'mc-item');
         const row = el('button', 'mc-row');
         row.type = 'button';
         const top = el('span', 'mc-row-top');
@@ -177,7 +182,14 @@ const MadlibCollection = (function() {
         row.append(top, el('span', 'mc-row-excerpt', excerpt));
         row.addEventListener('click', () => renderStory(entry.id));
         if (entry.id === focusId) focusTarget = row;
-        li.appendChild(row);
+        // A small Delete inside the row, like My madlibs; it's undoable either way
+        const del = el('button', 'mc-row-delete');
+        del.type = 'button';
+        del.setAttribute('aria-label', 'Delete ' + (entry.title || UNTITLED) + ', ' + formatDate(entry.savedAt, true));
+        del.title = 'Delete';
+        del.innerHTML = TRASH_ICON;
+        del.addEventListener('click', () => removeEntry(entry.id));
+        li.append(row, del);
         ul.appendChild(li);
       });
       wrap.appendChild(ul);
@@ -207,7 +219,8 @@ const MadlibCollection = (function() {
     }
 
     const wrap = el('div', 'mc-story-view');
-    const back = actionButton('← All stories', () => renderList(id), 'mc-back');
+    const back = actionButton('All stories', () => renderList(id), 'mc-back');
+    back.insertAdjacentHTML('afterbegin', ARROW_LEFT_ICON);
     wrap.appendChild(back);
 
     const head = el('div', 'mc-story-head');
