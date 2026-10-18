@@ -255,7 +255,9 @@
     font-size: 0.85rem;
     line-height: 1.55;
   }
-  .hint.is-flagged { color: var(--ink); }
+  /* Blocked typing: darker and underlined, since in dark mode the color
+     change alone is under 3:1 */
+  .hint.is-flagged { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
   .self-aside { color: var(--ink-soft); }
   .status-note {
     padding: 10px 14px;
