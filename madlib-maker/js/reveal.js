@@ -172,7 +172,9 @@ const Reveal = (function() {
     onDone = done || null;
     render(result);
     active = true;
-    paused = false;
+    // With reduced motion the story doesn't play itself: it waits on the first
+    // sentence until Resume, Show all, a tap or ArrowRight moves it on
+    paused = reducedMotion;
     shown = 0;
     updateControls();
     if (steps.length <= 1) {
