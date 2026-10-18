@@ -155,8 +155,8 @@ const ModeManager = (function() {
     modeTabsEl = document.getElementById('mode-tabs');
     modeTabs = document.querySelectorAll('.mode-tab[data-mode]');
 
-    // Get all creator sections (including column/bottom wrappers)
-    creatorSections = document.querySelectorAll('.container .section, .container .editor-columns, .container .bottom-sections');
+    // Get all creator sections (including the column wrapper)
+    creatorSections = document.querySelectorAll('.container .section, .container .editor-columns');
 
     // Add tab click listeners
     modeTabs.forEach(tab => {
