@@ -219,22 +219,27 @@
         <button type="button" class="player-btn reveal-read-btn" id="read-aloud-btn" aria-pressed="false">Read aloud</button>
       </header>
       <div class="story-output" id="story-output" aria-live="polite"></div>
-      <p class="reveal-tip">Select the story to skip ahead, or a word to see what was asked.</p>
-      <div class="reveal-step-controls" id="reveal-step-controls">
-        <button type="button" class="player-btn player-btn-primary" id="reveal-pause-btn" aria-pressed="false">Pause</button>
-        <span class="reveal-progress" id="reveal-progress">1 of 1</span>
-        <button type="button" class="player-btn reveal-all-btn" id="reveal-all-btn">Show all</button>
-      </div>
+      <p class="reveal-tip">Select a word to see what was asked.</p>
       <div class="reveal-actions" id="reveal-actions" hidden>
-        <button type="button" class="player-btn" id="copy-story-btn">Copy story</button>
-        <button type="button" class="player-btn player-btn-primary" id="share-story-btn">Share story link</button>
-        <button type="button" class="player-btn" id="replay-btn">Replay reveal</button>
-        <button type="button" class="player-btn" id="play-again-btn">Play again</button>
-        <!-- Wired by js/share.js, js/print.js and js/collection.js; hidden until then -->
-        <button type="button" class="player-btn" id="save-image-btn" hidden>Save as image</button>
-        <button type="button" class="player-btn" id="print-story-btn" hidden>Print</button>
-        <button type="button" class="player-btn" id="my-stories-btn" hidden>My stories</button>
-        <button type="button" class="player-btn" id="create-own-btn">Create your own</button>
+        <!-- Keep or send the finished story: sharing leads, so it's first and filled.
+             Save as image and Print are wired by js/share.js and js/print.js; hidden until then -->
+        <div class="reveal-actions-main">
+          <button type="button" class="player-btn player-btn-primary" id="share-story-btn">Share story link</button>
+          <button type="button" class="player-btn" id="copy-story-btn">Copy story</button>
+          <button type="button" class="player-btn" id="save-image-btn" hidden>Save as image</button>
+          <button type="button" class="player-btn" id="print-story-btn" hidden>Print</button>
+        </div>
+        <!-- Quieter: go again on one side, move on on the other.
+             My stories is wired by js/collection.js; hidden until then -->
+        <div class="reveal-actions-more">
+          <div class="reveal-actions-group">
+            <button type="button" class="reveal-link-btn" id="play-again-btn">Play again</button>
+          </div>
+          <div class="reveal-actions-group">
+            <button type="button" class="reveal-link-btn" id="my-stories-btn" hidden>My stories</button>
+            <button type="button" class="reveal-link-btn" id="create-own-btn">Create your own</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

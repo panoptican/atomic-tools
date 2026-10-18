@@ -290,7 +290,6 @@ const MadlibCollection = (function() {
 
     document.addEventListener('madlib:revealdone', (e) => {
       const detail = e.detail || {};
-      if (detail.source === 'replay') return;
       save(detail.result);
     });
   }
