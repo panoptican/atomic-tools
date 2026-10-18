@@ -824,6 +824,11 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--ink-muted);
 }
 
+/* Phone keyboards say Go or Next, not Enter, and the buttons are right there */
+@media (pointer: coarse) {
+  .prompt-hint { display: none; }
+}
+
 .prompt-nav {
   display: flex;
   justify-content: space-between;
