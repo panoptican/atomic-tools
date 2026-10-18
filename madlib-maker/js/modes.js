@@ -40,41 +40,16 @@ const ModeManager = (function() {
     };
   }
 
-  // Update tab button states
+  // Update the view switch: toggle buttons in a group, like the player's input
+  // mode switch, so screen readers hear which view is on
   function updateTabButtons() {
     if (!modeTabs) return;
 
     modeTabs.forEach(tab => {
-      if (tab.dataset.mode === currentMode) {
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-      } else {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
-      }
+      const on = tab.dataset.mode === currentMode;
+      tab.classList.toggle('active', on);
+      tab.setAttribute('aria-pressed', String(on));
     });
-  }
-
-  function handleTabKeydown(e) {
-    const tabs = Array.from(modeTabs);
-    const index = tabs.indexOf(e.currentTarget);
-    if (index === -1) return;
-
-    let nextIndex = null;
-    if (e.key === 'ArrowRight') {
-      nextIndex = (index + 1) % tabs.length;
-    } else if (e.key === 'ArrowLeft') {
-      nextIndex = (index - 1 + tabs.length) % tabs.length;
-    } else if (e.key === 'Home') {
-      nextIndex = 0;
-    } else if (e.key === 'End') {
-      nextIndex = tabs.length - 1;
-    }
-
-    if (nextIndex === null) return;
-
-    e.preventDefault();
-    tabs[nextIndex].focus();
   }
 
   // Show creator sections
@@ -186,7 +161,6 @@ const ModeManager = (function() {
     // Add tab click listeners
     modeTabs.forEach(tab => {
       tab.addEventListener('click', handleTabClick);
-      tab.addEventListener('keydown', handleTabKeydown);
     });
     updateTabButtons();
   }

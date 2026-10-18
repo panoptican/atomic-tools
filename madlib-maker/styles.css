@@ -107,26 +107,39 @@ a { -webkit-tap-highlight-color: transparent; }
   }
 }
 
+/* Mode bar -------------------------------------------------------------- */
+
+/* Two jobs, two rows, in reading order at every width: the library actions
+   (open a dialog or start over) as a quiet row of text buttons, then the
+   Create / Preview view switch right above the editor. */
+.mode-bar { margin-bottom: 34px; }
+
 .mode-tools {
   display: flex;
-  margin-left: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 24px;
+  margin-bottom: 10px;
 }
 
-.mode-tools .mode-tab { padding-left: 16px; padding-right: 16px; }
-
-.new-madlib-btn:hover {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
+.mode-tool {
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  font-family: var(--text);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-/* Mode tabs -------------------------------------------------------------- */
+.new-madlib-btn::before { content: "+ "; }
 
 .mode-tabs {
   display: flex;
-  gap: 0;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 34px;
-  align-items: flex-end;
 }
 
 .mode-tab {
@@ -143,10 +156,49 @@ a { -webkit-tap-highlight-color: transparent; }
   cursor: pointer;
 }
 
-.mode-tab:hover { color: var(--ink); }
 .mode-tab.active {
   color: var(--ink);
   border-bottom-color: var(--ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mode-tool:hover,
+  .mode-tab:not(.active):hover { color: var(--ink); }
+}
+
+/* Narrow screens: the library actions start at the leading edge with
+   "New madlib" at the end, and Create / Preview become a full-width
+   segmented control. */
+@media (max-width: 680px) {
+  .mode-bar { margin-bottom: 24px; }
+
+  .mode-tools {
+    justify-content: flex-start;
+    gap: 4px 20px;
+    margin-bottom: 14px;
+  }
+
+  .mode-tools .new-madlib-btn { margin-left: auto; }
+
+  .mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 0;
+  }
+
+  .mode-tab {
+    padding: 12px 8px;
+    border: 1px solid var(--rule);
+    margin-bottom: 0;
+    text-align: center;
+  }
+
+  .mode-tab + .mode-tab { border-left: 0; }
+
+  .mode-tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
 }
 
 /* Sections --------------------------------------------------------------- */
@@ -1000,11 +1052,6 @@ a { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 560px) {
   .container { width: calc(100% - 32px); padding: 32px 0 48px; }
-  .mode-tabs { flex-wrap: wrap; }
-  .mode-tab { padding: 12px 14px; }
-  .mode-tools { margin-left: 0; flex-basis: 100%; }
-  .mode-tools .mode-tab { padding: 12px 10px; white-space: nowrap; }
-  .mode-tools .mode-tab:first-child { padding-left: 0; }
   .primary-section, .supporting-section { padding: 16px; }
   .page-intro { margin-bottom: 28px; }
   .story-textarea { min-height: 320px; padding: 16px 18px; font-size: 1rem; }
