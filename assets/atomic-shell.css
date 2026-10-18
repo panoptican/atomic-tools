@@ -126,14 +126,46 @@
   display: block;
 }
 
+/* Phones: a centered title collides with "All Tools" on long names, so the
+   back link shrinks to an icon square that mirrors the theme toggle and the
+   title sits centered between the two equal squares, truncating instead of
+   overlapping.
+   The "All Tools" text stays in the DOM (font-size: 0) as the link's name. */
 @media (max-width: 560px) {
   .top-bar {
-    padding: 14px 18px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 14px;
+    padding: 12px 16px;
   }
 
-  .back-link,
-  .tool-title {
-    font-size: 0.7rem;
+  .top-bar .back-link {
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+    border: 1px solid var(--rule);
+    font-size: 0;
+    letter-spacing: 0;
+  }
+
+  .top-bar .back-link::before {
+    inset: -6px;
+  }
+
+  .top-bar .tool-title {
+    justify-self: center;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ink);
+    font-size: 0.74rem;
     letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 560px) and (hover: hover) and (pointer: fine) {
+  .top-bar .back-link:hover {
+    background: var(--ink);
+    color: var(--paper);
   }
 }
