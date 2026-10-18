@@ -10,11 +10,10 @@ client-side — nothing is uploaded.
 
 ## How it works
 
-`@pierre/diffs` is loaded as an ES module from esm.sh:
-
-```js
-import { FileDiff } from 'https://esm.sh/@pierre/diffs@1.3.5';
-```
+`@pierre/diffs` is loaded from esm.sh with a dynamic `import()` at the end of
+`app.js`, so the panes, line counts and buttons work before it arrives. If it
+can't load, the page says so and asks for a reload instead of sitting on the
+empty-state message.
 
 Typing in either pane schedules a debounced (180ms) re-render. `FileDiff` renders
 into shadow DOM, so page styles and the diff's own theme stay isolated.

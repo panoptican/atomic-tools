@@ -1,4 +1,8 @@
-import { FileDiff } from 'https://esm.sh/@pierre/diffs@1.3.5';
+// Loaded with import() at the end of this file rather than a static import, so
+// the panes, counts and buttons still work, and say so, when esm.sh is unreachable.
+const LIBRARY_URL = 'https://esm.sh/@pierre/diffs@1.3.5';
+const LOAD_ERROR = "Couldn't load the diff viewer. Check your connection, then reload the page.";
+const RENDER_ERROR = "Couldn't show this diff. Reload the page and paste again.";
 
 const originalInput = document.getElementById('originalInput');
 const changedInput = document.getElementById('changedInput');
@@ -24,6 +28,8 @@ const STORAGE_KEY = 'text-diff-prefs';
 const DEFAULT_FILENAME = 'snippet.txt';
 
 const prefs = loadPrefs();
+let FileDiff = null;
+let libraryFailed = false;
 let instance = null;
 let identicalSwaps = 0;
 // What Clear removed, kept until the next edit so the button can undo it.
@@ -84,6 +90,17 @@ function showStatus(message) {
   statusNote.classList.toggle('hidden', !message);
 }
 
+function showPlaceholder(message) {
+  if (instance) {
+    instance.cleanUp();
+    instance = null;
+  }
+  diffMount.replaceChildren();
+  diffMount.classList.add('hidden');
+  placeholder.classList.toggle('hidden', !message);
+  placeholder.textContent = message;
+}
+
 /**
  * FileDiff uses reference equality on the file objects to skip re-renders, so
  * each render passes freshly built objects.
@@ -95,28 +112,26 @@ function render() {
   originalCount.textContent = lineLabel(oldText);
   changedCount.textContent = lineLabel(newText);
 
+  if (libraryFailed) {
+    showPlaceholder('');
+    showStatus(LOAD_ERROR);
+    return;
+  }
+
   if (!oldText && !newText) {
-    if (instance) {
-      instance.cleanUp();
-      instance = null;
-    }
-    diffMount.replaceChildren();
-    diffMount.classList.add('hidden');
-    placeholder.classList.remove('hidden');
-    placeholder.textContent = 'Paste text into both panes to see the diff.';
+    showPlaceholder('Paste text into both panes to see the diff.');
     showStatus('');
     return;
   }
 
   if (oldText === newText) {
-    if (instance) {
-      instance.cleanUp();
-      instance = null;
-    }
-    diffMount.replaceChildren();
-    diffMount.classList.add('hidden');
-    placeholder.classList.remove('hidden');
-    placeholder.textContent = 'Both sides are identical.';
+    showPlaceholder('Both sides are identical.');
+    showStatus('');
+    return;
+  }
+
+  if (!FileDiff) {
+    showPlaceholder('Loading the diff viewer…');
     showStatus('');
     return;
   }
@@ -138,7 +153,8 @@ function render() {
     instance.render(payload);
     showStatus('');
   } catch (error) {
-    showStatus('Could not render the diff: ' + error.message);
+    console.error('Diff render failed:', error);
+    showStatus(RENDER_ERROR);
   }
 }
 
@@ -263,3 +279,13 @@ AtomicTheme.bind({
 });
 
 render();
+
+import(LIBRARY_URL)
+  .then((module) => {
+    FileDiff = module.FileDiff;
+  })
+  .catch((error) => {
+    console.error('Diff library failed to load:', error);
+    libraryFailed = true;
+  })
+  .then(render);
