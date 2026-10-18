@@ -142,9 +142,16 @@
     width: 32px;
     height: 32px;
     justify-content: center;
+    gap: 0;
     border: 1px solid var(--rule);
     font-size: 0;
     letter-spacing: 0;
+  }
+
+  /* The arrowhead carries the glyph's weight on the left, so a geometric
+     center reads left of center; nudge it toward the shaft. */
+  .top-bar .back-link svg {
+    transform: translateX(0.5px);
   }
 
   .top-bar .back-link::before {
