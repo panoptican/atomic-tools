@@ -97,13 +97,10 @@
       grid-template-columns: repeat(5, 64px);
       gap: 10px;
       margin: 48px 0 0;
-      outline: 2px solid transparent;
-      outline-offset: 8px;
     }
 
-    /* The real input is visually hidden, so the tiles show its focus: the
-       site's focus ring around the row and a caret in the next empty tile. */
-    .tiles.is-focused { outline-color: var(--focus); }
+    /* The real input is visually hidden, so the tiles show its focus: a
+       darker border and a blinking caret in the next empty tile. */
     .tiles.is-focused .tile.is-next { border-color: var(--ink-muted); }
     .tiles.is-focused .tile.is-next::after {
       content: "";
