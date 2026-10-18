@@ -329,7 +329,8 @@
           resultDetail.textContent = `Wordle #${data.game} · ${data.date}`;
         } else {
           tiles.forEach(t => { t.classList.add('no'); t.classList.remove('yes'); });
-          resultHeadline.textContent = 'No. Still safe to guess.';
+          // The API has no dictionary, so don't promise this is a valid guess
+          resultHeadline.textContent = 'No. Not used yet.';
           resultDetail.textContent = 'This word has not been a Wordle answer.';
         }
       } catch (err) {
