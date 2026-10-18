@@ -606,14 +606,16 @@ a { -webkit-tap-highlight-color: transparent; }
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%) translateY(12px);
+  /* left: 50% alone would shrink a long message to half the viewport */
+  width: max-content;
+  max-width: min(560px, calc(100% - 32px));
   padding: 12px 18px;
   border: 1px solid var(--rule);
   background: var(--ink);
   color: var(--paper);
   font-family: var(--text);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  /* Toasts carry whole sentences (errors and how to recover), so sentence case */
+  font-size: 0.875rem;
   opacity: 0;
   pointer-events: none;
   transition: opacity 180ms, transform 180ms;
