@@ -26,8 +26,7 @@
       color-scheme: light;
       --paper: #f5f4ef;
       --ink: #111111;
-      --ink-muted: #8a8a85;
-      --ink-faint: #b8b6ae;
+      --ink-muted: #66665f;
       --rule: #1a1a1a;
       --text: "GT America", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
       --glyph: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -40,8 +39,7 @@
       color-scheme: dark;
       --paper: #0f0f0e;
       --ink: #ededea;
-      --ink-muted: #6f6e6a;
-      --ink-faint: #4a4a47;
+      --ink-muted: #a4a39d;
       --rule: #2a2a28;
     }
 
@@ -50,8 +48,7 @@
         color-scheme: dark;
         --paper: #0f0f0e;
         --ink: #ededea;
-        --ink-muted: #6f6e6a;
-        --ink-faint: #4a4a47;
+        --ink-muted: #a4a39d;
         --rule: #2a2a28;
       }
     }
@@ -94,20 +91,22 @@
       gap: 24px;
       padding: 22px 0;
       border-bottom: 1px solid var(--rule);
-      transition: transform 140ms var(--ease);
     }
 
+    /* The row's contents slide, never the link itself: moving the hovered box
+       would pull it out from under a cursor near its left edge and flicker. */
     .row-name {
       font-size: 17px;
       font-weight: 500;
+      transition: transform 140ms var(--ease);
     }
 
     .row-desc {
       font-size: 17px;
       font-weight: 500;
-      color: var(--ink-faint);
+      color: var(--ink-muted);
       opacity: 0;
-      transform: translateX(-4px);
+      transform: translateX(8px);
       transition: opacity 140ms var(--ease), transform 140ms var(--ease);
       pointer-events: none;
     }
@@ -121,32 +120,34 @@
     }
 
     /* Keyboard focus */
-    .row:focus-visible {
+    .row:focus-visible .row-name {
       transform: translateX(12px);
       transition-duration: 200ms;
     }
     .row:focus-visible .row-desc {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateX(12px);
       transition-duration: 200ms;
     }
     .row:focus-visible .row-arrow {
-      transform: translateX(4px);
+      transform: translateX(16px);
+      transition-duration: 200ms;
     }
 
     /* Pointer hover (skipped on touch) */
     @media (hover: hover) and (pointer: fine) {
-      .row:hover {
+      .row:hover .row-name {
         transform: translateX(12px);
         transition-duration: 200ms;
       }
       .row:hover .row-desc {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(12px);
         transition-duration: 200ms;
       }
       .row:hover .row-arrow {
-        transform: translateX(4px);
+        transform: translateX(16px);
+        transition-duration: 200ms;
       }
     }
 
