@@ -27,8 +27,16 @@ Notes on the library that shaped the implementation:
 - Syntax highlighting (Shiki) is inferred from the filename. The filename field
   defaults to `snippet.txt`, i.e. plain text; typing `app.ts` or `styles.css`
   switches the grammar.
-- Theme follows the shared Atomic Tools toggle via `setThemeType()`, mapping to the
-  `pierre-light` / `pierre-dark` themes.
+- Theme follows the shared Atomic Tools toggle via `setThemeType()`, mapping to
+  Shiki's `github-light-high-contrast` / `github-dark-high-contrast`. The
+  `pierre-*` themes fell below 4.5:1 on changed lines. In light mode,
+  `index.html` darkens the changed-line numbers through the library's
+  `--diffs-fg-number-*-override` properties, and `DIFF_CSS` (the `unsafeCSS`
+  option) darkens the -/+ counts and the theme's comment gray.
+- The library draws collapsed-context expand controls as `<div role="button">`
+  with no tabindex or name. `app.js` watches the diff's shadow root and gives each
+  one `tabindex="0"`, an `aria-label` ("Show 16 unmodified lines") and
+  Enter/Space handling.
 
 ## Controls
 

@@ -175,6 +175,12 @@
     border: 1px solid var(--rule);
     background: var(--surface);
     overflow: hidden;
+    /* The library's light green and red put changed-line numbers under 3:1.
+       Darker text only; the line tints keep the library's colors. light-dark()
+       resolves inside the diff, so dark mode keeps the library's defaults. The
+       -/+ counts get the same colors in DIFF_CSS (app.js). */
+    --diffs-fg-number-addition-override: light-dark(#116329, #5ecc71);
+    --diffs-fg-number-deletion-override: light-dark(#a40e26, #ff6762);
   }
 
   .placeholder {

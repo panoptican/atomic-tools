@@ -63,11 +63,27 @@ function currentThemeType() {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 }
 
+// Inside the diff's shadow root, page styles don't reach. This matches the
+// page's focus ring on the expand controls made focusable below, and fixes
+// light-mode contrast the theme misses: the -/+ counts (same colors as the line
+// numbers in index.html) and the theme's comment gray, #66707B, which falls to
+// 4.1:1 on changed lines. Tokens carry their color inline, so the comment rule
+// matches that value; dark mode keeps the theme's colors.
+const DIFF_CSS = `
+  [data-expand-button]:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+  [data-additions-count] { color: light-dark(#116329, #5ecc71); }
+  [data-deletions-count] { color: light-dark(#a40e26, #ff6762); }
+  [style*="--diffs-token-light:#66707B" i] { color: light-dark(#59636e, var(--diffs-token-dark)); }
+`;
+
 function diffOptions() {
   return {
-    theme: { dark: 'pierre-dark', light: 'pierre-light' },
+    // The high-contrast GitHub themes keep syntax colors at 4.5:1 or better on
+    // the tinted change lines; the pierre themes dropped to 1.8:1
+    theme: { dark: 'github-dark-high-contrast', light: 'github-light-high-contrast' },
     themeType: currentThemeType(),
     diffStyle: prefs.diffStyle,
+    unsafeCSS: DIFF_CSS,
     overflow: prefs.wrap ? 'wrap' : 'scroll',
     expandUnchanged: prefs.fullContext,
     lineDiffType: 'word-alt',
@@ -99,6 +115,45 @@ function showPlaceholder(message) {
   diffMount.classList.add('hidden');
   placeholder.classList.toggle('hidden', !message);
   placeholder.textContent = message;
+}
+
+// The library draws the collapsed-context expand controls as <div role="button">
+// with no tabindex, name or key handling. Give each one all three as it appears.
+const EXPAND_LABELS = {
+  'data-expand-up': 'Show unmodified lines above',
+  'data-expand-down': 'Show unmodified lines below'
+};
+
+function enhanceExpanders(root) {
+  root.querySelectorAll('[data-expand-button]:not([tabindex])').forEach((btn) => {
+    const direction = Object.keys(EXPAND_LABELS).find((attr) => btn.hasAttribute(attr));
+    const count = btn.closest('[data-separator]')?.querySelector('[data-unmodified-lines]');
+    btn.tabIndex = 0;
+    btn.setAttribute('aria-label', direction
+      ? EXPAND_LABELS[direction]
+      : count ? 'Show ' + count.textContent.trim() : 'Show unmodified lines');
+    btn.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      const index = [...root.querySelectorAll('[data-expand-button]')].indexOf(btn);
+      btn.click();
+      // Expanding removes the control; keep focus on the next one, if any
+      requestAnimationFrame(() => {
+        if (root.activeElement) return;
+        const rest = root.querySelectorAll('[data-expand-button][tabindex]');
+        if (rest.length) rest[Math.min(index, rest.length - 1)].focus();
+      });
+    });
+  });
+}
+
+let observedRoot = null;
+function watchExpanders() {
+  const root = diffMount.firstElementChild?.shadowRoot;
+  if (!root || root === observedRoot) return;
+  observedRoot = root;
+  enhanceExpanders(root);
+  new MutationObserver(() => enhanceExpanders(root)).observe(root, { childList: true, subtree: true });
 }
 
 /**
@@ -151,6 +206,7 @@ function render() {
       instance = new FileDiff(diffOptions());
     }
     instance.render(payload);
+    watchExpanders();
     showStatus('');
   } catch (error) {
     console.error('Diff render failed:', error);
