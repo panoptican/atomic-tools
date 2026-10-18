@@ -235,14 +235,14 @@ const BlankList = (function() {
       itemEl.className = 'word-item';
       itemEl.innerHTML = `
         <div class="word-info">
-          <button type="button" class="word-id" data-key="${key}" aria-label="Show blank ${i + 1} in the story">${number}</button>
-          <button type="button" class="word-label" data-key="${key}" title="Click to rename" aria-label="Rename blank ${i + 1}, ${type}">${type}</button>
+          <button type="button" class="word-id" data-key="${key}" aria-label="Blank ${number}, show in the story">${number}</button>
+          <button type="button" class="word-label" data-key="${key}" title="Click to rename" aria-label="${type}, rename blank ${number}">${type}</button>
           ${reuse}
         </div>
-        <button type="button" class="word-question${prompt.question ? '' : ' is-empty'}" data-key="${key}" aria-label="${prompt.question ? `Edit the question for blank ${i + 1}` : `Add a question for blank ${i + 1}`}">${prompt.question ? escapeHtml(prompt.question) : '+ Ask a question instead'}</button>
+        <button type="button" class="word-question${prompt.question ? '' : ' is-empty'}" data-key="${key}" aria-label="${prompt.question ? `${escapeHtml(prompt.question)}, edit the question for blank ${number}` : `Ask a question instead for blank ${number}`}">${prompt.question ? escapeHtml(prompt.question) : '+ Ask a question instead'}</button>
         <div class="word-actions">
-          <button type="button" class="reuse-btn" data-key="${key}" title="Insert this same answer again at the cursor" aria-label="Reuse blank ${i + 1} at the cursor">Reuse</button>
-          <button type="button" class="delete-btn" data-key="${key}" aria-label="Remove blank ${i + 1} from the story">Delete</button>
+          <button type="button" class="reuse-btn" data-key="${key}" title="Insert this same answer again at the cursor" aria-label="Reuse blank ${number} at the cursor">Reuse</button>
+          <button type="button" class="delete-btn" data-key="${key}" aria-label="Delete blank ${number} from the story">Delete</button>
         </div>
       `;
       wordListEl.appendChild(itemEl);

@@ -69,8 +69,8 @@
 
       <!-- Story Editor Section -->
       <div class="section primary-section" id="story-editor-section">
-        <h3>Story</h3>
-        <p class="section-hint">Write your story, then select a word and pick a type to blank it out. You can also type blanks in braces, like <code>{noun}</code>.</p>
+        <h3 id="story-heading">Story</h3>
+        <p class="section-hint" id="story-hint">Write your story, then select a word and pick a type to blank it out. You can also type blanks in braces, like <code>{noun}</code>.</p>
 
         <!-- Blank toolbar: turns the selection (or the cursor) into a blank -->
         <div class="blank-toolbar" id="blank-toolbar" role="group" aria-labelledby="blank-toolbar-label">
@@ -91,6 +91,8 @@
         <textarea
           id="story-editor"
           class="story-textarea"
+          aria-labelledby="story-heading"
+          aria-describedby="story-hint"
           placeholder="Once upon a time, a {blank} walked into a {place}..."
           rows="12"
         ></textarea>
