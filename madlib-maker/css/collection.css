@@ -86,7 +86,8 @@
 }
 
 .mc-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.mc-btn-danger { border-color: var(--rule-soft); color: var(--err); }
+/* Same as the library's Delete: quiet until hovered, since both can be undone */
+.mc-btn-danger { border-color: var(--rule-soft); color: var(--ink-soft); }
 
 .mc-back {
   padding-left: 0;
@@ -144,7 +145,7 @@
 @media (hover: hover) and (pointer: fine) {
   .mc-row:hover { border-color: var(--ink); }
   .mc-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .mc-btn-danger:hover { background: var(--err); color: var(--paper); border-color: var(--err); }
+  .mc-btn-danger:hover { background: var(--err-soft); color: var(--err); border-color: var(--err); }
   .mc-back:hover { background: transparent; color: var(--ink-soft); border-color: transparent; }
 }
 
