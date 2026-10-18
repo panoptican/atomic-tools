@@ -4,7 +4,7 @@
 .print-sheet-slot { margin-top: 14px; }
 .print-sheet-hint {
   margin-top: 8px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   color: var(--ink-muted);
 }
 
@@ -52,7 +52,7 @@
   #print-root .print-head { margin-bottom: 8mm; }
   #print-root .print-title {
     font-family: var(--display);
-    font-weight: 700;
+    font-weight: 400;
     font-size: 28pt;
     line-height: 1.1;
     letter-spacing: -0.01em;
@@ -76,7 +76,7 @@
   #print-root .print-section { margin-bottom: 10mm; }
   #print-root .print-heading {
     font-family: var(--display);
-    font-weight: 700;
+    font-weight: 400;
     font-size: 11pt;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -127,7 +127,7 @@
     top: -0.9em;
     font-size: 0.6em;
     line-height: 1;
-    font-weight: 700;
+    font-weight: 500;
   }
   #print-root .print-gap-type {
     position: absolute;
@@ -148,8 +148,10 @@
   /* Finished story: big and fridge-ready */
   #print-root .print-finished .print-story { font-size: 16pt; }
   #print-root .print-finished .print-story p { line-height: 1.7; margin-bottom: 6mm; }
+  /* Answers set in the wide face, since the family ships no bold */
   #print-root .print-answer {
-    font-weight: 700;
+    font-family: var(--display);
+    font-weight: 400;
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
