@@ -46,22 +46,43 @@
 
   <main class="page-main">
   <div class="container">
-    <div class="page-intro">
-      <h1>Fill the <em>blanks</em>.</h1>
-      <p class="page-sub">Write a story, blank out a few words, then share a link for friends to play.</p>
+    <div class="page-intro" id="creator-intro">
+      <div class="page-intro-text">
+        <h1>Fill the <em>blanks</em>.</h1>
+        <p class="page-sub">Write a story, blank out a few words, then share a link for friends to play.</p>
+      </div>
+      <!-- The library and starting over, beside the intro -->
+      <div class="intro-actions">
+        <!-- Wired by js/drafts.js (library) and js/collection.js; hidden until then -->
+        <button type="button" class="intro-btn" id="library-btn" hidden>My madlibs</button>
+        <button type="button" class="intro-btn" id="stories-btn" hidden>My stories</button>
+        <button type="button" class="intro-btn new-madlib-btn" id="new-madlib-btn">
+          <!-- Lucide plus -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14"/><path d="M12 5v14"/>
+          </svg>
+          New madlib
+        </button>
+      </div>
     </div>
 
-    <!-- Library actions, then the Create / Preview switch (hidden together for player links) -->
-    <div class="mode-bar" id="mode-tabs">
-      <div class="mode-tools">
-        <!-- Wired by js/drafts.js (library) and js/collection.js; hidden until then -->
-        <button type="button" class="mode-tool" id="library-btn" hidden>My madlibs</button>
-        <button type="button" class="mode-tool" id="stories-btn" hidden>My stories</button>
-        <button type="button" class="mode-tool new-madlib-btn" id="new-madlib-btn">New madlib</button>
+    <!-- Only while previewing (opened from the story card): the same intro
+         row as the creator's, with the way back to the editor and sharing for
+         when the preview looks right -->
+    <div class="page-intro preview-intro" id="preview-bar" hidden>
+      <div class="page-intro-text">
+        <h1>Try it out.</h1>
+        <p class="page-sub">Play it through the way your friends will, then share the link.</p>
       </div>
-      <div class="mode-tabs" role="group" aria-label="View">
-        <button type="button" class="mode-tab active" data-mode="creator" aria-pressed="true">Create</button>
-        <button type="button" class="mode-tab" data-mode="preview" aria-pressed="false">Preview</button>
+      <div class="intro-actions">
+        <button type="button" class="intro-btn" id="exit-preview-btn">
+          <!-- Lucide arrow-left, matching the top bar's All Tools link -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+          </svg>
+          Back to editing
+        </button>
+        <button type="button" class="intro-btn intro-btn-primary" id="preview-share-btn">Share with players</button>
       </div>
     </div>
 
@@ -108,6 +129,11 @@
           placeholder="Once upon a time, a {noun} walked into a {place}…"
           rows="12"
         ></textarea>
+
+        <!-- Check the story the way players will see it -->
+        <div class="story-actions">
+          <button type="button" class="share-btn share-btn-secondary" id="preview-btn">Preview</button>
+        </div>
       </div>
 
       <!-- Detected Blanks Section -->

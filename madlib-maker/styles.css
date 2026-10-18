@@ -77,8 +77,54 @@ a { -webkit-tap-highlight-color: transparent; }
   padding-bottom: 0;
 }
 
+/* Intro text on the leading edge, the library buttons on the trailing edge;
+   on narrow screens the buttons wrap under the text */
 .page-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 32px;
   margin-bottom: 44px;
+}
+
+.intro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.intro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.intro-btn svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.intro-btn-primary {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .intro-btn:not(.intro-btn-primary):hover { background: var(--ink); color: var(--paper); }
+  .intro-btn-primary:hover { opacity: 0.88; }
 }
 
 .page-intro h1 {
@@ -134,120 +180,13 @@ a { -webkit-tap-highlight-color: transparent; }
   }
 }
 
-/* Mode bar -------------------------------------------------------------- */
+/* Preview intro --------------------------------------------------------- */
 
-/* Two jobs: the library actions (open a dialog or start over) as a quiet
-   row of text buttons, and the Create / Preview view switch right above
-   the editor. They share one row on wide screens and stack on narrow. */
-.mode-bar { margin-bottom: 34px; }
-
-.mode-tools {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 4px 24px;
-  margin-bottom: 10px;
-}
-
-.mode-tool {
-  padding: 6px 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink-muted);
-  font-family: var(--text);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.new-madlib-btn::before { content: "+ "; }
-
-.mode-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--rule);
-}
-
-.mode-tab {
-  padding: 14px 28px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  background: transparent;
-  color: var(--ink-muted);
-  font-family: var(--text);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.mode-tab.active {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .mode-tool:hover,
-  .mode-tab:not(.active):hover { color: var(--ink); }
-}
-
-/* Wide screens: one row on one rule, Create / Preview at the leading edge
-   and the library actions at the trailing edge, on the tabs' baseline.
-   row-reverse keeps the DOM order the narrow layout needs. */
-@media (min-width: 681px) {
-  .mode-bar {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 24px;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .mode-tools {
-    margin-bottom: 0;
-    padding-bottom: 9px;
-  }
-
-  .mode-tabs { border-bottom: 0; }
-}
-
-/* Narrow screens: the library actions start at the leading edge with
-   "New madlib" at the end, and Create / Preview become a full-width
-   segmented control. */
-@media (max-width: 680px) {
-  .mode-bar { margin-bottom: 24px; }
-
-  .mode-tools {
-    justify-content: flex-start;
-    gap: 4px 20px;
-    margin-bottom: 14px;
-  }
-
-  .mode-tools .new-madlib-btn { margin-left: auto; }
-
-  .mode-tabs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-bottom: 0;
-  }
-
-  .mode-tab {
-    padding: 12px 8px;
-    border: 1px solid var(--rule);
-    margin-bottom: 0;
-    text-align: center;
-  }
-
-  .mode-tab + .mode-tab { border-left: 0; }
-
-  .mode-tab.active {
-    background: var(--ink);
-    color: var(--paper);
-  }
-}
+/* Previewing is a mode entered from the story card, not a tab. Its header
+   is the creator's intro row with its own title and buttons; the player's
+   top padding sets the gap below it, so it drops the intro's margin. */
+.preview-intro { margin-bottom: 0; }
+.preview-intro[hidden] { display: none; }
 
 /* Sections --------------------------------------------------------------- */
 
@@ -261,7 +200,6 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .section + .section,
-.mode-tabs + .section,
 .primary-section + .section,
 .supporting-section + .section {
   margin-top: 20px;
@@ -675,6 +613,15 @@ a { -webkit-tap-highlight-color: transparent; }
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Story actions ---------------------------------------------------------- */
+
+/* Preview sits at the foot of the story card, on the trailing edge */
+.story-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
 }
 
 /* Share buttons --------------------------------------------------------- */

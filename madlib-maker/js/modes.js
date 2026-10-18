@@ -7,9 +7,11 @@ const ModeManager = (function() {
   let isPlayerOnly = false;
 
   // DOM Elements
-  let modeTabsEl;
-  let modeTabs;
+  let previewBar;
   let creatorSections;
+
+  // Where the creator was scrolled to, so leaving the preview lands back there
+  let creatorScrollY = 0;
 
   // Validate before entering preview mode
   function validate() {
@@ -40,18 +42,6 @@ const ModeManager = (function() {
     };
   }
 
-  // Update the view switch: toggle buttons in a group, like the player's input
-  // mode switch, so screen readers hear which view is on
-  function updateTabButtons() {
-    if (!modeTabs) return;
-
-    modeTabs.forEach(tab => {
-      const on = tab.dataset.mode === currentMode;
-      tab.classList.toggle('active', on);
-      tab.setAttribute('aria-pressed', String(on));
-    });
-  }
-
   // Show creator sections
   function showCreatorSections() {
     if (creatorSections) {
@@ -60,8 +50,10 @@ const ModeManager = (function() {
       });
     }
     // Show headers
-    const pageIntro = document.querySelector('.container .page-intro');
+    const pageIntro = document.getElementById('creator-intro');
     if (pageIntro) pageIntro.style.display = '';
+    document.querySelector('.page-main > .container').classList.remove('is-preview');
+    if (previewBar) previewBar.hidden = true;
   }
 
   // Hide creator sections
@@ -72,8 +64,12 @@ const ModeManager = (function() {
       });
     }
     // Hide headers (player has its own title)
-    const pageIntro = document.querySelector('.container .page-intro');
+    const pageIntro = document.getElementById('creator-intro');
     if (pageIntro) pageIntro.style.display = 'none';
+    // Only the preview bar is left, so the container stops sharing the page's
+    // spare height with the player and the preview sits right under the bar
+    document.querySelector('.page-main > .container').classList.add('is-preview');
+    if (previewBar) previewBar.hidden = false;
   }
 
   // Switch to creator mode
@@ -85,9 +81,16 @@ const ModeManager = (function() {
 
     // Show creator sections
     showCreatorSections();
+  }
 
-    // Update tabs
-    updateTabButtons();
+  // "Back to editing": land where the preview was opened from, with focus on
+  // the Preview button. (Loading a draft also leaves the preview, but goes
+  // through switchToCreator alone.)
+  function exitPreview() {
+    switchToCreator();
+    window.scrollTo(0, creatorScrollY);
+    const previewBtn = document.getElementById('preview-btn');
+    if (previewBtn) previewBtn.focus({ preventScroll: true });
   }
 
   // Switch to preview mode
@@ -101,43 +104,30 @@ const ModeManager = (function() {
     }
 
     currentMode = 'preview';
+    creatorScrollY = window.scrollY;
 
-    // Hide creator sections but keep tabs visible
+    // Hide creator sections and show the preview bar
     hideCreatorSections();
-
-    // Update tabs
-    updateTabButtons();
 
     // Activate player with current data (isPreview=true to keep container visible)
     const data = collectPreviewData();
     PlayerMode.activate(data, true);
 
+    // The Preview button just disappeared, so start at the top with focus
+    // on the way back
+    window.scrollTo(0, 0);
+    const exitBtn = document.getElementById('exit-preview-btn');
+    if (exitBtn) exitBtn.focus({ preventScroll: true });
+
     return true;
-  }
-
-  // Handle tab click
-  function handleTabClick(e) {
-    const mode = e.currentTarget.dataset.mode;
-
-    if (mode === currentMode) return;
-
-    if (mode === 'creator') {
-      switchToCreator();
-    } else if (mode === 'preview') {
-      switchToPreview();
-    }
   }
 
   // Set player-only mode (from #play= URL)
   function setPlayerOnly(isOnly) {
     isPlayerOnly = isOnly;
 
-    if (isOnly) {
-      // Hide mode tabs entirely for player-only mode
-      if (modeTabsEl) {
-        modeTabsEl.style.display = 'none';
-      }
-    }
+    // Nothing to hide: the creator container, with its intro, library
+    // buttons and preview bar, is hidden whole for player links (main.js)
   }
 
   // Check if in player-only mode
@@ -152,17 +142,15 @@ const ModeManager = (function() {
 
   // Initialize
   function init() {
-    modeTabsEl = document.getElementById('mode-tabs');
-    modeTabs = document.querySelectorAll('.mode-tab[data-mode]');
+    previewBar = document.getElementById('preview-bar');
 
     // Get all creator sections (including the column wrapper)
     creatorSections = document.querySelectorAll('.container .section, .container .editor-columns');
 
-    // Add tab click listeners
-    modeTabs.forEach(tab => {
-      tab.addEventListener('click', handleTabClick);
-    });
-    updateTabButtons();
+    const previewBtn = document.getElementById('preview-btn');
+    if (previewBtn) previewBtn.addEventListener('click', () => switchToPreview());
+    const exitBtn = document.getElementById('exit-preview-btn');
+    if (exitBtn) exitBtn.addEventListener('click', exitPreview);
   }
 
   // Public API
