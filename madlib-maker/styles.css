@@ -777,6 +777,7 @@ a { -webkit-tap-highlight-color: transparent; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .prompt-label {
@@ -960,6 +961,7 @@ a { -webkit-tap-highlight-color: transparent; }
 
 .reveal-progress {
   font-family: var(--text);
+  font-variant-numeric: tabular-nums;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
