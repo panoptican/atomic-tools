@@ -407,6 +407,10 @@ a { -webkit-tap-highlight-color: transparent; }
   text-align: left;
   overflow-wrap: anywhere;
   color: var(--ink);
+  /* The type is editable: a quiet underline says so without a pointer hover */
+  text-decoration: underline;
+  text-decoration-color: var(--ink-muted);
+  text-underline-offset: 3px;
   cursor: pointer;
   background: transparent;
   border: 0;
