@@ -87,7 +87,8 @@ const MetadataManager = (function() {
     // Sync state on input. The title is a textarea only so it can wrap:
     // keep it one paragraph by dropping line breaks (typed or pasted).
     titleInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') e.preventDefault();
+      // Leave Enter alone while an IME composition is being confirmed
+      if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) e.preventDefault();
     });
     titleInput.addEventListener('input', () => {
       if (/[\r\n]/.test(titleInput.value)) {
@@ -97,14 +98,18 @@ const MetadataManager = (function() {
       syncFromInputs();
     });
     // Re-fit when the card's width changes or the display font arrives
-    let lastWidth = 0;
-    new ResizeObserver(([entry]) => {
-      const width = entry.contentRect.width;
-      if (width !== lastWidth) {
-        lastWidth = width;
-        fitTitleHeight();
-      }
-    }).observe(titleInput);
+    if (typeof ResizeObserver !== 'undefined') {
+      let lastWidth = 0;
+      new ResizeObserver(([entry]) => {
+        const width = entry.contentRect.width;
+        if (width !== lastWidth) {
+          lastWidth = width;
+          fitTitleHeight();
+        }
+      }).observe(titleInput);
+    } else {
+      window.addEventListener('resize', fitTitleHeight);
+    }
     if (document.fonts) document.fonts.ready.then(fitTitleHeight);
     subtitleInput.addEventListener('input', syncFromInputs);
 

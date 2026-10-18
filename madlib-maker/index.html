@@ -68,62 +68,46 @@
     <!-- Two-column editor layout -->
     <div class="editor-columns">
 
-      <!-- Main column: the story, then sharing it -->
-      <div class="editor-main">
-
-        <!-- Story Editor Section -->
-        <div class="section primary-section" id="story-editor-section">
-          <!-- The title is the card's heading, edited in place -->
-          <div class="title-block">
-            <label for="madlib-title" class="visually-hidden">Title</label>
-            <!-- A one-row textarea so long titles wrap instead of clipping -->
-            <textarea id="madlib-title" class="title-input" placeholder="Untitled madlib" rows="1" autocomplete="off" spellcheck="true"></textarea>
-            <!-- Subtitle stays tucked behind a link until it's wanted (js/metadata.js) -->
-            <button type="button" class="add-subtitle-btn" id="add-subtitle-btn">Add subtitle</button>
-            <div class="subtitle-field" id="subtitle-field" hidden>
-              <label for="madlib-subtitle" class="visually-hidden">Subtitle</label>
-              <input type="text" id="madlib-subtitle" class="subtitle-input" placeholder="A madlib by…" autocomplete="off">
-            </div>
+      <!-- Story Editor Section -->
+      <div class="section primary-section" id="story-editor-section">
+        <!-- The title is the card's heading, edited in place -->
+        <div class="title-block">
+          <label for="madlib-title" class="visually-hidden">Title</label>
+          <!-- A one-row textarea so long titles wrap instead of clipping -->
+          <textarea id="madlib-title" class="title-input" placeholder="Untitled madlib" rows="1" autocomplete="off" spellcheck="true"></textarea>
+          <!-- Subtitle stays tucked behind a link until it's wanted (js/metadata.js) -->
+          <button type="button" class="add-subtitle-btn" id="add-subtitle-btn">Add subtitle</button>
+          <div class="subtitle-field" id="subtitle-field" hidden>
+            <label for="madlib-subtitle" class="visually-hidden">Subtitle</label>
+            <input type="text" id="madlib-subtitle" class="subtitle-input" placeholder="A madlib by…" autocomplete="off">
           </div>
-          <p class="section-hint" id="story-hint">Write your story, then select a word and pick a type to blank it out. You can also type blanks in braces, like <code>{noun}</code>.</p>
+        </div>
+        <p class="section-hint" id="story-hint">Write your story, then select a word and pick a type to blank it out. You can also type blanks in braces, like <code>{noun}</code>.</p>
 
-          <!-- Blank toolbar: turns the selection (or the cursor) into a blank -->
-          <div class="blank-toolbar" id="blank-toolbar" role="group" aria-labelledby="blank-toolbar-label">
-            <span class="blank-toolbar-label" id="blank-toolbar-label">Add a blank</span>
-            <div class="preset-buttons">
-              <button type="button" class="preset-btn" data-type="noun">Noun</button>
-              <button type="button" class="preset-btn" data-type="verb">Verb</button>
-              <button type="button" class="preset-btn" data-type="adjective">Adjective</button>
-              <button type="button" class="preset-btn" data-type="name">Name</button>
-              <button type="button" class="preset-btn" data-type="place">Place</button>
-            </div>
-            <form class="custom-input-wrapper" id="custom-blank-form">
-              <input type="text" id="custom-label-input" placeholder="Other type, e.g. animal" aria-label="Other blank type">
-              <button type="submit" id="add-custom-btn">Add</button>
-            </form>
+        <!-- Blank toolbar: turns the selection (or the cursor) into a blank -->
+        <div class="blank-toolbar" id="blank-toolbar" role="group" aria-labelledby="blank-toolbar-label">
+          <span class="blank-toolbar-label" id="blank-toolbar-label">Add a blank</span>
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" data-type="noun">Noun</button>
+            <button type="button" class="preset-btn" data-type="verb">Verb</button>
+            <button type="button" class="preset-btn" data-type="adjective">Adjective</button>
+            <button type="button" class="preset-btn" data-type="name">Name</button>
+            <button type="button" class="preset-btn" data-type="place">Place</button>
           </div>
-
-          <textarea
-            id="story-editor"
-            class="story-textarea"
-            aria-label="Story"
-            aria-describedby="story-hint"
-            placeholder="Once upon a time, a {noun} walked into a {place}…"
-            rows="12"
-          ></textarea>
+          <form class="custom-input-wrapper" id="custom-blank-form">
+            <input type="text" id="custom-label-input" placeholder="Other type, e.g. animal" aria-label="Other blank type">
+            <button type="submit" id="add-custom-btn">Add</button>
+          </form>
         </div>
 
-        <!-- Share Section -->
-        <section class="section secondary-section" id="share-section" aria-labelledby="share-heading">
-          <h3 class="secondary-heading" id="share-heading">Share</h3>
-          <div class="secondary-section-body">
-            <!-- Built by js/share.js -->
-            <div id="share-panel"></div>
-            <!-- Built by js/print.js -->
-            <div id="print-sheet-slot"></div>
-          </div>
-        </section>
-
+        <textarea
+          id="story-editor"
+          class="story-textarea"
+          aria-label="Story"
+          aria-describedby="story-hint"
+          placeholder="Once upon a time, a {noun} walked into a {place}…"
+          rows="12"
+        ></textarea>
       </div>
 
       <!-- Detected Blanks Section -->
@@ -140,6 +124,17 @@
 
         <p class="blank-list-note">Players fill each blank separately, in story order. To use one answer in several places, press <strong>Reuse</strong> or give the blanks a shared name, like <code>{name:hero}</code>. For young kids, ask a question instead of naming the word type: <code>{noun|Something squishy?}</code>.</p>
       </div>
+
+      <!-- Share Section -->
+      <section class="section secondary-section" id="share-section" aria-labelledby="share-heading">
+        <h3 class="secondary-heading" id="share-heading">Share</h3>
+        <div class="secondary-section-body">
+          <!-- Built by js/share.js -->
+          <div id="share-panel"></div>
+          <!-- Built by js/print.js -->
+          <div id="print-sheet-slot"></div>
+        </div>
+      </section>
 
     </div>
 
