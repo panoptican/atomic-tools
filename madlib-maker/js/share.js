@@ -18,8 +18,9 @@ const MadlibShare = (function() {
     linkField.select();
   }
 
-  // Native share sheet on phones; clipboard everywhere else
-  async function shareLink({ url, title, text }) {
+  // Native share sheet on phones; clipboard everywhere else. `useField` is the
+  // creator's share panel, where the link also sits in a field to copy by hand.
+  async function shareLink({ url, title, text, useField = false }) {
     if (!url) return false;
     if (navigator.share && isTouchFirst()) {
       try {
@@ -32,11 +33,15 @@ const MadlibShare = (function() {
     }
     const copied = await URLManager.copyToClipboard(url);
     if (copied) {
-      URLManager.showToast('Link copied to clipboard!');
+      URLManager.showToast('Link copied');
       return true;
     }
-    URLManager.showToast('Could not copy the link. Copy it from the field.', true);
-    selectLinkField();
+    if (useField && linkField) {
+      URLManager.showToast("Couldn't copy the link. Copy it from the field instead.", true);
+      selectLinkField();
+    } else {
+      URLManager.showToast("Couldn't copy the link. Use Copy story to share the text instead.", true);
+    }
     return false;
   }
 
@@ -76,7 +81,7 @@ const MadlibShare = (function() {
         linkField.value = url;
         openLink.href = url;
         row.hidden = false;
-        await shareLink({ url, title: MetadataManager.getTitle(), text: 'Fill in my madlib!' });
+        await shareLink({ url, title: MetadataManager.getTitle(), text: 'Fill in my madlib!', useField: true });
       } finally {
         playerBtn.disabled = false;
         playerBtn.textContent = label;
@@ -86,9 +91,9 @@ const MadlibShare = (function() {
     copyBtn.addEventListener('click', async () => {
       if (!linkField.value) return;
       if (await URLManager.copyToClipboard(linkField.value)) {
-        URLManager.showToast('Link copied to clipboard!');
+        URLManager.showToast('Link copied');
       } else {
-        URLManager.showToast('Could not copy the link. Copy it from the field.', true);
+        URLManager.showToast("Couldn't copy the link. Copy it from the field instead.", true);
         selectLinkField();
       }
     });
@@ -99,9 +104,9 @@ const MadlibShare = (function() {
         const url = await URLManager.getEditorLink();
         if (!url) return;
         if (await URLManager.copyToClipboard(url)) {
-          URLManager.showToast('Editor link copied — anyone with it can edit a copy');
+          URLManager.showToast('Editor link copied. Anyone with it can edit a copy.');
         } else {
-          URLManager.showToast('Could not copy the editor link', true);
+          URLManager.showToast("Couldn't copy the editor link. Click Copy editor link again to retry.", true);
         }
       } finally {
         editorBtn.disabled = false;
@@ -314,7 +319,7 @@ const MadlibShare = (function() {
 
   async function saveImage(result) {
     if (!result || !result.paragraphs) {
-      URLManager.showToast('Nothing to save yet', true);
+      URLManager.showToast('Finish the story first, then save it as an image.', true);
       return;
     }
     try {
@@ -358,7 +363,7 @@ const MadlibShare = (function() {
       setTimeout(() => URL.revokeObjectURL(objectUrl), 10000);
       URLManager.showToast('Image saved');
     } catch (err) {
-      URLManager.showToast('Could not save the image', true);
+      URLManager.showToast("Couldn't save the image. Try again, or use Copy story instead.", true);
     }
   }
 

@@ -3,6 +3,9 @@ const URLManager = (function() {
   // Configuration (leave empty to disable URL shortening and use long hash URLs)
   const SHORTENER_API_URL = 'https://madlib-url-shortener.spidleweb.workers.dev';
 
+  const LINK_ERROR = "Couldn't make the link. Your madlib is saved, so reload the page and try again.";
+  const LOAD_ERROR = "Couldn't open this madlib link. It may be incomplete or expired, so ask the sender for a new one.";
+
   // Toast element
   let toastEl;
   let toastTimeout;
@@ -237,14 +240,14 @@ const URLManager = (function() {
       return null;
     }
     const url = (SHORTENER_API_URL && await createShortURL('play', collectData())) || generatePlayerURL();
-    if (!url) showToast('Failed to generate link', true);
+    if (!url) showToast(LINK_ERROR, true);
     return url;
   }
 
   // Link that opens an editable copy of the current madlib
   async function getEditorLink() {
     const url = (SHORTENER_API_URL && await createShortURL('edit', collectData())) || generateEditorURL();
-    if (!url) showToast('Failed to generate link', true);
+    if (!url) showToast(LINK_ERROR, true);
     return url;
   }
 
@@ -311,7 +314,7 @@ const URLManager = (function() {
 
     if (!parsed.data) {
       // Hash present but couldn't decode - show error
-      showToast('Could not load madlib from URL', true);
+      showToast(LOAD_ERROR, true);
       return { mode: 'creator', loaded: false, error: true };
     }
 
@@ -319,7 +322,7 @@ const URLManager = (function() {
     const success = loadData(parsed.data);
 
     if (!success) {
-      showToast('Could not load madlib from URL', true);
+      showToast(LOAD_ERROR, true);
       return { mode: 'creator', loaded: false, error: true };
     }
 

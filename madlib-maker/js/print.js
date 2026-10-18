@@ -92,7 +92,7 @@ const MadlibPrint = (function() {
 
   function printStory(result) {
     if (!result || !result.paragraphs || !result.paragraphs.length) {
-      URLManager.showToast('Nothing to print yet.', true);
+      URLManager.showToast('Finish the story first, then print it.', true);
       return;
     }
     const paragraphs = result.paragraphs.map(paragraph => {

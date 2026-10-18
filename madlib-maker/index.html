@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <link rel="preconnect" href="https://spidleweb.net" crossorigin>
-  <title>Madlib Creator</title>
+  <title>Madlib Maker</title>
   <meta name="description" content="Create and share custom madlibs with friends." />
   <link rel="canonical" href="https://tools.spidleweb.net/madlib-maker/" />
   <link rel="stylesheet" href="../assets/atomic-shell.css">
@@ -93,7 +93,7 @@
           class="story-textarea"
           aria-labelledby="story-heading"
           aria-describedby="story-hint"
-          placeholder="Once upon a time, a {blank} walked into a {place}..."
+          placeholder="Once upon a time, a {noun} walked into a {place}…"
           rows="12"
         ></textarea>
       </div>
@@ -125,11 +125,11 @@
           <div class="metadata-fields">
             <div class="field-group">
               <label for="madlib-title">Title</label>
-              <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled Madlib">
+              <input type="text" id="madlib-title" class="metadata-input" placeholder="Untitled madlib">
             </div>
             <div class="field-group">
               <label for="madlib-subtitle">Subtitle <span class="optional-label">(optional)</span></label>
-              <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by...">
+              <input type="text" id="madlib-subtitle" class="metadata-input" placeholder="A madlib by…">
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@
 
     <div class="player-screen" id="player-intro">
       <header class="player-intro-header">
-        <h1 class="player-title" id="player-title">Untitled Madlib</h1>
+        <h1 class="player-title" id="player-title">Untitled madlib</h1>
         <p class="player-subtitle" id="player-subtitle"></p>
       </header>
 
@@ -196,7 +196,7 @@
       <header class="reveal-header">
         <div class="player-intro-header">
           <p class="prompt-progress">Your madlib</p>
-          <h2 class="player-section-title" id="reveal-title">Untitled Madlib</h2>
+          <h2 class="player-section-title" id="reveal-title">Untitled madlib</h2>
         </div>
         <button type="button" class="player-btn reveal-read-btn" id="read-aloud-btn" aria-pressed="false">Read aloud</button>
       </header>

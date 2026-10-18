@@ -1,5 +1,7 @@
 // Player Mode Module
 const PlayerMode = (function() {
+  const UNTITLED = 'Untitled madlib';
+
   // State
   let prompts = [];
   let story = '';
@@ -55,11 +57,11 @@ const PlayerMode = (function() {
 
   // Update intro screen with title and subtitle
   function renderIntro() {
-    titleEl.textContent = title || 'Untitled Madlib';
+    titleEl.textContent = title || UNTITLED;
     subtitleEl.textContent = subtitle || '';
 
     // Update page title
-    document.title = title || 'Untitled Madlib';
+    document.title = title || UNTITLED;
   }
 
   // Update toggle button states
@@ -150,7 +152,7 @@ const PlayerMode = (function() {
   // or 'replay'. When the whole story is shown, a `madlib:revealdone` event fires
   // on document with { result, source }.
   function showReveal(source) {
-    revealTitleEl.textContent = title || 'Untitled Madlib';
+    revealTitleEl.textContent = title || UNTITLED;
     showScreen('reveal');
     const result = getResult();
     Reveal.start(result, () => {
@@ -165,7 +167,7 @@ const PlayerMode = (function() {
   // Handle start button click
   function handleStart() {
     if (prompts.length === 0) {
-      URLManager.showToast('No prompts to fill!', true);
+      URLManager.showToast('This madlib has no blanks to fill. Ask whoever sent it for a new link.', true);
       return;
     }
 
@@ -239,9 +241,9 @@ const PlayerMode = (function() {
   async function handleCopyStory() {
     const success = await URLManager.copyToClipboard(getResult().plainText);
     if (success) {
-      URLManager.showToast('Story copied to clipboard!');
+      URLManager.showToast('Story copied');
     } else {
-      URLManager.showToast('Failed to copy story', true);
+      URLManager.showToast("Couldn't copy the story. Select the text and copy it instead.", true);
     }
   }
 
@@ -256,20 +258,20 @@ const PlayerMode = (function() {
     };
     const url = await URLManager.generateStoryURL(dataToShare);
     if (!url) {
-      URLManager.showToast('Failed to generate story link', true);
+      URLManager.showToast("Couldn't make the story link. Try again, or use Copy story instead.", true);
       return;
     }
 
     // js/share.js offers the phone's share sheet; otherwise copy the link
     if (typeof MadlibShare !== 'undefined') {
-      await MadlibShare.shareLink({ url, title: title || 'Untitled Madlib', text: 'Read my madlib' });
+      await MadlibShare.shareLink({ url, title: title || UNTITLED, text: 'Read my madlib' });
       return;
     }
     const success = await URLManager.copyToClipboard(url);
     if (success) {
-      URLManager.showToast('Story link copied to clipboard!');
+      URLManager.showToast('Story link copied');
     } else {
-      URLManager.showToast('Failed to copy story link', true);
+      URLManager.showToast("Couldn't copy the story link. Try again, or use Copy story instead.", true);
     }
   }
 
@@ -317,7 +319,7 @@ const PlayerMode = (function() {
 
     // If story view mode, play the completed story back
     if (isStoryView && data.answers) {
-      document.title = title || 'Untitled Madlib';
+      document.title = title || UNTITLED;
       showReveal('story');
     } else {
       // Otherwise show intro screen for interactive play

@@ -1,7 +1,7 @@
 // Metadata Manager Module
 const MetadataManager = (function() {
   // Defaults
-  const DEFAULT_TITLE = 'Untitled Madlib';
+  const DEFAULT_TITLE = 'Untitled madlib';
   const DEFAULT_SUBTITLE = '';
 
   // State
@@ -26,7 +26,7 @@ const MetadataManager = (function() {
   // Update browser tab title
   function updatePageTitle() {
     const displayTitle = title.trim() || DEFAULT_TITLE;
-    document.title = `${displayTitle} — Madlib Creator`;
+    document.title = `${displayTitle} — Madlib Maker`;
   }
 
   // Get title (returns default if empty)

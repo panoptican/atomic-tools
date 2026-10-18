@@ -1,7 +1,7 @@
 // Draft Manager Module (auto-saves the madlib being edited into MadlibLibrary)
 const DraftManager = (function() {
   const DEBOUNCE_DELAY = 500;
-  const UNTITLED = 'Untitled Madlib';
+  const UNTITLED = 'Untitled madlib';
 
   let saveTimeout = null;
   let isEnabled = true; // Can be disabled for player-only mode
@@ -60,7 +60,7 @@ const DraftManager = (function() {
   function warnStorage() {
     if (storageWarned) return;
     storageWarned = true;
-    URLManager.showToast('Could not save — browser storage is unavailable or full', true);
+    URLManager.showToast("Couldn't save your madlib. This browser's storage is full or turned off, so use Copy editor link to keep a copy.", true);
   }
 
   // Save to the library (internal, immediate)
@@ -354,7 +354,7 @@ const DraftManager = (function() {
     flush();
     const result = MadlibLibrary.remove(id);
     if (!result) {
-      setStatus('Could not delete that madlib.');
+      setStatus("Couldn't delete that madlib. Reload the page and try again.");
       return;
     }
     const wasActive = result.entry.id === activeId;

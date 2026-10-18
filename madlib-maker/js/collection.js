@@ -26,7 +26,7 @@ const MadlibCollection = (function() {
     } catch (e) {
       if (!saveErrorShown) {
         saveErrorShown = true;
-        URLManager.showToast('Could not save this story on this device', true);
+        URLManager.showToast("Couldn't update My stories. This browser's storage is full or turned off, so use Copy story to keep a copy.", true);
       }
       return false;
     }
@@ -169,7 +169,7 @@ const MadlibCollection = (function() {
         row.type = 'button';
         const top = el('span', 'mc-row-top');
         top.append(
-          el('span', 'mc-row-title', entry.title || 'Untitled Madlib'),
+          el('span', 'mc-row-title', entry.title || UNTITLED),
           el('span', 'mc-row-date', formatDate(entry.savedAt, false))
         );
         let excerpt = '';
@@ -211,7 +211,7 @@ const MadlibCollection = (function() {
     wrap.appendChild(back);
 
     const head = el('div', 'mc-story-head');
-    head.appendChild(el('h3', 'mc-story-title', entry.title || 'Untitled Madlib'));
+    head.appendChild(el('h3', 'mc-story-title', entry.title || UNTITLED));
     if (entry.subtitle) head.appendChild(el('p', 'mc-story-subtitle', entry.subtitle));
     head.appendChild(el('p', 'mc-story-date', formatDate(entry.savedAt, true)));
     wrap.appendChild(head);
@@ -236,9 +236,9 @@ const MadlibCollection = (function() {
     wrap.appendChild(text);
 
     const actions = el('div', 'mc-actions');
-    actions.appendChild(actionButton('Copy', async () => {
+    actions.appendChild(actionButton('Copy story', async () => {
       const ok = await URLManager.copyToClipboard(result.plainText);
-      URLManager.showToast(ok ? 'Story copied' : 'Could not copy', !ok);
+      URLManager.showToast(ok ? 'Story copied' : "Couldn't copy the story. Select the text and copy it instead.", !ok);
     }));
     if (typeof MadlibShare !== 'undefined') {
       actions.appendChild(actionButton('Save as image', () => MadlibShare.saveImage(result)));
