@@ -58,6 +58,21 @@
     root.dataset.theme = theme === 'dark' ? 'dark' : 'light';
   }
 
+  /* Runtime switches swap every color at once. Without this, elements with
+     color transitions fade into the new theme while the page snaps. */
+  function switchTheme(theme, options) {
+    var pause = document.createElement('style');
+    pause.textContent = '*, *::before, *::after { transition: none !important; }';
+    document.head.appendChild(pause);
+    applyTheme(theme, options);
+    global.getComputedStyle(document.body).color; // flush styles with transitions off
+    global.requestAnimationFrame(function () {
+      global.requestAnimationFrame(function () {
+        pause.remove();
+      });
+    });
+  }
+
   function isDark(options) {
     if (options.mode === 'class') {
       return document.documentElement.classList.contains(options.className || 'dark');
@@ -89,7 +104,7 @@
     if (toggle) {
       toggle.addEventListener('click', function () {
         var next = isDark(options) ? 'light' : 'dark';
-        applyTheme(next, options);
+        switchTheme(next, options);
         setItem(SHARED_KEY, next);
         syncToggleLabel();
       });
@@ -97,14 +112,14 @@
 
     global.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
       if (readStored(options.storageKey)) return;
-      applyTheme(e.matches ? 'dark' : 'light', options);
+      switchTheme(e.matches ? 'dark' : 'light', options);
       syncToggleLabel();
     });
 
     // Another tab changed the theme: match it.
     global.addEventListener('storage', function (e) {
       if (e.key !== SHARED_KEY || !isTheme(e.newValue)) return;
-      applyTheme(e.newValue, options);
+      switchTheme(e.newValue, options);
       syncToggleLabel();
     });
   }
