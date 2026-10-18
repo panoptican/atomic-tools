@@ -8,7 +8,7 @@
 }
 .share-link[hidden] { display: none; }
 .share-link-label {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-muted);
