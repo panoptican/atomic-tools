@@ -100,15 +100,18 @@
     }
 
     /* The real input is visually hidden, so the tiles show its focus: a
-       darker border and a blinking caret in the next empty tile. */
-    .tiles.is-focused .tile.is-next { border-color: var(--ink-muted); }
+       darker border and a blinking caret in the next empty tile. Once all
+       five are filled, the caret sits after the last letter instead, so
+       focus never disappears. */
+    .tiles.is-focused .tile.is-next:not(.filled) { border-color: var(--ink-muted); }
     .tiles.is-focused .tile.is-next::after {
       content: "";
       width: 2px;
       height: 45%;
-      background: var(--ink);
+      background: currentColor;
       animation: caret 1s steps(1) infinite;
     }
+    .tiles.is-focused .tile.is-next.filled::after { margin-left: 3px; }
     @keyframes caret {
       50% { opacity: 0; }
     }
@@ -300,7 +303,8 @@
         const letter = letters[i] || '';
         tile.textContent = letter;
         tile.classList.toggle('filled', !!letter);
-        tile.classList.toggle('is-next', i === letters.length);
+        // A full word keeps the caret on the last tile
+        tile.classList.toggle('is-next', i === Math.min(letters.length, tiles.length - 1));
       });
     }
 
