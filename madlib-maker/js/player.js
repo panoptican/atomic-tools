@@ -243,7 +243,7 @@ const PlayerMode = (function() {
     if (success) {
       URLManager.showToast('Story copied');
     } else {
-      URLManager.showToast("Couldn't copy the story. Select the text and copy it instead.", true);
+      URLManager.showToast("Couldn’t copy the story. Select the text and copy it instead.", true);
     }
   }
 
@@ -258,7 +258,7 @@ const PlayerMode = (function() {
     };
     const url = await URLManager.generateStoryURL(dataToShare);
     if (!url) {
-      URLManager.showToast("Couldn't make the story link. Try again, or use Copy story instead.", true);
+      URLManager.showToast("Couldn’t make the story link. Try again, or use Copy story instead.", true);
       return;
     }
 
@@ -271,7 +271,7 @@ const PlayerMode = (function() {
     if (success) {
       URLManager.showToast('Story link copied');
     } else {
-      URLManager.showToast("Couldn't copy the story link. Try again, or use Copy story instead.", true);
+      URLManager.showToast("Couldn’t copy the story link. Try again, or use Copy story instead.", true);
     }
   }
 

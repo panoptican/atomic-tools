@@ -3,8 +3,8 @@ const URLManager = (function() {
   // Configuration (leave empty to disable URL shortening and use long hash URLs)
   const SHORTENER_API_URL = 'https://madlib-url-shortener.spidleweb.workers.dev';
 
-  const LINK_ERROR = "Couldn't make the link. Your madlib is saved, so reload the page and try again.";
-  const LOAD_ERROR = "Couldn't open this madlib link. It may be incomplete or expired, so ask the sender for a new one.";
+  const LINK_ERROR = "Couldn’t make the link. Your madlib is saved, so reload the page and try again.";
+  const LOAD_ERROR = "Couldn’t open this madlib link. It may be incomplete or expired, so ask the sender for a new one.";
 
   // Toast element
   let toastEl;

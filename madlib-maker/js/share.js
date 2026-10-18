@@ -37,10 +37,10 @@ const MadlibShare = (function() {
       return true;
     }
     if (useField && linkField) {
-      URLManager.showToast("Couldn't copy the link. Copy it from the field instead.", true);
+      URLManager.showToast("Couldn’t copy the link. Copy it from the field instead.", true);
       selectLinkField();
     } else {
-      URLManager.showToast("Couldn't copy the link. Use Copy story to share the text instead.", true);
+      URLManager.showToast("Couldn’t copy the link. Use Copy story to share the text instead.", true);
     }
     return false;
   }
@@ -93,7 +93,7 @@ const MadlibShare = (function() {
       if (await URLManager.copyToClipboard(linkField.value)) {
         URLManager.showToast('Link copied');
       } else {
-        URLManager.showToast("Couldn't copy the link. Copy it from the field instead.", true);
+        URLManager.showToast("Couldn’t copy the link. Copy it from the field instead.", true);
         selectLinkField();
       }
     });
@@ -106,7 +106,7 @@ const MadlibShare = (function() {
         if (await URLManager.copyToClipboard(url)) {
           URLManager.showToast('Editor link copied. Anyone with it can edit a copy.');
         } else {
-          URLManager.showToast("Couldn't copy the editor link. Click Copy editor link again to retry.", true);
+          URLManager.showToast("Couldn’t copy the editor link. Click Copy editor link again to retry.", true);
         }
       } finally {
         editorBtn.disabled = false;
@@ -363,7 +363,7 @@ const MadlibShare = (function() {
       setTimeout(() => URL.revokeObjectURL(objectUrl), 10000);
       URLManager.showToast('Image saved');
     } catch (err) {
-      URLManager.showToast("Couldn't save the image. Try again, or use Copy story instead.", true);
+      URLManager.showToast("Couldn’t save the image. Try again, or use Copy story instead.", true);
     }
   }
 

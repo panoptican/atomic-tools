@@ -60,7 +60,7 @@ const DraftManager = (function() {
   function warnStorage() {
     if (storageWarned) return;
     storageWarned = true;
-    URLManager.showToast("Couldn't save your madlib. This browser's storage is full or turned off, so use Copy editor link to keep a copy.", true);
+    URLManager.showToast("Couldn’t save your madlib. This browser’s storage is full or turned off, so use Copy editor link to keep a copy.", true);
   }
 
   // Save to the library (internal, immediate)
@@ -354,7 +354,7 @@ const DraftManager = (function() {
     flush();
     const result = MadlibLibrary.remove(id);
     if (!result) {
-      setStatus("Couldn't delete that madlib. Reload the page and try again.");
+      setStatus("Couldn’t delete that madlib. Reload the page and try again.");
       return;
     }
     const wasActive = result.entry.id === activeId;

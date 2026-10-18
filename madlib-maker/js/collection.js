@@ -26,7 +26,7 @@ const MadlibCollection = (function() {
     } catch (e) {
       if (!saveErrorShown) {
         saveErrorShown = true;
-        URLManager.showToast("Couldn't update My stories. This browser's storage is full or turned off, so use Copy story to keep a copy.", true);
+        URLManager.showToast("Couldn’t update My stories. This browser’s storage is full or turned off, so use Copy story to keep a copy.", true);
       }
       return false;
     }
@@ -238,7 +238,7 @@ const MadlibCollection = (function() {
     const actions = el('div', 'mc-actions');
     actions.appendChild(actionButton('Copy story', async () => {
       const ok = await URLManager.copyToClipboard(result.plainText);
-      URLManager.showToast(ok ? 'Story copied' : "Couldn't copy the story. Select the text and copy it instead.", !ok);
+      URLManager.showToast(ok ? 'Story copied' : "Couldn’t copy the story. Select the text and copy it instead.", !ok);
     }));
     if (typeof MadlibShare !== 'undefined') {
       actions.appendChild(actionButton('Save as image', () => MadlibShare.saveImage(result)));
