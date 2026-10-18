@@ -708,6 +708,31 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--ink);
 }
 
+/* Previewing from the creator: the player sits on a sheet of paper with a
+   second sheet offset behind it, so the preview reads as the thing being
+   made rather than more of the page. Player links keep the bare layout. */
+.player-container.is-preview {
+  flex: none;
+  width: min(760px, calc(100% - 56px));
+  margin: 48px auto 96px;
+  padding: clamp(28px, 6vw, 56px) clamp(20px, 7vw, 64px) clamp(32px, 7vw, 64px);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  box-shadow:
+    8px 8px 0 -1px var(--surface),
+    8px 8px 0 0 var(--rule);
+}
+
+@media (max-width: 560px) {
+  .player-container.is-preview {
+    width: calc(100% - 38px);
+    margin: 32px auto 56px 16px;
+    box-shadow:
+      6px 6px 0 -1px var(--surface),
+      6px 6px 0 0 var(--rule);
+  }
+}
+
 .player-screen {
   display: none;
   flex-direction: column;

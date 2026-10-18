@@ -316,6 +316,8 @@ const PlayerMode = (function() {
       creatorEl.style.display = 'none';
     }
     playerContainerEl.style.display = 'flex';
+    // A creator's preview sits on a sheet of paper; player links stay bare
+    playerContainerEl.classList.toggle('is-preview', isPreview);
 
     // If story view mode, play the completed story back
     if (isStoryView && data.answers) {
