@@ -29,7 +29,6 @@
   cursor: pointer;
 }
 
-.mc-row:hover { border-color: var(--ink); }
 .mc-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 .mc-row-top {
@@ -86,18 +85,14 @@
   cursor: pointer;
 }
 
-.mc-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .mc-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .mc-btn-danger { border-color: var(--rule-soft); color: var(--err); }
-.mc-btn-danger:hover { background: var(--err); color: var(--paper); border-color: var(--err); }
 
 .mc-back {
   padding-left: 0;
   padding-right: 10px;
   border-color: transparent;
 }
-
-.mc-back:hover { background: transparent; color: var(--ink-soft); border-color: transparent; }
 
 .mc-story-head { margin: 4px 0 18px; }
 
@@ -144,6 +139,13 @@
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--rule-soft);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mc-row:hover { border-color: var(--ink); }
+  .mc-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .mc-btn-danger:hover { background: var(--err); color: var(--paper); border-color: var(--err); }
+  .mc-back:hover { background: transparent; color: var(--ink-soft); border-color: transparent; }
 }
 
 @media (max-width: 560px) {

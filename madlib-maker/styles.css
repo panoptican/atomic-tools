@@ -336,12 +336,6 @@ a { -webkit-tap-highlight-color: transparent; }
   cursor: pointer;
 }
 
-.word-id:hover {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-}
-
 .word-label {
   color: var(--ink);
   cursor: pointer;
@@ -352,7 +346,6 @@ a { -webkit-tap-highlight-color: transparent; }
   text-transform: inherit;
 }
 
-.word-label:hover { color: var(--ink-soft); }
 
 .word-origin {
   white-space: nowrap;
@@ -379,7 +372,6 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .word-question.is-empty { color: var(--ink-muted); font-size: 0.75rem; }
-.word-question:hover { color: var(--ink); }
 
 .word-question-edit {
   order: 3;
@@ -424,9 +416,6 @@ a { -webkit-tap-highlight-color: transparent; }
   padding: 0 2px;
 }
 
-.delete-btn:hover,
-.reuse-btn:hover { color: var(--ink); }
-
 .blank-list-note {
   color: var(--ink-muted);
   font-size: 0.9rem;
@@ -463,7 +452,6 @@ a { -webkit-tap-highlight-color: transparent; }
   text-transform: uppercase;
   cursor: pointer;
 }
-.preset-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
 .custom-input-wrapper {
   display: grid;
@@ -491,7 +479,6 @@ a { -webkit-tap-highlight-color: transparent; }
   text-transform: uppercase;
   cursor: pointer;
 }
-.custom-input-wrapper button:hover { opacity: 0.88; }
 
 /* Title & metadata ------------------------------------------------------- */
 
@@ -536,12 +523,10 @@ a { -webkit-tap-highlight-color: transparent; }
   background: var(--ink);
   color: var(--paper);
 }
-.share-btn-primary:hover { opacity: 0.88; }
 .share-btn-secondary {
   background: transparent;
   color: var(--ink);
 }
-.share-btn-secondary:hover { background: var(--ink); color: var(--paper); }
 
 /* Toast ----------------------------------------------------------------- */
 
@@ -678,7 +663,6 @@ a { -webkit-tap-highlight-color: transparent; }
   cursor: pointer;
 }
 
-.player-tab:hover { color: var(--ink); }
 .player-tab.active {
   color: var(--ink);
   border-bottom-color: var(--ink);
@@ -696,11 +680,6 @@ a { -webkit-tap-highlight-color: transparent; }
   cursor: pointer;
 }
 
-.player-btn:hover:not(:disabled) {
-  background: var(--ink);
-  color: var(--paper);
-}
-
 .player-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
@@ -710,8 +689,6 @@ a { -webkit-tap-highlight-color: transparent; }
   background: var(--ink);
   color: var(--paper);
 }
-
-.player-btn-primary:hover:not(:disabled) { opacity: 0.88; }
 
 .prompt-header {
   display: flex;
@@ -989,9 +966,35 @@ a { -webkit-tap-highlight-color: transparent; }
   cursor: pointer;
 }
 
-.mm-dialog-close:hover { border-color: var(--ink); }
-
 .mm-empty { color: var(--ink-muted); padding: 12px 0; }
+
+/* Hover (pointer devices only) ------------------------------------------ */
+
+/* On touch, :hover sticks after a tap and an inverted button reads as
+   selected, so hover styling only applies to a fine pointer (matches
+   assets/atomic-shell.css). */
+@media (hover: hover) and (pointer: fine) {
+  .word-id:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .word-label:hover { color: var(--ink-soft); }
+  .word-question:hover { color: var(--ink); }
+  .delete-btn:hover,
+  .reuse-btn:hover { color: var(--ink); }
+  .preset-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .custom-input-wrapper button:hover { opacity: 0.88; }
+  .share-btn-primary:hover { opacity: 0.88; }
+  .share-btn-secondary:hover { background: var(--ink); color: var(--paper); }
+  .player-tab:hover { color: var(--ink); }
+  .player-btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .player-btn-primary:hover:not(:disabled) { opacity: 0.88; }
+  .mm-dialog-close:hover { border-color: var(--ink); }
+}
 
 /* Responsive ------------------------------------------------------------ */
 

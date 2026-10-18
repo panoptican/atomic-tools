@@ -29,9 +29,11 @@
   cursor: pointer;
 }
 
-.suggest-btn:hover {
-  background: var(--ink);
-  color: var(--paper);
+@media (hover: hover) and (pointer: fine) {
+  .suggest-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
 }
 
 .suggest-btn:focus-visible {

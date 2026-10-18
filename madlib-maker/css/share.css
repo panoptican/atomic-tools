@@ -39,7 +39,9 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.share-open-link:hover { text-decoration-thickness: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .share-open-link:hover { text-decoration-thickness: 2px; }
+}
 
 #share-panel .share-btn:disabled {
   opacity: 0.55;
