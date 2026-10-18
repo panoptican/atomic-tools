@@ -326,7 +326,8 @@
         if (data.used) {
           tiles.forEach(t => { t.classList.add('yes'); t.classList.remove('no'); });
           resultHeadline.textContent = 'Yes. Already used.';
-          resultDetail.textContent = `Wordle #${data.game} · ${data.date}`;
+          const played = formatDataDate(data.date);
+          resultDetail.textContent = played ? `Wordle #${data.game} · ${played}` : `Wordle #${data.game}`;
         } else {
           tiles.forEach(t => { t.classList.add('no'); t.classList.remove('yes'); });
           // The API has no dictionary, so don't promise this is a valid guess
