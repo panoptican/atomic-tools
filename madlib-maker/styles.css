@@ -788,18 +788,17 @@ a { -webkit-tap-highlight-color: transparent; }
   color: var(--ink-muted);
 }
 
+/* A setting, not navigation, so a segmented control rather than tabs */
 .player-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .player-tab {
-  padding: 12px 18px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  padding: 12px 8px;
+  border: 1px solid var(--rule);
   background: transparent;
+  text-align: center;
   color: var(--ink-muted);
   font-family: var(--text);
   font-size: 0.78rem;
@@ -808,9 +807,11 @@ a { -webkit-tap-highlight-color: transparent; }
   cursor: pointer;
 }
 
+.player-tab + .player-tab { border-left: 0; }
+
 .player-tab.active {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .player-btn {
@@ -1117,7 +1118,7 @@ a { -webkit-tap-highlight-color: transparent; }
   .custom-input-wrapper button:hover { opacity: 0.88; }
   .share-btn-primary:hover { opacity: 0.88; }
   .share-btn-secondary:hover { background: var(--ink); color: var(--paper); }
-  .player-tab:hover { color: var(--ink); }
+  .player-tab:not(.active):hover { color: var(--ink); }
   .player-btn:hover:not(:disabled) {
     background: var(--ink);
     color: var(--paper);
