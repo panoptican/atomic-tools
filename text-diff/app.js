@@ -16,6 +16,9 @@ const wrapBtn = document.getElementById('wrapBtn');
 const contextBtn = document.getElementById('contextBtn');
 const swapBtn = document.getElementById('swapBtn');
 const clearBtn = document.getElementById('clearBtn');
+const clearLabel = document.getElementById('clearLabel');
+const clearIcon = document.getElementById('clearIcon');
+const undoIcon = document.getElementById('undoIcon');
 
 const STORAGE_KEY = 'text-diff-prefs';
 const DEFAULT_FILENAME = 'snippet.txt';
@@ -23,6 +26,9 @@ const DEFAULT_FILENAME = 'snippet.txt';
 const prefs = loadPrefs();
 let instance = null;
 let identicalSwaps = 0;
+// What Clear removed, kept until the next edit so the button can undo it.
+// (Setting .value directly wipes the textareas' own undo history.)
+let clearedTexts = null;
 let swapAsideShown = false;
 try {
   swapAsideShown = sessionStorage.getItem('text-diff-swap-aside') === 'shown';
@@ -174,7 +180,15 @@ function resetSwapAside() {
   swapAside.classList.add('hidden');
 }
 
+function setUndoClear(texts) {
+  clearedTexts = texts;
+  clearLabel.textContent = texts ? 'Undo clear' : 'Clear';
+  clearIcon.classList.toggle('hidden', !!texts);
+  undoIcon.classList.toggle('hidden', !texts);
+}
+
 function onTextInput() {
+  if (clearedTexts) setUndoClear(null);
   resetSwapAside();
   scheduleRender();
 }
@@ -194,6 +208,7 @@ wrapBtn.addEventListener('click', () => setToggle(wrapBtn, 'wrap', !prefs.wrap))
 contextBtn.addEventListener('click', () => setToggle(contextBtn, 'fullContext', !prefs.fullContext));
 
 swapBtn.addEventListener('click', () => {
+  if (clearedTexts) setUndoClear(null);
   const held = originalInput.value;
   originalInput.value = changedInput.value;
   changedInput.value = held;
@@ -215,8 +230,16 @@ swapBtn.addEventListener('click', () => {
 });
 
 clearBtn.addEventListener('click', () => {
-  originalInput.value = '';
-  changedInput.value = '';
+  if (clearedTexts) {
+    originalInput.value = clearedTexts.original;
+    changedInput.value = clearedTexts.changed;
+    setUndoClear(null);
+  } else {
+    if (!originalInput.value && !changedInput.value) return;
+    setUndoClear({ original: originalInput.value, changed: changedInput.value });
+    originalInput.value = '';
+    changedInput.value = '';
+  }
   resetSwapAside();
   render();
   originalInput.focus();
