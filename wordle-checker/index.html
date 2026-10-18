@@ -182,6 +182,12 @@
       .result { min-height: 96px; } /* results wrap to two lines here */
     }
 
+    /* Five 54px tiles outgrow the 24px margins below 350px */
+    @media (max-width: 360px) {
+      .tiles { grid-template-columns: repeat(5, 48px); gap: 6px; }
+      .tile { width: 48px; height: 48px; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
     }
