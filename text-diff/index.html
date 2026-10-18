@@ -155,18 +155,29 @@
   .text-btn svg { width: 12px; height: 12px; }
 
   .field { display: inline-flex; align-items: center; gap: 8px; }
-  .field input {
-    width: 150px; min-height: 32px; padding: 6px 10px;
+  /* A native select keeps the platform's own menu and keyboard handling; only
+     the closed control is restyled, with the chevron drawn by .select-wrap. */
+  .select-wrap { position: relative; display: inline-flex; }
+  .select-wrap select {
+    appearance: none; -webkit-appearance: none;
+    min-height: 32px; padding: 6px 30px 6px 10px;
     border: 1px solid var(--rule);
+    border-radius: 0;
     background: var(--surface);
     color: var(--ink);
-    font-family: var(--mono); font-size: 0.8rem;
+    font-family: var(--text); font-weight: 500; font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .select-wrap svg {
+    position: absolute; right: 10px; top: 50%;
+    width: 12px; height: 12px; margin-top: -6px;
+    color: var(--ink-muted);
+    pointer-events: none;
   }
 
   @media (pointer: coarse) {
     /* Under 16px, iOS zooms the page when a field focuses. */
-    textarea, .field input { font-size: 16px; }
-    .field input { width: 170px; }
+    textarea, .select-wrap select { font-size: 16px; }
   }
 
   .result { min-height: 120px; }
@@ -274,9 +285,12 @@
     <button type="button" class="text-btn" id="contextBtn" aria-pressed="true">Full context</button>
 
     <div class="field">
-      <label class="section-label" for="filenameInput">Filename</label>
-      <input id="filenameInput" type="text" placeholder="snippet.txt" spellcheck="false" autocomplete="off"
-             title="Sets syntax highlighting, e.g. app.ts, styles.css, notes.md">
+      <label class="section-label" for="languageSelect">Language</label>
+      <span class="select-wrap">
+        <!-- Options come from language.js; Auto names its current guess -->
+        <select id="languageSelect"></select>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </span>
     </div>
 
     <span class="toolbar-spacer"></span>
@@ -301,7 +315,7 @@
   </section>
 
   <p class="hint swap-aside hidden" id="swapAside">Still identical. I checked the other way round.</p>
-  <p class="hint">Rendering by <a href="https://diffs.com/docs" target="_blank" rel="noopener">Diffs</a>. Add a filename like <code>app.ts</code> to turn on syntax highlighting.</p>
+  <p class="hint">Rendering by <a href="https://diffs.com/docs" target="_blank" rel="noopener">Diffs</a>. Syntax highlighting follows the language it detects; pick one under Language if it guesses wrong.</p>
 </main>
 
 <script type="module" src="app.js"></script>

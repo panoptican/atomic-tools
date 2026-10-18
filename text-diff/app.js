@@ -1,3 +1,5 @@
+import { LANGUAGES, detectLanguage } from './language.js';
+
 // Loaded with import() at the end of this file rather than a static import, so
 // the panes, counts and buttons still work, and say so, when esm.sh is unreachable.
 const LIBRARY_URL = 'https://esm.sh/@pierre/diffs@1.3.5';
@@ -12,7 +14,7 @@ const diffMount = document.getElementById('diffMount');
 const placeholder = document.getElementById('placeholder');
 const statusNote = document.getElementById('statusNote');
 const swapAside = document.getElementById('swapAside');
-const filenameInput = document.getElementById('filenameInput');
+const languageSelect = document.getElementById('languageSelect');
 
 const splitBtn = document.getElementById('splitBtn');
 const unifiedBtn = document.getElementById('unifiedBtn');
@@ -25,7 +27,6 @@ const clearIcon = document.getElementById('clearIcon');
 const undoIcon = document.getElementById('undoIcon');
 
 const STORAGE_KEY = 'text-diff-prefs';
-const DEFAULT_FILENAME = 'snippet.txt';
 
 const prefs = loadPrefs();
 let FileDiff = null;
@@ -46,7 +47,7 @@ try {
 }
 
 function loadPrefs() {
-  const defaults = { diffStyle: 'split', wrap: false, fullContext: true, filename: '' };
+  const defaults = { diffStyle: 'split', wrap: false, fullContext: true, language: 'auto' };
   try {
     return Object.assign(defaults, JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'));
   } catch (e) {
@@ -94,8 +95,19 @@ function diffOptions() {
   };
 }
 
-function fileName() {
-  return filenameInput.value.trim() || DEFAULT_FILENAME;
+const autoOption = new Option('Auto', 'auto');
+languageSelect.append(autoOption, ...LANGUAGES.map((lang) => new Option(lang.label, lang.id)));
+
+// Auto names its guess in the menu, so a wrong guess is visible and one
+// choice away from being fixed.
+function findLanguage(id) {
+  return LANGUAGES.find((lang) => lang.id === id) || LANGUAGES[0];
+}
+
+function resolveLanguage(oldText, newText) {
+  const detected = findLanguage(detectLanguage(oldText + '\n' + newText));
+  autoOption.textContent = oldText || newText ? 'Auto · ' + detected.label : 'Auto';
+  return prefs.language === 'auto' ? detected : findLanguage(prefs.language);
 }
 
 function lineLabel(value) {
@@ -169,6 +181,7 @@ function render() {
 
   originalCount.textContent = lineLabel(oldText);
   changedCount.textContent = lineLabel(newText);
+  const lang = resolveLanguage(oldText, newText);
 
   if (libraryFailed) {
     showPlaceholder('');
@@ -197,10 +210,11 @@ function render() {
   placeholder.classList.add('hidden');
   diffMount.classList.remove('hidden');
 
-  const name = fileName();
+  // The name only titles the diff header; lang sets the highlighting
+  const name = 'snippet.' + lang.ext;
   const payload = {
-    oldFile: { name, contents: oldText },
-    newFile: { name, contents: newText },
+    oldFile: { name, contents: oldText, lang: lang.id },
+    newFile: { name, contents: newText, lang: lang.id },
     containerWrapper: diffMount
   };
 
@@ -271,10 +285,10 @@ function onTextInput() {
 originalInput.addEventListener('input', onTextInput);
 changedInput.addEventListener('input', onTextInput);
 
-filenameInput.addEventListener('input', () => {
-  prefs.filename = filenameInput.value;
+languageSelect.addEventListener('change', () => {
+  prefs.language = languageSelect.value;
   savePrefs();
-  scheduleRender();
+  render();
 });
 
 splitBtn.addEventListener('click', () => setDiffStyle('split'));
@@ -321,7 +335,12 @@ clearBtn.addEventListener('click', () => {
 });
 
 // Restore saved preferences before the first render.
-filenameInput.value = prefs.filename;
+// Saved prefs from before the Language menu carry a filename instead.
+delete prefs.filename;
+if (prefs.language !== 'auto' && findLanguage(prefs.language).id !== prefs.language) {
+  prefs.language = 'auto';
+}
+languageSelect.value = prefs.language;
 splitBtn.setAttribute('aria-pressed', String(prefs.diffStyle === 'split'));
 unifiedBtn.setAttribute('aria-pressed', String(prefs.diffStyle === 'unified'));
 wrapBtn.setAttribute('aria-pressed', String(prefs.wrap));
