@@ -127,16 +127,9 @@
       color: var(--ink);
       text-transform: uppercase;
       cursor: text;
-      transition: border-color 120ms, background 220ms, color 220ms, transform 120ms;
+      transition: border-color 120ms, background 220ms, color 220ms;
     }
-    .tile.filled {
-      border-color: var(--tile-border);
-      animation: pop 140ms ease-out;
-    }
-    @keyframes pop {
-      from { transform: scale(0.92); }
-      to { transform: scale(1); }
-    }
+    .tile.filled { border-color: var(--tile-border); }
 
     .tile.yes { background: var(--yes); border-color: var(--yes); color: #fff; }
     .tile.no  { background: var(--no);  border-color: var(--no);  color: #fff; }
