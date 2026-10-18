@@ -7,6 +7,10 @@
   <title>Atomic Tools</title>
   <meta name="description" content="Small single-purpose web tools by Jason Spidle: a madlib maker, a Markdown and rich text converter, a text diff, and a Wordle checker.">
   <link rel="canonical" href="https://tools.spidleweb.net/">
+  <script src="assets/atomic-theme.js"></script>
+  <script>
+    AtomicTheme.applyBeforePaint({ mode: 'dataset' });
+  </script>
   <style>
     @font-face {
       font-family: "GT America";
@@ -19,7 +23,7 @@
     *, *::before, *::after { box-sizing: border-box; }
 
     :root {
-      color-scheme: light dark;
+      color-scheme: light;
       --paper: #f5f4ef;
       --ink: #111111;
       --ink-muted: #8a8a85;
@@ -30,8 +34,20 @@
       --ease: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
+    /* The theme script sets data-theme before paint (shared with the tools'
+       toggles); the media query only covers a page loaded without scripts. */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #0f0f0e;
+      --ink: #ededea;
+      --ink-muted: #6f6e6a;
+      --ink-faint: #4a4a47;
+      --rule: #2a2a28;
+    }
+
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme]) {
+        color-scheme: dark;
         --paper: #0f0f0e;
         --ink: #ededea;
         --ink-muted: #6f6e6a;
@@ -202,5 +218,8 @@
     </ol>
     <footer class="print-note">The links work better on screen.</footer>
   </main>
+  <script>
+    AtomicTheme.bind({ mode: 'dataset' });
+  </script>
 </body>
 </html>

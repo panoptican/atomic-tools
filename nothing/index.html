@@ -8,11 +8,15 @@
   <title>Nothing · Atomic Tools</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../assets/atomic-shell.css">
+  <script src="../assets/atomic-theme.js"></script>
+  <script>
+    AtomicTheme.applyBeforePaint({ mode: 'dataset' });
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
     :root {
-      color-scheme: light dark;
+      color-scheme: light;
       --paper: #f5f4ef;
       --ink: #111111;
       --ink-soft: #444444;
@@ -21,8 +25,20 @@
       --text: "GT America", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
+    /* data-theme comes from the shared theme script; the media query only
+       covers a page loaded without scripts. */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #0f0f0e;
+      --ink: #ededea;
+      --ink-soft: #cfccc4;
+      --ink-muted: #a4a39d;
+      --rule: #2a2a28;
+    }
+
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme]) {
+        color-scheme: dark;
         --paper: #0f0f0e;
         --ink: #ededea;
         --ink-soft: #cfccc4;
@@ -88,6 +104,8 @@
     <button type="button" id="again" aria-label="Do it again (does nothing)">Do it again</button>
   </main>
   <script>
+    AtomicTheme.bind({ mode: 'dataset' });
+
     const statusText = document.getElementById('status');
     let resetTimer;
 

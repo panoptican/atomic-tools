@@ -8,16 +8,24 @@
   <title>Page not found · Atomic Tools</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/assets/atomic-shell.css">
+  <script src="/assets/atomic-theme.js"></script>
+  <script>
+    AtomicTheme.applyBeforePaint({ mode: 'dataset' });
+  </script>
   <style>
     :root {
-      color-scheme: light dark;
+      color-scheme: light;
       --paper: #f5f4ef;
       --ink: #111111;
       --ink-muted: #66665f;
     }
 
+    /* data-theme comes from the shared theme script; the media query only
+       covers a page loaded without scripts. */
+    :root[data-theme="dark"] { color-scheme: dark; --paper: #0f0f0e; --ink: #ededea; --ink-muted: #a4a39d; }
+
     @media (prefers-color-scheme: dark) {
-      :root { --paper: #0f0f0e; --ink: #ededea; --ink-muted: #a4a39d; }
+      :root:not([data-theme]) { color-scheme: dark; --paper: #0f0f0e; --ink: #ededea; --ink-muted: #a4a39d; }
     }
 
     body {
@@ -53,5 +61,8 @@
     <a href="/">All tools</a>
     <p class="hint">The page that does nothing on purpose is at /nothing/.</p>
   </main>
+  <script>
+    AtomicTheme.bind({ mode: 'dataset' });
+  </script>
 </body>
 </html>

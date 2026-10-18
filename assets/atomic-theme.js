@@ -2,26 +2,51 @@
  * Shared light/dark theme for Atomic Tools pages.
  * mode: "dataset" sets documentElement.dataset.theme ("light"|"dark")
  * mode: "class" toggles a class on documentElement (default "dark")
+ *
+ * Every page stores the choice under one key so it follows you between tools.
+ * options.storageKey is the page's old per-tool key, read once as a fallback so
+ * nobody loses a choice made before the theme was shared.
  */
 (function (global) {
   'use strict';
 
-  function readStored(storageKey) {
+  var SHARED_KEY = 'atomic-tools-theme';
+
+  function getItem(key) {
     try {
-      return localStorage.getItem(storageKey);
+      return localStorage.getItem(key);
     } catch (e) {
       return null;
     }
+  }
+
+  function setItem(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {}
+  }
+
+  function isTheme(value) {
+    return value === 'dark' || value === 'light';
+  }
+
+  function readStored(legacyKey) {
+    var stored = getItem(SHARED_KEY);
+    if (isTheme(stored)) return stored;
+    var legacy = legacyKey ? getItem(legacyKey) : null;
+    if (isTheme(legacy)) {
+      setItem(SHARED_KEY, legacy);
+      return legacy;
+    }
+    return null;
   }
 
   function systemPrefersDark() {
     return global.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
-  function resolveTheme(storageKey) {
-    var stored = readStored(storageKey);
-    if (stored === 'dark' || stored === 'light') return stored;
-    return systemPrefersDark() ? 'dark' : 'light';
+  function resolveTheme(options) {
+    return readStored(options.storageKey) || (systemPrefersDark() ? 'dark' : 'light');
   }
 
   function applyTheme(theme, options) {
@@ -41,35 +66,45 @@
   }
 
   function applyBeforePaint(options) {
-    applyTheme(resolveTheme(options.storageKey), options);
+    applyTheme(resolveTheme(options || {}), options || {});
   }
 
+  /* Pages without a toggle (index, 404, Nothing) still call bind so they follow
+     the system theme live; the toggle wiring is skipped when there is none. */
   function bind(options) {
-    var toggle = document.getElementById(options.toggleId);
-    if (!toggle) return;
+    var toggle = options.toggleId ? document.getElementById(options.toggleId) : null;
 
     function syncToggleLabel() {
       var dark = isDark(options);
-      var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
-      toggle.setAttribute('aria-label', label);
-      toggle.setAttribute('title', label);
+      if (toggle) {
+        var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        toggle.setAttribute('aria-label', label);
+        toggle.setAttribute('title', label);
+      }
       if (options.onChange) options.onChange(dark);
     }
 
     syncToggleLabel();
 
-    toggle.addEventListener('click', function () {
-      var next = isDark(options) ? 'light' : 'dark';
-      applyTheme(next, options);
-      try {
-        localStorage.setItem(options.storageKey, next);
-      } catch (e) {}
-      syncToggleLabel();
-    });
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        var next = isDark(options) ? 'light' : 'dark';
+        applyTheme(next, options);
+        setItem(SHARED_KEY, next);
+        syncToggleLabel();
+      });
+    }
 
     global.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
       if (readStored(options.storageKey)) return;
       applyTheme(e.matches ? 'dark' : 'light', options);
+      syncToggleLabel();
+    });
+
+    // Another tab changed the theme: match it.
+    global.addEventListener('storage', function (e) {
+      if (e.key !== SHARED_KEY || !isTheme(e.newValue)) return;
+      applyTheme(e.newValue, options);
       syncToggleLabel();
     });
   }
