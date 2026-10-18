@@ -59,3 +59,8 @@ _concepts/
 # Cloudflare deployment docs
 **/CLOUDFLARE_DEPLOYMENT.md
 /qa/
+
+# Local working folders: video renders, product docs (own repo), SEO notes
+/videos/
+/product-description/
+/.seo/
