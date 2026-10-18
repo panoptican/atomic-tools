@@ -952,7 +952,7 @@ a { -webkit-tap-highlight-color: transparent; }
   letter-spacing: -0.005em;
 }
 
-.mm-dialog-body { padding: 18px 22px 22px; overflow-y: auto; }
+.mm-dialog-body { padding: 18px 22px 22px; overflow-y: auto; overscroll-behavior: contain; }
 
 .mm-dialog-close {
   padding: 6px 10px;
