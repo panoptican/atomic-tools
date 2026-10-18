@@ -15,6 +15,7 @@
   --focus: #2b5fff;
   --err: #b03030; /* 5.06:1 on err-soft */
   --err-soft: #f5e1e1;
+  --blank: #2b5fff; /* editor highlight for blanks; tinted in css/highlight.css */
 
   --display: "GT America Expanded", -apple-system, BlinkMacSystemFont, sans-serif;
   --text: "GT America", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -32,6 +33,7 @@
   --focus: #6f8dff;
   --err: #d97070;
   --err-soft: #2a1a1a;
+  --blank: #6f8dff;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

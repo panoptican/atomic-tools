@@ -34,8 +34,8 @@
 .hl-token {
   color: transparent;
   border-radius: 3px;
-  background: color-mix(in srgb, var(--focus) 16%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--focus) 30%, transparent);
+  background: color-mix(in srgb, var(--blank) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blank) 30%, transparent);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -49,14 +49,14 @@
 /* Blank with a question: underline-style accent along the bottom */
 .hl-token.hl-question {
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--focus) 30%, transparent),
-    inset 0 -2px 0 var(--focus);
+    inset 0 0 0 1px color-mix(in srgb, var(--blank) 30%, transparent),
+    inset 0 -2px 0 var(--blank);
 }
 
 .hl-token.hl-named.hl-question {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--ink) 28%, transparent),
-    inset 0 -2px 0 var(--focus);
+    inset 0 -2px 0 var(--blank);
 }
 
 /* iOS Safari adds ~3px of inner padding and rounded corners to textareas
