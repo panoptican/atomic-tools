@@ -113,13 +113,19 @@ const MadlibPrint = (function() {
   }
 
   function init() {
+    // One row with the share buttons; the slot under them if the panel's missing
+    const row = document.querySelector('#share-panel .share-buttons');
     const slot = document.getElementById('print-sheet-slot');
-    if (slot && !slot.firstChild) {
-      slot.className = 'print-sheet-slot';
-      slot.innerHTML = `
-        <button type="button" class="share-btn share-btn-secondary" id="print-worksheet-btn">Print worksheet</button>
-        <p class="print-sheet-hint">A paper version to fill in with a pencil.</p>`;
-      slot.querySelector('button').addEventListener('click', () => printWorksheet());
+    const target = row || slot;
+    if (target && !document.getElementById('print-worksheet-btn')) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'share-btn share-btn-secondary';
+      btn.id = 'print-worksheet-btn';
+      btn.textContent = 'Print worksheet';
+      btn.addEventListener('click', () => printWorksheet());
+      target.appendChild(btn);
+      if (!row) slot.className = 'print-sheet-slot';
     }
 
     const storyBtn = document.getElementById('print-story-btn');

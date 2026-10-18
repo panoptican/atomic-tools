@@ -42,7 +42,6 @@ const PlayerMode = (function() {
   let revealTitleEl;
   let copyBtn;
   let shareStoryBtn;
-  let replayBtn;
   let playAgainBtn;
   let createOwnBtn;
 
@@ -148,9 +147,9 @@ const PlayerMode = (function() {
   }
 
   // Play the story back. `source` says how the reveal started:
-  // 'play' (a player link), 'preview' (the creator testing), 'story' (a story link)
-  // or 'replay'. When the whole story is shown, a `madlib:revealdone` event fires
-  // on document with { result, source }.
+  // 'play' (a player link), 'preview' (the creator testing) or 'story' (a story
+  // link). When the story is shown, a `madlib:revealdone` event fires on document
+  // with { result, source }.
   function showReveal(source) {
     revealTitleEl.textContent = title || UNTITLED;
     showScreen('reveal');
@@ -316,6 +315,8 @@ const PlayerMode = (function() {
       creatorEl.style.display = 'none';
     }
     playerContainerEl.style.display = 'flex';
+    // A creator's preview sits on a sheet of paper; player links stay bare
+    playerContainerEl.classList.toggle('is-preview', isPreview);
 
     // If story view mode, play the completed story back
     if (isStoryView && data.answers) {
@@ -374,7 +375,6 @@ const PlayerMode = (function() {
     revealTitleEl = document.getElementById('reveal-title');
     copyBtn = document.getElementById('copy-story-btn');
     shareStoryBtn = document.getElementById('share-story-btn');
-    replayBtn = document.getElementById('replay-btn');
     playAgainBtn = document.getElementById('play-again-btn');
     createOwnBtn = document.getElementById('create-own-btn');
 
@@ -398,7 +398,6 @@ const PlayerMode = (function() {
 
     copyBtn.addEventListener('click', handleCopyStory);
     shareStoryBtn.addEventListener('click', handleShareStoryLink);
-    replayBtn.addEventListener('click', () => showReveal('replay'));
     playAgainBtn.addEventListener('click', handlePlayAgain);
     createOwnBtn.addEventListener('click', handleCreateOwn);
   }

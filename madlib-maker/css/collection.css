@@ -7,29 +7,59 @@
 
 .mc-body { min-height: 0; }
 
+/* minmax(0, 1fr): grid items won't shrink below their content by default,
+   so a long one-line excerpt would widen the list instead of truncating */
 .mc-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
+}
+
+/* The bordered row holds two buttons: the story (opens it) and a small
+   Delete icon at the trailing edge */
+.mc-item {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  border: 1px solid var(--rule-soft);
+  background: var(--paper);
 }
 
 .mc-row {
   appearance: none;
   display: block;
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 44px;
-  padding: 10px 12px;
-  border: 1px solid var(--rule-soft);
-  background: var(--paper);
+  padding: 10px 4px 10px 12px;
+  border: 0;
+  background: transparent;
   color: var(--ink);
   font-family: var(--text);
   text-align: left;
   cursor: pointer;
 }
 
-.mc-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.mc-row:focus-visible,
+.mc-row-delete:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+.mc-row-delete {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.mc-row-delete svg { width: 16px; height: 16px; }
 
 .mc-row-top {
   display: flex;
@@ -40,6 +70,8 @@
 
 .mc-row-title {
   min-width: 0;
+  /* Stacked on phones, the title isn't stretched, so cap it to truncate */
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -90,9 +122,18 @@
 .mc-btn-danger { border-color: var(--rule-soft); color: var(--ink-soft); }
 
 .mc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding-left: 0;
   padding-right: 10px;
   border-color: transparent;
+}
+
+.mc-back svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
 }
 
 .mc-story-head { margin: 4px 0 18px; }
@@ -143,7 +184,8 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .mc-row:hover { border-color: var(--ink); }
+  .mc-item:has(.mc-row:hover) { border-color: var(--ink); }
+  .mc-row-delete:hover { color: var(--err); }
   .mc-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .mc-btn-danger:hover { background: var(--err-soft); color: var(--err); border-color: var(--err); }
   .mc-back:hover { background: transparent; color: var(--ink-soft); border-color: transparent; }

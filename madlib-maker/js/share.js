@@ -6,6 +6,7 @@ const MadlibShare = (function() {
   const FONT_MIN = 28;
 
   let linkField = null;
+  let sharePlayerLink = null;
 
   function isTouchFirst() {
     return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
@@ -13,6 +14,10 @@ const MadlibShare = (function() {
 
   function selectLinkField() {
     if (!linkField) return;
+    // The field lives in the creator's Share panel, which a preview hides
+    if (typeof ModeManager !== 'undefined' && ModeManager.getMode() === 'preview') {
+      ModeManager.switchToCreator();
+    }
     linkField.hidden = false;
     linkField.focus();
     linkField.select();
@@ -71,10 +76,12 @@ const MadlibShare = (function() {
     linkField = panel.querySelector('#share-link-field');
     linkField.addEventListener('focus', () => linkField.select());
 
-    playerBtn.addEventListener('click', async () => {
-      const label = playerBtn.textContent;
-      playerBtn.disabled = true;
-      playerBtn.textContent = 'Making link…';
+    // Shared by this panel and the preview bar's "Share with players". The
+    // link also lands in this panel's field, ready after leaving the preview.
+    sharePlayerLink = async (btn) => {
+      const label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Making link…';
       try {
         const url = await URLManager.getPlayerLink();
         if (!url) return;
@@ -83,10 +90,12 @@ const MadlibShare = (function() {
         row.hidden = false;
         await shareLink({ url, title: MetadataManager.getTitle(), text: 'Fill in my madlib!', useField: true });
       } finally {
-        playerBtn.disabled = false;
-        playerBtn.textContent = label;
+        btn.disabled = false;
+        btn.textContent = label;
       }
-    });
+    };
+
+    playerBtn.addEventListener('click', () => sharePlayerLink(playerBtn));
 
     copyBtn.addEventListener('click', async () => {
       if (!linkField.value) return;
@@ -370,6 +379,11 @@ const MadlibShare = (function() {
   function init() {
     const panel = document.getElementById('share-panel');
     if (panel) buildPanel(panel);
+
+    const previewShareBtn = document.getElementById('preview-share-btn');
+    if (previewShareBtn && sharePlayerLink) {
+      previewShareBtn.addEventListener('click', () => sharePlayerLink(previewShareBtn));
+    }
 
     const saveBtn = document.getElementById('save-image-btn');
     if (saveBtn) {

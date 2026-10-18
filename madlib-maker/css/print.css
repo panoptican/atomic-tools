@@ -1,12 +1,7 @@
 /* Print: worksheet + finished story ------------------------------------- */
 
-/* Slot in the Share section */
+/* Fallback slot in the Share section, used only if the share row is missing */
 .print-sheet-slot { margin-top: 14px; }
-.print-sheet-hint {
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: var(--ink-muted);
-}
 
 /* The print tree never shows on screen */
 .print-root { display: none; }
@@ -74,6 +69,9 @@
   }
 
   #print-root .print-section { margin-bottom: 10mm; }
+  /* The story always starts a new page, so the word list can be filled in
+     without seeing the story it goes into */
+  #print-root .print-story-section { break-before: page; }
   #print-root .print-heading {
     font-family: var(--display);
     font-weight: 400;
