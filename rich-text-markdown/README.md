@@ -5,10 +5,13 @@ A browser-only converter for moving content between rich text editors and Markdo
 ## Features
 
 - Paste rich text from tools like Google Docs, Notion, or web pages and get Markdown.
-- Type or paste Markdown and get copy-ready rich text.
-- Automatically copies converted output to the clipboard.
+- Paste Markdown and get copy-ready rich text.
+- Paste-only input: typing into the box is blocked (with a visible hint), so
+  every result comes from a paste or a drop. Edit the original and paste again
+  to change it.
+- Automatically copies converted output to the clipboard on each paste.
 - Swap direction: click the direction badge to feed output back as input (MD → RT round-trip).
-- Visible error state when clipboard copy fails, with tap-to-retry.
+- Visible error state when clipboard copy fails, with a retry button.
 - Supports light and dark mode with persisted preference.
 - Runs entirely in the browser — no server calls.
 
@@ -26,7 +29,9 @@ Then visit http://localhost:8080/rich-text-markdown/
 
 ```text
 rich-text-markdown/
-├── index.html    # Self-contained tool (HTML + CSS + JS)
+├── index.html    # Markup and styles
+├── converter.js  # Conversion, direction detection, clipboard helpers
+├── app.js        # UI wiring
 └── README.md
 ```
 
