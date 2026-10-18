@@ -280,7 +280,22 @@
     return sanitizePreviewHtml(mdi.render(md));
   }
 
+  /* The execCommand fallbacks need a selection of their own, which pulls focus
+     out of whatever the person was using. Note it first and put it back. */
+  function saveFocus() {
+    var el = document.activeElement;
+    var range = el && typeof el.selectionStart === 'number'
+      ? [el.selectionStart, el.selectionEnd]
+      : null;
+    return function restore() {
+      if (!el || el === document.body || !el.isConnected) return;
+      el.focus({ preventScroll: true });
+      if (range) el.setSelectionRange(range[0], range[1]);
+    };
+  }
+
   function copyTextFallback(text) {
+    var restoreFocus = saveFocus();
     var ta = document.createElement('textarea');
     ta.value = text;
     ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0';
@@ -291,10 +306,12 @@
       ok = document.execCommand('copy');
     } catch (e) {}
     document.body.removeChild(ta);
+    restoreFocus();
     return ok;
   }
 
   function copyRichFallback(html) {
+    var restoreFocus = saveFocus();
     var el = document.createElement('div');
     el.innerHTML = html;
     el.style.cssText =
@@ -305,6 +322,7 @@
     var sel = window.getSelection();
     if (!sel) {
       document.body.removeChild(el);
+      restoreFocus();
       return false;
     }
     sel.removeAllRanges();
@@ -315,18 +333,21 @@
     } catch (e) {}
     sel.removeAllRanges();
     document.body.removeChild(el);
+    restoreFocus();
     return ok;
   }
 
+  // Clipboard API first: it needs no selection, so focus stays put.
   async function copyMd(markdown) {
-    if (copyTextFallback(markdown)) return true;
-    if (!navigator.clipboard || !navigator.clipboard.writeText) return false;
-    try {
-      await navigator.clipboard.writeText(markdown);
-      return true;
-    } catch (e) {
-      return false;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(markdown);
+        return true;
+      } catch (e) {
+        // Fall through to execCommand.
+      }
     }
+    return copyTextFallback(markdown);
   }
 
   function neutralizeRichHtml(html) {
