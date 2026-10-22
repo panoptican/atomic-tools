@@ -6,7 +6,7 @@ const MadlibSuggest = (function() {
     'noun': ['banana', 'spaceship', 'pickle', 'sock', 'waffle', 'rainbow', 'bathtub', 'pillow', 'dinosaur', 'trampoline', 'teapot', 'doorknob', 'noodle', 'moon', 'bubble', 'cupcake', 'flashlight', 'potato', 'wig', 'kazoo', 'toaster'],
     'plural noun': ['pickles', 'socks', 'waffles', 'rainbows', 'bathtubs', 'pillows', 'dinosaurs', 'trampolines', 'teapots', 'noodles', 'bubbles', 'cupcakes', 'potatoes', 'wigs', 'kazoos', 'toasters', 'hamsters', 'giraffes', 'spoons', 'marshmallows', 'sandwiches', 'robots'],
     'verb': ['tickle', 'wiggle', 'juggle', 'bounce', 'hiccup', 'sneeze', 'giggle', 'flip', 'boogie', 'dance', 'pounce', 'wobble', 'slurp', 'zoom', 'hop', 'spin', 'twirl', 'snore', 'squeak', 'gobble', 'burp', 'stomp', 'wave', 'tiptoe'],
-    'verb ing': ['tickling', 'wiggling', 'juggling', 'bouncing', 'hiccuping', 'sneezing', 'giggling', 'flipping', 'dancing', 'pouncing', 'wobbling', 'slurping', 'zooming', 'hopping', 'spinning', 'twirling', 'snoring', 'squeaking', 'gobbling', 'burping', 'stomping', 'waving', 'tiptoeing', 'skipping'],
+    'verb ending in -ing': ['tickling', 'wiggling', 'juggling', 'bouncing', 'hiccuping', 'sneezing', 'giggling', 'flipping', 'dancing', 'pouncing', 'wobbling', 'slurping', 'zooming', 'hopping', 'spinning', 'twirling', 'snoring', 'squeaking', 'gobbling', 'burping', 'stomping', 'waving', 'tiptoeing', 'skipping'],
     'past tense verb': ['tickled', 'wiggled', 'juggled', 'bounced', 'hiccuped', 'sneezed', 'giggled', 'flipped', 'boogied', 'danced', 'pounced', 'wobbled', 'slurped', 'zoomed', 'hopped', 'spun', 'twirled', 'snored', 'squeaked', 'gobbled', 'burped', 'stomped', 'waved', 'tiptoed'],
     'adjective': ['wiggly', 'squishy', 'fluffy', 'sparkly', 'grumpy', 'bouncy', 'soggy', 'ticklish', 'gigantic', 'teeny', 'slimy', 'wobbly', 'fancy', 'crunchy', 'stinky', 'sticky', 'dizzy', 'bumpy', 'jiggly', 'ginormous', 'sneezy', 'crispy', 'glittery'],
     'adverb': ['sneakily', 'loudly', 'backwards', 'gracefully', 'sleepily', 'silently', 'wildly', 'slowly', 'dramatically', 'politely', 'bravely', 'sideways', 'grumpily', 'quickly', 'excitedly', 'carefully', 'proudly', 'suspiciously', 'happily'],
@@ -26,76 +26,10 @@ const MadlibSuggest = (function() {
     'clothing': ['pajamas', 'mittens', 'bow tie', 'cape', 'tutu', 'swim goggles', 'sandals', 'sweater', 'baseball cap', 'rain boots', 'fuzzy slippers', 'tuxedo', 'bathrobe', 'socks', 'bunny ear headband', 'overalls', 'onesie', 'sunglasses', 'unicorn onesie', 'poncho', 'raincoat']
   };
 
-  // Common spellings and phrasings that mean one of the WORDS keys
-  const SYNONYMS = {
-    'adj': 'adjective',
-    'adjectives': 'adjective',
-    'describing word': 'adjective',
-    'adv': 'adverb',
-    'adverbs': 'adverb',
-    'nouns': 'noun',
-    'plural nouns': 'plural noun',
-    'plural': 'plural noun',
-    'verbs': 'verb',
-    'ing verb': 'verb ing',
-    'verb ing form': 'verb ing',
-    'verbing': 'verb ing',
-    'past verb': 'past tense verb',
-    'verb past tense': 'past tense verb',
-    'past tense': 'past tense verb',
-    'person': 'name',
-    'friend': 'name',
-    'names': 'name',
-    'first name': 'name',
-    'proper noun': 'name',
-    'colour': 'color',
-    'colours': 'color',
-    'colors': 'color',
-    'animals': 'animal',
-    'foods': 'food',
-    'places': 'place',
-    'numbers': 'number',
-    'body parts': 'body part',
-    'body': 'body part',
-    'exclamations': 'exclamation',
-    'sounds': 'sound',
-    'silly': 'silly word',
-    'silly words': 'silly word',
-    'vehicles': 'vehicle',
-    'jobs': 'job',
-    'occupation': 'job',
-    'emotions': 'emotion',
-    'feeling': 'emotion',
-    'clothes': 'clothing'
-  };
-
-  // Used when a type matches nothing else; checked in order, so 'adverb' comes before 'verb'
-  const KEYWORDS = [
-    ['animal', 'animal'], ['food', 'food'], ['snack', 'food'], ['color', 'color'],
-    ['place', 'place'], ['location', 'place'], ['name', 'name'], ['number', 'number'],
-    ['body', 'body part'], ['sound', 'sound'], ['exclam', 'exclamation'], ['vehicle', 'vehicle'],
-    ['job', 'job'], ['occupation', 'job'], ['emotion', 'emotion'], ['feel', 'emotion'],
-    ['cloth', 'clothing'], ['adjective', 'adjective'], ['adverb', 'adverb'], ['verb', 'verb'], ['noun', 'noun']
-  ];
-
-  // Turn a free-text prompt type into a WORDS key
+  // Turn a free-text prompt type into a WORDS key. The type list and its
+  // synonyms live in core.js (MadlibFormat) so generated madlibs share them.
   function bankKeyFor(type) {
-    const t = String(type || '').toLowerCase()
-      .replace(/[^a-z\s-]/g, ' ')
-      .replace(/-/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    if (WORDS[t]) return t;
-    if (SYNONYMS[t]) return SYNONYMS[t];
-
-    const words = t.split(' ');
-    if (words.includes('plural')) return 'plural noun';
-    if (words.includes('verb') && words.includes('ing')) return 'verb ing';
-    if (words.includes('verb') && (words.includes('past') || words.includes('tense'))) return 'past tense verb';
-
-    const hit = KEYWORDS.find(([keyword]) => t.includes(keyword));
-    return hit ? hit[1] : 'silly word';
+    return MadlibFormat.normalizeType(type) || 'silly word';
   }
 
   // Random word for the type, never the one we just offered for this field

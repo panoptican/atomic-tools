@@ -290,5 +290,89 @@ const MadlibFormat = (function() {
     };
   }
 
-  return { VERSION, parse, tokenText, promptText, applyEdits, cleanType, cleanQuestion, slugify, migrate, toSteps, finish };
+  // The word types every feature understands: the "Stuck?" dice have words for
+  // each one, and generated madlibs may only use these.
+  const COMMON_TYPES = Object.freeze([
+    'noun', 'plural noun', 'verb', 'verb ending in -ing', 'past tense verb', 'adjective', 'adverb',
+    'name', 'place', 'animal', 'food', 'color', 'number', 'body part', 'exclamation',
+    'sound', 'silly word', 'vehicle', 'job', 'emotion', 'clothing'
+  ]);
+
+  // Common spellings and phrasings that mean one of the COMMON_TYPES
+  const TYPE_SYNONYMS = {
+    'adj': 'adjective',
+    'adjectives': 'adjective',
+    'describing word': 'adjective',
+    'adv': 'adverb',
+    'adverbs': 'adverb',
+    'nouns': 'noun',
+    'plural nouns': 'plural noun',
+    'plural': 'plural noun',
+    'verbs': 'verb',
+    'ing verb': 'verb ending in -ing',
+    'verb ing': 'verb ending in -ing',
+    'verb ing form': 'verb ending in -ing',
+    'verbing': 'verb ending in -ing',
+    'past verb': 'past tense verb',
+    'verb past tense': 'past tense verb',
+    'past tense': 'past tense verb',
+    'person': 'name',
+    'friend': 'name',
+    'names': 'name',
+    'first name': 'name',
+    'proper noun': 'name',
+    'colour': 'color',
+    'colours': 'color',
+    'colors': 'color',
+    'animals': 'animal',
+    'foods': 'food',
+    'places': 'place',
+    'numbers': 'number',
+    'body parts': 'body part',
+    'body': 'body part',
+    'exclamations': 'exclamation',
+    'sounds': 'sound',
+    'silly': 'silly word',
+    'silly words': 'silly word',
+    'vehicles': 'vehicle',
+    'jobs': 'job',
+    'occupation': 'job',
+    'emotions': 'emotion',
+    'feeling': 'emotion',
+    'clothes': 'clothing'
+  };
+
+  // Used when a type matches nothing else; checked in order, so 'adverb' comes before 'verb'
+  const TYPE_KEYWORDS = [
+    ['animal', 'animal'], ['food', 'food'], ['snack', 'food'], ['color', 'color'],
+    ['place', 'place'], ['location', 'place'], ['name', 'name'], ['number', 'number'],
+    ['body', 'body part'], ['sound', 'sound'], ['exclam', 'exclamation'], ['vehicle', 'vehicle'],
+    ['job', 'job'], ['occupation', 'job'], ['emotion', 'emotion'], ['feel', 'emotion'],
+    ['cloth', 'clothing'], ['adjective', 'adjective'], ['adverb', 'adverb'], ['verb', 'verb'], ['noun', 'noun']
+  ];
+
+  // Turn a free-text word type into one of the COMMON_TYPES, or null if none fits
+  function normalizeType(type) {
+    const t = String(type || '').toLowerCase()
+      .replace(/[^a-z\s-]/g, ' ')
+      .replace(/-/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!t) return null;
+
+    // Match on the cleaned text; hyphens are gone, so compare cleaned names too
+    const exact = COMMON_TYPES.find(type => type.replace(/-/g, ' ').replace(/\s+/g, ' ') === t);
+    if (exact) return exact;
+    if (Object.prototype.hasOwnProperty.call(TYPE_SYNONYMS, t)) return TYPE_SYNONYMS[t];
+
+    const words = t.split(' ');
+    if (words.includes('plural')) return 'plural noun';
+    if (words.includes('verb') && words.includes('ing')) return 'verb ending in -ing';
+    if (words.includes('verb') && (words.includes('past') || words.includes('tense'))) return 'past tense verb';
+
+    const hit = TYPE_KEYWORDS.find(([keyword]) => t.includes(keyword));
+    return hit ? hit[1] : null;
+  }
+
+  return { VERSION, COMMON_TYPES, parse, tokenText, promptText, applyEdits, cleanType, cleanQuestion, slugify, migrate, toSteps, finish, normalizeType };
 })();
