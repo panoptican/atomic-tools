@@ -1,32 +1,37 @@
 import "tokens/colors.elyx" as palette
 import "foundations/typography.elyx" as typeScale
 import "controls/button.elyx" as buttons
+import "tokens/spacing.elyx" as metrics
 import "controls/segmented.elyx" as segments
 import "controls/toggle.elyx" as toggles
+import "controls/icons.elyx" as icons
 import "resources/assets/check.svg" as checkAsset
 import "resources/assets/sparkles.svg" as sparklesAsset
 
 export generateButton = frame : buttons.secondary {
   title: "Generate / default",
+  caption: "Text button at the top right of the Story card; always available in create mode.",
+  meta: {code: "madlib-maker/index.html#generate-btn"},
   left: 0px,
   top: 0px,
-  height: 37px,
+  height: 30px,
   padding-top: 0px,
-  padding-left: 18px,
+  padding-left: 0px,
   padding-bottom: 0px,
-  padding-right: 18px,
-  fill[0].color: palette.colors.surface,
+  padding-right: 0px,
+  border[0].visible: .false,
+  fill[0].visible: .false,
   layout.item-gap: 6px,
   overrides: [insert(sparkleIcon, after = .nil)],
 
   label {
     contents: "GENERATE",
-    font-size: 12.48
+    font-size: 11.52
   }
 
   sparkleIcon = asset {
-    width: 16px,
-    height: 16px,
+    width: 14px,
+    height: 14px,
     fill: palette.colors.ink,
     contents: sparklesAsset
   }
@@ -37,14 +42,9 @@ export generateHover = frame : generateButton {
   title: "Generate / hover",
   left: 240px,
   top: 0px,
-  fill[0].color: palette.colors.ink,
-
-  sparkleIcon {
-    fill[0].color: palette.colors.paper
-  }
 
   label {
-    fill[0].color: palette.colors.paper
+    underline: .single
   }
 }
 
@@ -53,23 +53,74 @@ export generateFocus = frame : generateButton {
   title: "Generate / focus",
   left: 480px,
   top: 0px,
+  padding-left: 4px,
+  padding-right: 4px,
   border[0].color: palette.colors.focus,
-  border[0].width: 3px
+  border[0].visible: .true,
+  border[0].width: 2px
 }
 
 @variant
-export generatePressed = frame : generateHover {
+export generatePressed = frame : generateButton {
   title: "Generate / pressed",
   left: 720px,
   top: 0px,
-  border[0].color: palette.colors.soft,
-  fill[0].color: palette.colors.soft
+
+  sparkleIcon {
+    fill[0].color: palette.colors.soft
+  }
+
+  label {
+    fill[0].color: palette.colors.soft
+  }
+}
+
+export generateHint = frame {
+  title: "Generate hint / default",
+  caption: "Floats just under the story placeholder while the story is empty.",
+  meta: {code: "madlib-maker/index.html#generate-hint"},
+  left: 0px,
+  top: 100px,
+  width: .auto,
+  height: 30px,
+  layout: {align-items: .center, item-gap: 6px},
+  children: [sparkleIcon, label],
+
+  sparkleIcon = asset {
+    width: 14px,
+    height: 14px,
+    fill: palette.colors.soft,
+    contents: sparklesAsset
+  }
+
+  label = text : typeScale.body {
+    contents: "Or generate one from a prompt",
+    font-size: 15.2,
+    underline: .single,
+    fill[0].color: palette.colors.soft
+  }
+}
+
+@variant
+export generateHintHover = frame : generateHint {
+  title: "Generate hint / hover",
+  left: 400px,
+  top: 100px,
+
+  sparkleIcon {
+    fill[0].color: palette.colors.ink
+  }
+
+  label {
+    fill[0].color: palette.colors.ink
+  }
 }
 
 export lengthPicker = frame {
+  meta: {code: "madlib-maker/js/generate.js#segmented"},
   left: 0px,
   top: 200px,
-  width: 306px,
+  width: 594px,
   height: .auto,
   layout: {direction: .column, item-gap: 6px},
   children: [label, options],
@@ -86,37 +137,67 @@ export lengthPicker = frame {
 
     short = frame : segments.segment {
       width: 33.33%,
-      padding-top: 0px,
-      padding-left: 0px,
-      padding-bottom: 0px,
-      padding-right: 0px,
+      height: .auto,
+      padding-top: 10px,
+      padding-left: 6px,
+      padding-bottom: 10px,
+      padding-right: 6px,
+      layout.direction: .column,
+      layout.item-gap: 2px,
+      overrides: [insert(detail, after = segments.segment.label)],
 
       label {
         contents: "SHORT"
+      }
+
+      detail = text : typeScale.small {
+        contents: "~80 words · 6 blanks",
+        font-size: 11.52,
+        fill[0].color: palette.colors.muted
       }
     }
 
     medium = frame : segments.selected {
       width: 33.33%,
-      padding-top: 0px,
-      padding-left: 0px,
-      padding-bottom: 0px,
-      padding-right: 0px,
+      height: .auto,
+      padding-top: 10px,
+      padding-left: 6px,
+      padding-bottom: 10px,
+      padding-right: 6px,
+      layout.direction: .column,
+      layout.item-gap: 2px,
+      overrides: [insert(detail, after = segments.segment.label)],
 
       label {
         contents: "MEDIUM"
+      }
+
+      detail = text : typeScale.small {
+        contents: "~150 words · 10 blanks",
+        font-size: 11.52,
+        fill[0].color: palette.colors.paper
       }
     }
 
     long = frame : segments.segment {
       width: 33.33%,
-      padding-top: 0px,
-      padding-left: 0px,
-      padding-bottom: 0px,
-      padding-right: 0px,
+      height: .auto,
+      padding-top: 10px,
+      padding-left: 6px,
+      padding-bottom: 10px,
+      padding-right: 6px,
+      layout.direction: .column,
+      layout.item-gap: 2px,
+      overrides: [insert(detail, after = segments.segment.label)],
 
       label {
         contents: "LONG"
+      }
+
+      detail = text : typeScale.small {
+        contents: "~250 words · 15 blanks",
+        font-size: 11.52,
+        fill[0].color: palette.colors.muted
       }
     }
   }
@@ -124,33 +205,50 @@ export lengthPicker = frame {
 
 @variant
 export lengthShort = frame : lengthPicker {
-  left: 400px,
+  left: 700px,
   top: 200px,
 
   options {
     @with-variant(segments.segment)
-    medium {}
+    medium {
+      detail {
+        fill[0].color: palette.colors.muted
+      }
+    }
 
     @with-variant(segments.selected)
-    short {}
+    short {
+      detail {
+        fill[0].color: palette.colors.paper
+      }
+    }
   }
 }
 
 @variant
 export lengthLong = frame : lengthPicker {
-  left: 800px,
+  left: 1400px,
   top: 200px,
 
   options {
     @with-variant(segments.selected)
-    long {}
+    long {
+      detail {
+        fill[0].color: palette.colors.paper
+      }
+    }
 
     @with-variant(segments.segment)
-    medium {}
+    medium {
+      detail {
+        fill[0].color: palette.colors.muted
+      }
+    }
   }
 }
 
 export providerPicker = frame : segments.segmented {
+  meta: {code: "madlib-maker/js/generate.js#segmented"},
   left: 0px,
   top: 400px,
   width: 100%,
@@ -185,26 +283,28 @@ export providerOpenAI = frame : providerPicker {
 }
 
 export humorToggle = frame : toggles.toggle {
+  meta: {code: "madlib-maker/js/generate.js#buildGenerate"},
   left: 0px,
   top: 600px,
-  width: 100%,
+  width: 594px,
 
   copy {
-    width: 75%,
+    width: 85%,
+
+    helper {
+      width: 100%,
+      contents: "Jokes for teens and grown-ups instead of little kids. Never explicit."
+    }
 
     label {
       contents: "Grown-up humor"
-    }
-
-    helper {
-      contents: "Off"
     }
   }
 }
 
 @variant
 export humorOn = frame : humorToggle {
-  left: 400px,
+  left: 700px,
   top: 600px,
 
   hitArea {
@@ -219,15 +319,10 @@ export humorOn = frame : humorToggle {
       layout.justify-content: .end
     }
   }
-
-  copy {
-    helper {
-      contents: "On"
-    }
-  }
 }
 
 export rememberCheckbox = frame {
+  meta: {code: "madlib-maker/js/generate.js#buildSettings"},
   left: 0px,
   top: 800px,
   width: 100%,
@@ -280,6 +375,7 @@ export rememberUnchecked = frame : rememberCheckbox {
 }
 
 export settingsLink = frame {
+  meta: {code: "madlib-maker/js/generate.js#buildGenerate"},
   left: 0px,
   top: 1000px,
   width: .auto,
@@ -290,5 +386,93 @@ export settingsLink = frame {
   label = text : typeScale.small {
     contents: "AI settings",
     underline: .single
+  }
+}
+
+export checkButton = frame : buttons.secondary {
+  title: "Check / attached",
+  caption: "Joined to the right edge of the API key field.",
+  meta: {code: "madlib-maker/js/generate.js#buildSettings"},
+  left: 0px,
+  top: 1100px,
+  height: metrics.size.control,
+  padding-top: 0px,
+  padding-left: 14px,
+  padding-bottom: 0px,
+  padding-right: 14px,
+  border[0].sides: .left,
+  fill[0].color: palette.colors.surface,
+
+  label {
+    contents: "CHECK",
+    font-size: 11.52
+  }
+}
+
+@variant
+export checkBusy = frame : checkButton {
+  title: "Check / checking",
+  left: 240px,
+  top: 1100px,
+  fill[0].color: palette.colors.disabled,
+
+  label {
+    fill[0].color: palette.colors.disabledInk,
+    contents: "CHECKING…"
+  }
+}
+
+export modelsButton = frame : buttons.secondary {
+  title: "Models / closed",
+  caption: "Joined to the right edge of the Model field. Loads the list on first open; picking a model closes it.",
+  meta: {code: "madlib-maker/js/generate.js#toggleModels"},
+  left: 0px,
+  top: 1200px,
+  height: metrics.size.control,
+  padding-top: 0px,
+  padding-left: 14px,
+  padding-bottom: 0px,
+  padding-right: 14px,
+  border[0].sides: .left,
+  fill[0].color: palette.colors.surface,
+  layout.item-gap: 8px,
+  overrides: [insert(chevron, after = buttons.button.label)],
+
+  label {
+    contents: "MODELS",
+    font-size: 11.52
+  }
+
+  chevron = asset : icons.chevronDown {
+    width: 12px,
+    height: 12px
+  }
+}
+
+@variant
+export modelsOpen = frame : modelsButton {
+  title: "Models / open",
+  left: 240px,
+  top: 1200px,
+
+  chevron {
+    transform: [1, 0, 0, 0, -1, 12]
+  }
+}
+
+@variant
+export modelsBusy = frame : modelsButton {
+  title: "Models / loading",
+  left: 480px,
+  top: 1200px,
+  fill[0].color: palette.colors.disabled,
+
+  label {
+    fill[0].color: palette.colors.disabledInk,
+    contents: "LOADING…"
+  }
+
+  chevron {
+    fill[0].color: palette.colors.disabledInk
   }
 }

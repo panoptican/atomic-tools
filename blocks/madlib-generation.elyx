@@ -11,6 +11,7 @@ import "blocks/toast.elyx" as toasts
 export aiSettingsDialog = frame : madlib.library {
   title: "AI settings / First use",
   caption: "Claude default · Empty password field · Remember checked · Provider mismatch is advisory.",
+  meta: {code: "madlib-maker/js/generate.js#buildSettings"},
   left: 0px,
   top: 0px,
   overrides: [
@@ -34,8 +35,6 @@ export aiSettingsDialog = frame : madlib.library {
       apiKey,
       keyStatus,
       model,
-      modelActions,
-      modelList,
       remember,
       storageNotice,
       privacyNote,
@@ -60,16 +59,26 @@ export aiSettingsDialog = frame : madlib.library {
       overrides: [remove(inputs.input.helper)],
 
       field {
+        overrides: [insert(check, after = inputs.input.field.value)],
         border[0].color: palette.colors.ink,
         fill[0].color: palette.colors.paper,
 
         value {
+          width: 75%,
           contents: "Enter your API key"
         }
+
+        layout.justify-content: .space-between,
+        padding-right: 0px
       }
 
       label {
         contents: "API KEY"
+      }
+
+      check = frame : controls.checkButton {
+        title: "",
+        caption: ""
       }
     }
 
@@ -79,38 +88,37 @@ export aiSettingsDialog = frame : madlib.library {
       contents: "Key works"
     }
 
+    // The model list and its error hang directly under the field, like a select
     model = frame : inputs.input {
       width: 100%,
-      overrides: [remove(inputs.input.helper)],
+      overrides: [
+        insert(modelList, after = inputs.input.field),
+        insert(modelStatus, after = modelList),
+        remove(inputs.input.helper)
+      ],
 
       field {
+        overrides: [insert(models, after = inputs.input.field.value)],
         border[0].color: palette.colors.ink,
         fill[0].color: palette.colors.paper,
 
         value {
           fill[0].color: palette.colors.ink,
-          contents: "claude-haiku-5-5"
+          width: 70%,
+          contents: "claude-opus-5-5"
         }
+
+        layout.justify-content: .space-between,
+        padding-right: 0px
       }
 
       label {
         contents: "MODEL"
       }
-    }
 
-    modelActions = frame {
-      width: 100%,
-      height: .auto,
-      layout: {direction: .row},
-      children: loadModels,
-
-      loadModels = frame : buttons.secondary {
-        height: 37px,
-
-        label {
-          contents: "LOAD MODELS",
-          font-size: 11.52
-        }
+      models = frame : controls.modelsButton {
+        title: "",
+        caption: ""
       }
     }
 
@@ -120,15 +128,15 @@ export aiSettingsDialog = frame : madlib.library {
       display: .none,
       layout: {direction: .column},
       border: palette.colors.rule,
-      children: [haiku, sonnet, opus],
+      children: [opus, sonnet, haiku],
 
-      haiku = frame : buttons.button {
+      opus = frame : buttons.button {
         width: 100%,
         height: 44px,
         layout.justify-content: .start,
 
         label {
-          contents: "claude-haiku-5-5",
+          contents: "claude-opus-5-5",
           font-size: 14,
           letter-spacing: 0
         }
@@ -147,18 +155,25 @@ export aiSettingsDialog = frame : madlib.library {
         }
       }
 
-      opus = frame : buttons.secondary {
+      haiku = frame : buttons.secondary {
         width: 100%,
         height: 44px,
         border[0].color: palette.colors.rule,
         layout.justify-content: .start,
 
         label {
-          contents: "claude-opus-5-5",
+          contents: "claude-haiku-5-5",
           font-size: 14,
           letter-spacing: 0
         }
       }
+    }
+
+    modelStatus = text : typeScale.small {
+      width: 100%,
+      display: .none,
+      contents: "Couldn't reach Claude. Check your connection and try again.",
+      fill[0].color: palette.colors.error
     }
 
     remember = frame : controls.rememberCheckbox {}
@@ -180,20 +195,7 @@ export aiSettingsDialog = frame : madlib.library {
       width: 100%,
       height: .auto,
       layout: {justify-content: .end, item-gap: 8px, wrap: .true, line-gap: 8px},
-      children: [checkKey, forgetKey, save],
-
-      checkKey = frame : buttons.secondary {
-        height: 44px,
-        padding-top: 0px,
-        padding-left: 12px,
-        padding-bottom: 0px,
-        padding-right: 12px,
-
-        label {
-          contents: "CHECK KEY",
-          font-size: 11.52
-        }
-      }
+      children: [forgetKey, save],
 
       forgetKey = frame : buttons.secondary {
         height: 44px,
@@ -274,14 +276,10 @@ export checkingKey = frame : keySaved {
   top: 0px,
 
   settingsForm {
-    actions {
-      checkKey {
-        fill[0].color: palette.colors.disabled,
-
-        label {
-          fill[0].color: palette.colors.disabledInk,
-          contents: "CHECKING…"
-        }
+    apiKey {
+      field {
+        @with-variant(controls.checkBusy)
+        check {}
       }
     }
   }
@@ -313,7 +311,7 @@ export keyFailed = frame : keySaved {
     keyStatus {
       fill[0].color: palette.colors.error,
       display: .visible,
-      contents: "That key didn't work. Check it in AI settings."
+      contents: "That key didn't work."
     }
   }
 }
@@ -326,14 +324,10 @@ export loadingModels = frame : keySaved {
   top: 0px,
 
   settingsForm {
-    modelActions {
-      loadModels {
-        fill[0].color: palette.colors.disabled,
-
-        label {
-          fill[0].color: palette.colors.disabledInk,
-          contents: "LOADING…"
-        }
+    model {
+      field {
+        @with-variant(controls.modelsBusy)
+        models {}
       }
     }
   }
@@ -342,13 +336,20 @@ export loadingModels = frame : keySaved {
 @variant
 export modelsLoaded = frame : keySaved {
   title: "AI settings / Claude models",
-  caption: "Choose a row to fill the editable model field.",
+  caption: "Models opens the list under the field; picking a row fills the field and closes the list. Escape closes only the list.",
   left: 5600px,
   top: 0px,
 
   settingsForm {
-    modelList {
-      display: .visible
+    model {
+      modelList {
+        display: .visible
+      }
+
+      field {
+        @with-variant(controls.modelsOpen)
+        models {}
+      }
     }
   }
 }
@@ -356,19 +357,19 @@ export modelsLoaded = frame : keySaved {
 @variant
 export modelsFailed = frame : keySaved {
   title: "AI settings / Models failed",
-  caption: "Keep the editable model and Load models action available to retry.",
+  caption: "The error sits under the model field; Models stays available to retry.",
   left: 6400px,
   top: 0px,
 
   settingsForm {
-    storageNotice {
-      fill[0].color: palette.colors.error,
-      display: .visible,
-      contents: "Couldn't reach Claude. Check your connection and try again."
-    }
+    model {
+      modelList {
+        display: .none
+      }
 
-    modelList {
-      display: .none
+      modelStatus {
+        display: .visible
+      }
     }
   }
 }
@@ -419,7 +420,7 @@ export openAISettings = frame : keySaved {
     model {
       field {
         value {
-          contents: "gpt-6-luna"
+          contents: "gpt-6-astra"
         }
       }
     }
@@ -434,31 +435,37 @@ export openAISettings = frame : keySaved {
 @variant
 export openAIModels = frame : openAISettings {
   title: "AI settings / OpenAI models",
-  caption: "",
   left: 9600px,
   top: 0px,
 
   settingsForm {
-    modelList {
-      haiku {
-        label {
-          contents: "gpt-6-luna"
+    model {
+      modelList {
+        haiku {
+          label {
+            contents: "gpt-6.1-sol"
+          }
         }
+
+        sonnet {
+          label {
+            contents: "gpt-6-luna"
+          }
+        }
+
+        opus {
+          label {
+            contents: "gpt-6-astra"
+          }
+        }
+
+        display: .visible
       }
 
-      sonnet {
-        label {
-          contents: "gpt-6-astra"
-        }
+      field {
+        @with-variant(controls.modelsOpen)
+        models {}
       }
-
-      opus {
-        label {
-          contents: "gpt-6.1-sol"
-        }
-      }
-
-      display: .visible
     }
   }
 }
@@ -499,11 +506,6 @@ export settingsFocus = frame : modelsLoaded {
         border[0].color: palette.colors.focus,
         border[0].width: 3px
       }
-
-      checkKey {
-        border[0].color: palette.colors.focus,
-        border[0].width: 3px
-      }
     }
 
     remember {
@@ -513,33 +515,33 @@ export settingsFocus = frame : modelsLoaded {
       }
     }
 
-    modelList {
-      opus {
-        border[0].color: palette.colors.focus,
-        border[0].width: 3px
-      }
-
-      sonnet {
-        border[0].color: palette.colors.focus,
-        border[0].width: 3px
-      }
-
-      haiku {
-        border[0].color: palette.colors.focus,
-        border[0].width: 3px
-      }
-    }
-
-    modelActions {
-      loadModels {
-        border[0].color: palette.colors.focus,
-        border[0].width: 3px
-      }
-    }
-
     model {
+      modelList {
+        opus {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+
+        sonnet {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+
+        haiku {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+      }
+
       field {
         border[0].color: palette.colors.focus,
+
+        models {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px,
+          border[0].sides: .all
+        }
+
         border[0].width: 2px
       }
     }
@@ -547,6 +549,13 @@ export settingsFocus = frame : modelsLoaded {
     apiKey {
       field {
         border[0].color: palette.colors.focus,
+
+        check {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px,
+          border[0].sides: .all
+        }
+
         border[0].width: 2px
       }
     }
@@ -577,6 +586,7 @@ export settingsFocus = frame : modelsLoaded {
 export generateDialog = frame : madlib.library {
   title: "Generate / Empty",
   caption: "Required prompt · 500 character limit · Medium · Humor off · Generate disabled.",
+  meta: {code: "madlib-maker/js/generate.js#buildGenerate"},
   left: 0px,
   top: 1400px,
   overrides: [
@@ -598,7 +608,7 @@ export generateDialog = frame : madlib.library {
     children: [
       prompt,
       lengthPicker,
-      humorToggle,
+      settingsGroup,
       progressMessage,
       errorMessage,
       validationMessage,
@@ -641,7 +651,22 @@ export generateDialog = frame : madlib.library {
       width: 100%
     }
 
-    humorToggle = frame : controls.humorToggle {}
+    // A labelled group, like Prompt and Length
+    settingsGroup = frame {
+      width: 100%,
+      height: .auto,
+      layout: {direction: .column, item-gap: 6px},
+      padding-top: 6px,
+      children: [label, humorToggle],
+
+      label = text : typeScale.caption {
+        contents: "SETTINGS"
+      }
+
+      humorToggle = frame : controls.humorToggle {
+        width: 100%
+      }
+    }
 
     progressMessage = text : typeScale.small {
       width: 100%,
@@ -807,8 +832,10 @@ export generateHumor = frame : generateReady {
   top: 1400px,
 
   generateForm {
-    @with-variant(controls.humorOn)
-    humorToggle {}
+    settingsGroup {
+      @with-variant(controls.humorOn)
+      humorToggle {}
+    }
   }
 }
 
@@ -856,7 +883,7 @@ export generating = frame : generateReady {
       opacity: 0.5
     }
 
-    humorToggle {
+    settingsGroup {
       opacity: 0.5
     }
 
@@ -900,7 +927,7 @@ export modelError = frame : generateReady {
   generateForm {
     errorMessage {
       message {
-        contents: "Your key can't use claude-haiku-5-5. Pick another model in AI settings."
+        contents: "Your key can't use claude-opus-5-5. Pick another model in AI settings."
       }
 
       display: .visible
@@ -1036,10 +1063,12 @@ export generateFocus = frame : generateReady {
       }
     }
 
-    humorToggle {
-      hitArea {
-        border[0].color: palette.colors.focus,
-        border[0].width: 2px
+    settingsGroup {
+      humorToggle {
+        hitArea {
+          border[0].color: palette.colors.focus,
+          border[0].width: 2px
+        }
       }
     }
 
@@ -1117,6 +1146,7 @@ export openAnywayFocus = frame : partialResult {
 export generatedToast = frame : madlib.newToast {
   title: "Generated / Existing toast",
   caption: "Same toast, generation message; no Undo action.",
+  meta: {code: "madlib-maker/js/generate.js#finish"},
   left: 0px,
   top: 2800px,
   width: 500px,
@@ -1126,5 +1156,86 @@ export generatedToast = frame : madlib.newToast {
   message {
     width: 380px,
     contents: "Generated. Check the blanks before sharing."
+  }
+}
+
+export confirmDialog = frame : madlib.library {
+  title: "Confirm / Start a new madlib",
+  caption: "Shown when Generate is clicked with a title or story in the editor. Continue goes on to AI settings or Generate; an empty editor skips this.",
+  meta: {code: "madlib-maker/js/generate.js#buildConfirm"},
+  left: 0px,
+  top: 3200px,
+  overrides: [
+    insert(confirmBody, after = madlib.library.header),
+    remove(dialogs.dialog.content)
+  ],
+
+  header {
+    heading {
+      contents: "Start a new madlib?"
+    }
+  }
+
+  confirmBody = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 18px},
+    padding: [18px, 23px, 23px],
+    children: [message, actions],
+
+    message = text : typeScale.body {
+      width: 100%,
+      contents: "The generated madlib opens in the editor in place of this one. This one stays saved in My madlibs."
+    }
+
+    actions = frame {
+      width: 100%,
+      height: .auto,
+      layout: {justify-content: .end, item-gap: 8px},
+      children: [cancel, continueButton],
+
+      cancel = frame : buttons.secondary {
+        height: 44px,
+        padding-top: 0px,
+        padding-left: 12px,
+        padding-bottom: 0px,
+        padding-right: 12px,
+
+        label {
+          contents: "CANCEL",
+          font-size: 11.52
+        }
+      }
+
+      continueButton = frame : buttons.button {
+        height: 44px,
+        padding-top: 0px,
+        padding-left: 16px,
+        padding-bottom: 0px,
+        padding-right: 16px,
+
+        label {
+          contents: "CONTINUE",
+          font-size: 11.52
+        }
+      }
+    }
+  }
+}
+
+@variant
+export confirmFocus = frame : confirmDialog {
+  title: "Confirm / Keyboard focus",
+  caption: "Continue has focus when the dialog opens; Escape or Cancel keeps the current madlib.",
+  left: 800px,
+  top: 3200px,
+
+  confirmBody {
+    actions {
+      continueButton {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+    }
   }
 }

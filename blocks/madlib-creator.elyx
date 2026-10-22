@@ -2,10 +2,10 @@ import "controls/madlib-generate.elyx" as generation
 import "tokens/colors.elyx" as palette
 import "foundations/typography.elyx" as typeScale
 import "controls/button.elyx" as buttons
+import "controls/icons.elyx" as icons
 import "tokens/madlib-colors.elyx" as madlibColors
 import "controls/input.elyx" as inputs
 import "controls/textarea.elyx" as textareas
-import "controls/icons.elyx" as icons
 import "blocks/navigation.elyx" as navigation
 import "blocks/dialog.elyx" as dialogs
 import "blocks/toast.elyx" as toasts
@@ -177,12 +177,29 @@ export creator = frame {
           fill: palette.colors.surface,
           border: palette.colors.ink,
           padding: [29px, 31px],
-          children: [titleBlock, hintBox, toolbarBox, editor, previewRow],
+          children: [
+            generateLink,
+            titleBlock,
+            hintBox,
+            toolbarBox,
+            editor,
+            previewRow
+          ],
+
+          // Pinned to the card's top right, outside the column layout
+          generateLink = frame : generation.generateButton {
+            title: "",
+            caption: "",
+            top: 29px,
+            right: 31px,
+            ignore-stack: .true
+          }
 
           titleBlock = frame {
             width: 100%,
             height: 79px,
             layout: {direction: .column, item-gap: 4px},
+            padding-right: 120px,
             children: [titleInput, subtitle],
 
             titleInput = text : typeScale.heading {
@@ -270,10 +287,10 @@ export creator = frame {
               }
 
               presets = frame {
-                width: 403.36px,
+                width: .auto,
                 height: .auto,
                 layout: {item-gap: 10px, wrap: .true, line-gap: 10px},
-                children: [noun, verb, adjective, name, place],
+                children: [noun, verb, adjective, moreTypes],
 
                 noun = frame : buttons.secondary {
                   width: 66.75px,
@@ -320,33 +337,26 @@ export creator = frame {
                   }
                 }
 
-                name = frame : buttons.secondary {
-                  width: 66.67px,
+                moreTypes = frame : buttons.secondary {
+                  meta: {code: "madlib-maker/index.html#more-types"},
+                  width: .auto,
                   height: 33px,
                   padding-left: 14px,
-                  padding-right: 14px,
+                  padding-right: 12px,
                   border[0].color: palette.colors.rule,
                   fill[0].color: palette.colors.surface,
+                  layout.item-gap: 8px,
+                  overrides: [insert(chevron, after = buttons.button.label)],
 
                   label {
-                    contents: "NAME",
+                    contents: "MORE TYPES",
                     font-size: 11.52,
                     letter-spacing: 6%
                   }
-                }
 
-                place = frame : buttons.secondary {
-                  width: 71.94px,
-                  height: 33px,
-                  padding-left: 14px,
-                  padding-right: 14px,
-                  border[0].color: palette.colors.rule,
-                  fill[0].color: palette.colors.surface,
-
-                  label {
-                    contents: "PLACE",
-                    font-size: 11.52,
-                    letter-spacing: 6%
+                  chevron = asset : icons.chevronDown {
+                    width: 10px,
+                    height: 10px
                   }
                 }
               }
@@ -401,9 +411,14 @@ export creator = frame {
             overrides: [remove(inputs.input.helper), remove(inputs.input.label)],
 
             field {
+              overrides: [
+                insert(generateHint, after = inputs.input.field.value)
+              ],
               border[0].color: palette.colors.ink,
               fill[0].color: palette.colors.paper,
               height: 490px,
+              layout.direction: .column,
+              layout.item-gap: 6px,
 
               value {
                 contents: "Once upon a time, a {noun} walked into a {place}…",
@@ -417,14 +432,19 @@ export creator = frame {
               padding-bottom: 27px,
               padding-right: 29px
             }
+
+            generateHint = frame : generation.generateHint {
+              title: "",
+              caption: ""
+            }
           }
 
           previewRow = frame {
             width: 100%,
             height: .auto,
-            layout: {justify-content: .space-between},
+            layout: {justify-content: .end},
             padding-top: 16px,
-            children: [generateButton, preview],
+            children: preview,
 
             preview = frame : buttons.secondary {
               width: 99.84px,
@@ -587,11 +607,6 @@ export creator = frame {
       }
     }
   }
-
-  generateButton = frame : generation.generateButton {
-    left: 359.5px,
-    top: 8px
-  }
 }
 
 @variant
@@ -695,7 +710,23 @@ export phone = frame : creator {
           padding-top: 17px,
           padding-left: 17px,
           padding-bottom: 17px,
-          padding-right: 17px
+          padding-right: 17px,
+
+          generateLink {
+            top: 17px,
+            right: 17px
+          }
+
+          titleBlock {
+            height: .auto,
+
+            titleInput {
+              height: .auto
+            }
+
+            padding-bottom: 14px,
+            padding-right: 100px
+          }
         }
       }
     }
