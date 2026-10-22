@@ -67,3 +67,7 @@ _concepts/
 
 # Local licensed fonts
 /resources/fonts/*
+
+# Python publishing checks
+__pycache__/
+*.pyc
