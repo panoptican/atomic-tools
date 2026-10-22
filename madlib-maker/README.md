@@ -15,6 +15,7 @@ An interactive web tool for creating and sharing custom madlibs. Create stories 
 - **Older Links Keep Working**: Pre-2026 links and drafts (a placeholder list plus `{word01}` references) are converted on load
 - **Auto-save Drafts**: Never lose your work with automatic local storage backup
 - **Player Mode**: Clean, focused interface for playing madlibs
+- **Generate from a Prompt**: With your own Claude or OpenAI API key, describe a story and get a ready-to-edit madlib
 
 ## Getting Started
 
@@ -104,8 +105,10 @@ madlib-maker/
 │   ├── drafts.js           # Auto-save into the madlib library
 │   ├── modes.js            # Create / Preview switching
 │   ├── main.js             # Start-up; starts optional features
+│   ├── theme.js            # Light/dark theme (kept out of the page for the CSP)
+│   ├── generate-format.js  # What generation asks a model for; answer → story
 │   └── grammar.js, highlight.js, share.js, suggest.js, print.js,
-│       collection.js, library.js   # One file per optional feature
+│       collection.js, library.js, generate.js   # One file per optional feature
 ├── css/                    # One stylesheet per optional feature
 ├── README.md               # This file
 ├── CLOUDFLARE_DEPLOYMENT.md # URL shortener deployment guide
@@ -161,6 +164,7 @@ Optional features, one file each in `js/` (plus `css/`), started by `main.js` an
 - **MadlibPrint**: printable paper worksheet and printable finished story
 - **MadlibCollection**: "My stories", every finished story saved in this browser
 - **MadlibLibrary**: storage for "My madlibs" (several saved madlibs instead of one draft)
+- **MadlibGenerate** (`generate.js`, with `generate-format.js`): writes a madlib from a prompt using the creator's own Claude or OpenAI key, called straight from the browser. The key is kept in this browser under `madlib-ai-settings` and never put in share links. Tests: `node --test madlib-maker/test-generate.js`
 
 Features talk through `MadlibFormat.finish()` (the finished-story shape) and two document events: `madlib:revealdone` and `madlib:storychange`.
 
@@ -175,6 +179,7 @@ Features talk through `MadlibFormat.finish()` (the finished-story shape) and two
 
 - All data stored client-side in browser Local Storage
 - No tracking or analytics
+- Generate from a prompt (optional) sends your prompt and API key only to the provider you pick (Claude or OpenAI), straight from your browser. The key stays in this browser and is never included in share links
 - URL shortening (if enabled) stores only:
   - Madlib data (title, placeholders, story, theme)
   - Creation timestamp
