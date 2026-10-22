@@ -69,6 +69,35 @@
   border: 0;
 }
 
+/* Roll all: top right of the all-at-once screen, in line with its heading */
+.player-intro-header.has-roll-all {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.player-intro-header.has-roll-all > h2 { min-width: 0; }
+
+.roll-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.roll-all-btn .suggest-icon { width: 18px; height: 18px; }
+
+/* A phone row is just too narrow for the heading and a full-size button */
+@media (max-width: 560px) {
+  .roll-all-btn { gap: 6px; padding: 8px 10px; }
+  .roll-all-btn .suggest-icon { width: 16px; height: 16px; }
+}
+
+.roll-all-btn.is-rolling .suggest-icon {
+  animation: suggest-roll 0.5s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .suggest-btn.is-rolling .suggest-icon { animation: none; }
+  .suggest-btn.is-rolling .suggest-icon,
+  .roll-all-btn.is-rolling .suggest-icon { animation: none; }
 }

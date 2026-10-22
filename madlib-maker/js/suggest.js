@@ -32,10 +32,51 @@ const MadlibSuggest = (function() {
     return MadlibFormat.normalizeType(type) || 'silly word';
   }
 
-  // Random word for the type, never the one we just offered for this field
-  function pickWord(type, previous) {
-    const choices = WORDS[bankKeyFor(type)].filter(word => word !== previous);
+  const DIE_ICON = `
+      <svg class="suggest-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <rect x="3" y="3" width="18" height="18" rx="3"/>
+        <circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/>
+        <circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/>
+        <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>
+        <circle cx="8" cy="16" r="1.4" fill="currentColor" stroke="none"/>
+        <circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/>
+      </svg>`;
+
+  // Each answer field with a die: { getPrompt, button, lastWord }. Weak, so
+  // fields from an earlier render of the form are let go.
+  const fields = new WeakMap();
+
+  // Random word for the type, never the one we just offered for this field,
+  // and (when the bank allows) none of the words in `avoid`
+  function pickWord(type, previous, avoid) {
+    const bank = WORDS[bankKeyFor(type)].filter(word => word !== previous);
+    const fresh = avoid ? bank.filter(word => !avoid.has(word)) : bank;
+    const choices = fresh.length ? fresh : bank;
     return choices[Math.floor(Math.random() * choices.length)];
+  }
+
+  function fill(inputEl, word) {
+    inputEl.value = word;
+    // Lets player.js save the answer, as if it was typed
+    inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  // Roll a word into every answer field inside `container`, without moving
+  // focus. Words aren't repeated within one roll while the bank has others.
+  function rollAll(container) {
+    const used = new Set();
+    let rolled = 0;
+    container.querySelectorAll('input[data-suggest]').forEach(inputEl => {
+      const field = fields.get(inputEl);
+      const prompt = field && field.getPrompt();
+      if (!prompt) return;
+      field.lastWord = pickWord(prompt.type, field.lastWord, used);
+      used.add(field.lastWord);
+      fill(inputEl, field.lastWord);
+      roll(field.button);
+      rolled++;
+    });
+    return rolled;
   }
 
   // Restart the die's roll animation (skipped for reduced motion)
@@ -47,7 +88,24 @@ const MadlibSuggest = (function() {
     button.addEventListener('animationend', () => button.classList.remove('is-rolling'), { once: true });
   }
 
-  function init() {}
+  // "Roll all" in the all-at-once screen's header, beside "Fill in the blanks"
+  function init() {
+    const screen = document.getElementById('player-all-at-once');
+    const header = screen && screen.querySelector('.player-intro-header');
+    const form = document.getElementById('all-inputs-form');
+    if (!header || !form || header.querySelector('.roll-all-btn')) return;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'player-btn roll-all-btn';
+    button.title = 'Fill every blank with a random word';
+    button.innerHTML = `${DIE_ICON}<span>Roll all</span>`;
+    button.addEventListener('click', () => {
+      if (rollAll(form)) roll(button);
+    });
+    header.classList.add('has-roll-all');
+    header.appendChild(button);
+  }
 
   // Add the die button beside an answer input. getPrompt() returns the prompt
   // on screen right now, so it is read at click time.
@@ -66,26 +124,17 @@ const MadlibSuggest = (function() {
     button.className = 'suggest-btn';
     button.setAttribute('aria-label', 'Suggest a word');
     button.title = 'Stuck? Get a random word';
-    button.innerHTML = `
-      <svg class="suggest-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-        <rect x="3" y="3" width="18" height="18" rx="3"/>
-        <circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/>
-        <circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/>
-        <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>
-        <circle cx="8" cy="16" r="1.4" fill="currentColor" stroke="none"/>
-        <circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/>
-      </svg>
+    button.innerHTML = `${DIE_ICON}
       <span class="suggest-sr">Suggest a word</span>`;
 
-    let lastWord = '';
+    const field = { getPrompt, button, lastWord: '' };
+    fields.set(inputEl, field);
     button.addEventListener('click', () => {
       const prompt = getPrompt();
       if (!prompt) return;
 
-      lastWord = pickWord(prompt.type, lastWord);
-      inputEl.value = lastWord;
-      // Lets player.js save the answer, as if it was typed
-      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      field.lastWord = pickWord(prompt.type, field.lastWord);
+      fill(inputEl, field.lastWord);
       inputEl.focus();
       inputEl.select();
       roll(button);
