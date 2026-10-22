@@ -113,8 +113,10 @@
             <button type="button" class="preset-btn" data-type="noun">Noun</button>
             <button type="button" class="preset-btn" data-type="verb">Verb</button>
             <button type="button" class="preset-btn" data-type="adjective">Adjective</button>
-            <button type="button" class="preset-btn" data-type="name">Name</button>
-            <button type="button" class="preset-btn" data-type="place">Place</button>
+            <!-- Every other common type (MadlibFormat.COMMON_TYPES), filled in by js/editor.js -->
+            <select class="preset-btn preset-select" id="more-types" aria-label="More blank types">
+              <option value="">More types</option>
+            </select>
           </div>
           <form class="custom-input-wrapper" id="custom-blank-form">
             <input type="text" id="custom-label-input" placeholder="Other type, e.g. animal" aria-label="Other blank type">

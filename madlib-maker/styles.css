@@ -304,6 +304,27 @@ a { -webkit-tap-highlight-color: transparent; }
 }
 
 .blank-toolbar .preset-buttons { margin-bottom: 0; }
+
+/* "More types" is a native select dressed as a preset button, with a chevron.
+   Doubled class (and :hover) so the .preset-btn rules later in this file
+   don't reset its padding or background. */
+.preset-btn.preset-select,
+.preset-btn.preset-select:hover {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  padding-right: 32px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 16px top 50%, right 11px top 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  line-height: normal;
+  /* Size to "More types" rather than the longest option, where supported */
+  field-sizing: content;
+}
+.preset-select option { text-transform: none; color: var(--ink); background: var(--paper); }
 .blank-toolbar .custom-input-wrapper { flex: 1 1 220px; }
 .blank-toolbar .custom-input-wrapper input { padding: 8px 12px; font-size: 1rem; }
 .blank-toolbar .custom-input-wrapper button { padding: 8px 14px; }

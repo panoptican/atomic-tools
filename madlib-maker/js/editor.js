@@ -189,10 +189,27 @@ const BlankToolbar = (function() {
     const toolbar = document.getElementById('blank-toolbar');
 
     // Keep the textarea's selection visible while clicking a type
-    toolbar.querySelectorAll('.preset-btn').forEach(btn => {
+    toolbar.querySelectorAll('button.preset-btn').forEach(btn => {
       btn.addEventListener('mousedown', e => e.preventDefault());
       btn.addEventListener('click', () => addBlank(btn.dataset.type));
     });
+
+    // "More types": every common type that doesn't already have a button
+    const moreTypes = document.getElementById('more-types');
+    if (moreTypes) {
+      const shown = new Set([...toolbar.querySelectorAll('button.preset-btn')].map(btn => btn.dataset.type));
+      MadlibFormat.COMMON_TYPES.filter(type => !shown.has(type)).forEach(type => {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+        moreTypes.appendChild(option);
+      });
+      moreTypes.addEventListener('change', () => {
+        if (!moreTypes.value) return;
+        addBlank(moreTypes.value);
+        moreTypes.value = '';
+      });
+    }
 
     document.getElementById('custom-blank-form').addEventListener('submit', e => {
       e.preventDefault();
