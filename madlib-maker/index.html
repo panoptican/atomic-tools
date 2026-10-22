@@ -123,9 +123,14 @@
             <button type="button" class="preset-btn" data-type="verb">Verb</button>
             <button type="button" class="preset-btn" data-type="adjective">Adjective</button>
             <!-- Every other common type (MadlibFormat.COMMON_TYPES), filled in by js/editor.js -->
-            <select class="preset-btn preset-select" id="more-types" aria-label="More blank types">
-              <option value="">More types</option>
-            </select>
+            <!-- The select is invisible over a styled label, so the label can be
+                 uppercase like the buttons while the menu keeps sentence case -->
+            <span class="preset-btn preset-select-wrap">
+              <span class="preset-select-label" aria-hidden="true">More types</span>
+              <select class="preset-select" id="more-types" aria-label="More blank types">
+                <option value="">More types</option>
+              </select>
+            </span>
           </div>
           <form class="custom-input-wrapper" id="custom-blank-form">
             <input type="text" id="custom-label-input" placeholder="Other type, e.g. animal" aria-label="Other blank type">

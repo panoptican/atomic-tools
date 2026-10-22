@@ -305,14 +305,16 @@ a { -webkit-tap-highlight-color: transparent; }
 
 .blank-toolbar .preset-buttons { margin-bottom: 0; }
 
-/* "More types" is a native select dressed as a preset button, with a chevron.
-   Doubled class (and :hover) so the .preset-btn rules later in this file
-   don't reset its padding or background. */
-.preset-btn.preset-select,
-.preset-btn.preset-select:hover {
-  appearance: none;
-  -webkit-appearance: none;
-  border-radius: 0;
+/* "More types": a preset button with a chevron, and an invisible native
+   select laid over it. The select carries no styling of its own, so its menu
+   shows the types in sentence case (macOS draws the menu with the select's
+   text-transform). Doubled class (and :hover) so the .preset-btn rules later
+   in this file don't reset the chevron. */
+.preset-btn.preset-select-wrap,
+.preset-btn.preset-select-wrap:hover {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   padding-right: 32px;
   background-image:
     linear-gradient(45deg, transparent 50%, currentColor 50%),
@@ -320,11 +322,23 @@ a { -webkit-tap-highlight-color: transparent; }
   background-position: right 16px top 50%, right 11px top 50%;
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
-  line-height: normal;
-  /* Size to "More types" rather than the longest option, where supported */
-  field-sizing: content;
 }
-.preset-select option { text-transform: none; color: var(--ink); background: var(--paper); }
+.preset-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  font: inherit;
+  text-transform: none;
+  cursor: pointer;
+}
+.preset-select-wrap:focus-within { outline: 2px solid var(--focus); outline-offset: 3px; }
+@supports selector(:focus-visible) {
+  .preset-select-wrap:focus-within { outline: none; }
+  .preset-select-wrap:has(.preset-select:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+}
 .blank-toolbar .custom-input-wrapper { flex: 1 1 220px; }
 .blank-toolbar .custom-input-wrapper input { padding: 8px 12px; font-size: 1rem; }
 .blank-toolbar .custom-input-wrapper button { padding: 8px 14px; }
