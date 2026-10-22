@@ -24,6 +24,7 @@ Thumbs.db
 *.swo
 
 # Local agent/skill workspaces
+.impeccable/
 .agents/
 .claude/
 .codex/
