@@ -1,0 +1,5 @@
+import "tokens/colors.elyx" as palette
+
+export colors = tokens {
+  muted: palette.colors.muted
+}

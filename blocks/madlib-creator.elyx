@@ -1,0 +1,1132 @@
+import "controls/madlib-generate.elyx" as generation
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/button.elyx" as buttons
+import "tokens/madlib-colors.elyx" as madlibColors
+import "controls/input.elyx" as inputs
+import "controls/textarea.elyx" as textareas
+import "controls/icons.elyx" as icons
+import "blocks/navigation.elyx" as navigation
+import "blocks/dialog.elyx" as dialogs
+import "blocks/toast.elyx" as toasts
+
+export creator = frame {
+  title: "Madlib Maker / Desktop creator",
+  caption: "1440px · Empty creator · Source: madlib-maker/index.html and its CSS/JS. Theme tokens remain editable.",
+  meta: {code: "madlib-maker/index.html#creator-intro"},
+  width: 1440px,
+  height: .auto,
+  layout: {direction: .column},
+  fill: palette.colors.paper,
+  children: [nav, main],
+
+  nav = frame : navigation.navigation {
+    title: "",
+    caption: "",
+    width: 100%,
+    height: 69px,
+    padding-top: 18px,
+    padding-left: 28px,
+    padding-bottom: 18px,
+    padding-right: 28px,
+    border[0].color: palette.colors.ink,
+
+    theme {
+      action {
+        border[0].color: palette.colors.ink,
+        width: 32px,
+
+        glyph {
+          width: 14px,
+          height: 14px
+        }
+
+        height: 32px
+      }
+
+      height: 32px
+    }
+
+    back {
+      height: 32px,
+      layout.item-gap: 6px,
+
+      label {
+        contents: "ALL TOOLS",
+        font-size: 12.48
+      }
+    }
+
+    titleText {
+      contents: "MADLIB MAKER",
+      font-size: 12.48
+    }
+  }
+
+  main = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 44px},
+    padding: [78px, 30px, 96px],
+    children: [intro, columns],
+
+    intro = frame {
+      width: 100%,
+      height: .auto,
+      layout: {
+        justify-content: .space-between,
+        align-items: .end,
+        item-gap: 32px
+      },
+      children: [copy, actions],
+
+      copy = frame {
+        width: 540px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [heading, sub],
+
+        heading = text : typeScale.title {
+          contents: "Fill the blanks.",
+          font-size: 44,
+          line-height: 1
+        }
+
+        sub = text : typeScale.body {
+          width: 100%,
+          contents: "Write a story, blank out a few words, then share a link for friends to play.",
+          font-size: 15.2,
+          fill[0].color: madlibColors.colors.muted
+        }
+      }
+
+      actions = frame {
+        width: .auto,
+        height: .auto,
+        layout: {item-gap: 10px, wrap: .true, line-gap: 10px},
+        children: [library, stories, newMadlib],
+
+        library = frame : buttons.secondary {
+          width: 125.27px,
+          height: 37px,
+          padding-top: 0px,
+          padding-left: 18px,
+          padding-bottom: 0px,
+          padding-right: 18px,
+
+          label {
+            contents: "MY MADLIBS",
+            font-size: 12.48
+          }
+        }
+
+        stories = frame : buttons.secondary {
+          width: 121.41px,
+          height: 37px,
+          padding-top: 0px,
+          padding-left: 18px,
+          padding-bottom: 0px,
+          padding-right: 18px,
+
+          label {
+            contents: "MY STORIES",
+            font-size: 12.48
+          }
+        }
+
+        newMadlib = frame : buttons.secondary {
+          width: 147.59px,
+          height: 37px,
+          padding-top: 0px,
+          padding-left: 18px,
+          padding-bottom: 0px,
+          padding-right: 18px,
+          layout.item-gap: 6px,
+          overrides: [insert(plus, after = .nil)],
+
+          label {
+            contents: "NEW MADLIB",
+            font-size: 12.48
+          }
+
+          plus = asset : icons.plus {
+            width: 14px,
+            height: 14px
+          }
+        }
+      }
+    }
+
+    columns = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 30px},
+      children: [leading, blanks],
+
+      leading = frame {
+        width: 890px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 18px},
+        children: [story, share],
+
+        story = frame {
+          meta: {code: "madlib-maker/index.html#story-editor-section"},
+          width: 100%,
+          height: .auto,
+          layout: {direction: .column},
+          fill: palette.colors.surface,
+          border: palette.colors.ink,
+          padding: [29px, 31px],
+          children: [titleBlock, hintBox, toolbarBox, editor, previewRow],
+
+          titleBlock = frame {
+            width: 100%,
+            height: 79px,
+            layout: {direction: .column, item-gap: 4px},
+            children: [titleInput, subtitle],
+
+            titleInput = text : typeScale.heading {
+              width: 100%,
+              height: 36px,
+              contents: "Untitled madlib",
+              font-size: 25.6,
+              line-height: 1.2,
+              letter-spacing: -0.5%,
+              fill[0].color: madlibColors.colors.muted
+            }
+
+            subtitle = text : typeScale.body {
+              contents: "Add subtitle",
+              font-size: 14.4,
+              underline: .single,
+              fill[0].color: madlibColors.colors.muted
+            }
+          }
+
+          hintBox = frame {
+            width: 100%,
+            height: 46.8px,
+            layout: {direction: .column},
+            children: hint,
+
+            hint = frame {
+              width: 100%,
+              height: .auto,
+              layout: {align-items: .center, item-gap: 4px},
+              children: [words, code, period],
+
+              words = text : typeScale.body {
+                contents: "Write your story, then select a word and pick a type to blank it out. You can also type blanks in braces, like",
+                font-size: 15.2,
+                fill[0].color: madlibColors.colors.muted
+              }
+
+              code = frame {
+                width: .auto,
+                height: 22px,
+                layout: {align-items: .center},
+                fill: palette.colors.paper,
+                border: palette.colors.rule,
+                padding: [0px, 6px],
+                children: value,
+
+                value = text : typeScale.mono {
+                  contents: "{noun}",
+                  font-size: 13.6
+                }
+              }
+
+              period = text : typeScale.body {
+                contents: ".",
+                font-size: 15.2,
+                fill[0].color: madlibColors.colors.muted
+              }
+            }
+          }
+
+          toolbarBox = frame {
+            width: 100%,
+            height: 52px,
+            layout: {direction: .column},
+            children: toolbar,
+
+            toolbar = frame {
+              width: 100%,
+              height: .auto,
+              layout: {
+                align-items: .center,
+                item-gap: 14px,
+                wrap: .true,
+                line-gap: 10px
+              },
+              children: [label, presets, custom],
+
+              label = text : typeScale.caption {
+                width: 87.86px,
+                contents: "ADD A BLANK",
+                font-size: 11.52,
+                letter-spacing: 0,
+                fill[0].color: madlibColors.colors.muted
+              }
+
+              presets = frame {
+                width: 403.36px,
+                height: .auto,
+                layout: {item-gap: 10px, wrap: .true, line-gap: 10px},
+                children: [noun, verb, adjective, name, place],
+
+                noun = frame : buttons.secondary {
+                  width: 66.75px,
+                  height: 33px,
+                  padding-left: 14px,
+                  padding-right: 14px,
+                  border[0].color: palette.colors.rule,
+                  fill[0].color: palette.colors.surface,
+
+                  label {
+                    contents: "NOUN",
+                    font-size: 11.52,
+                    letter-spacing: 6%
+                  }
+                }
+
+                verb = frame : buttons.secondary {
+                  width: 62.42px,
+                  height: 33px,
+                  padding-left: 14px,
+                  padding-right: 14px,
+                  border[0].color: palette.colors.rule,
+                  fill[0].color: palette.colors.surface,
+
+                  label {
+                    contents: "VERB",
+                    font-size: 11.52,
+                    letter-spacing: 6%
+                  }
+                }
+
+                adjective = frame : buttons.secondary {
+                  width: 95.58px,
+                  height: 33px,
+                  padding-left: 14px,
+                  padding-right: 14px,
+                  border[0].color: palette.colors.rule,
+                  fill[0].color: palette.colors.surface,
+
+                  label {
+                    contents: "ADJECTIVE",
+                    font-size: 11.52,
+                    letter-spacing: 6%
+                  }
+                }
+
+                name = frame : buttons.secondary {
+                  width: 66.67px,
+                  height: 33px,
+                  padding-left: 14px,
+                  padding-right: 14px,
+                  border[0].color: palette.colors.rule,
+                  fill[0].color: palette.colors.surface,
+
+                  label {
+                    contents: "NAME",
+                    font-size: 11.52,
+                    letter-spacing: 6%
+                  }
+                }
+
+                place = frame : buttons.secondary {
+                  width: 71.94px,
+                  height: 33px,
+                  padding-left: 14px,
+                  padding-right: 14px,
+                  border[0].color: palette.colors.rule,
+                  fill[0].color: palette.colors.surface,
+
+                  label {
+                    contents: "PLACE",
+                    font-size: 11.52,
+                    letter-spacing: 6%
+                  }
+                }
+              }
+
+              custom = frame {
+                width: 308.78px,
+                height: 38px,
+                layout: {item-gap: 8px},
+                children: [input, add],
+
+                input = frame : inputs.input {
+                  width: 243.8px,
+                  layout.item-gap: 0,
+                  overrides: [
+                    remove(inputs.input.helper),
+                    remove(inputs.input.label)
+                  ],
+
+                  field {
+                    height: 38px,
+                    border[0].color: palette.colors.ink,
+                    fill[0].color: palette.colors.paper,
+
+                    value {
+                      contents: "Other type, e.g. animal"
+                    }
+                  }
+                }
+
+                add = frame : buttons.button {
+                  height: 38px,
+                  padding-top: 0px,
+                  padding-left: 14px,
+                  padding-bottom: 0px,
+                  padding-right: 14px,
+
+                  label {
+                    contents: "ADD",
+                    font-size: 11.52,
+                    font-style: "Regular",
+                    letter-spacing: 6%
+                  }
+                }
+              }
+            }
+          }
+
+          editor = frame : textareas.textarea {
+            width: 100%,
+            height: 490px,
+            layout.item-gap: 0,
+            overrides: [remove(inputs.input.helper), remove(inputs.input.label)],
+
+            field {
+              border[0].color: palette.colors.ink,
+              fill[0].color: palette.colors.paper,
+              height: 490px,
+
+              value {
+                contents: "Once upon a time, a {noun} walked into a {place}…",
+                font-size: 19.2,
+                font-family: "GT America",
+                font-style: "Medium"
+              }
+
+              padding-top: 27px,
+              padding-left: 29px,
+              padding-bottom: 27px,
+              padding-right: 29px
+            }
+          }
+
+          previewRow = frame {
+            width: 100%,
+            height: .auto,
+            layout: {justify-content: .space-between},
+            padding-top: 16px,
+            children: [generateButton, preview],
+
+            preview = frame : buttons.secondary {
+              width: 99.84px,
+              height: 37px,
+              padding-left: 18px,
+              padding-right: 18px,
+              fill[0].color: palette.colors.surface,
+
+              label {
+                contents: "PREVIEW",
+                font-size: 12.48
+              }
+            }
+          }
+        }
+
+        share = frame : shareCard {
+          width: 100%
+        }
+      }
+
+      blanks = frame {
+        meta: {code: "madlib-maker/index.html#word-list-section"},
+        width: 460px,
+        height: .auto,
+        layout: {direction: .column},
+        fill: palette.colors.surface,
+        border: palette.colors.ink,
+        padding: [29px, 31px],
+        children: [heading, empty, note],
+
+        heading = text : typeScale.heading {
+          contents: "Blanks",
+          font-size: 25.6,
+          line-height: 1.5,
+          letter-spacing: -0.5%
+        }
+
+        empty = frame {
+          width: 100%,
+          height: 98.8px,
+          layout: {direction: .row},
+          padding-top: 28px,
+          children: message,
+
+          message = text : typeScale.body {
+            contents: "No blanks yet.",
+            font-size: 15.2,
+            fill[0].color: madlibColors.colors.muted
+          }
+        }
+
+        note = frame {
+          width: 100%,
+          height: .auto,
+          layout: {direction: .column},
+          children: [line0, line1, line2, line3, line4],
+
+          line0 = frame {
+            width: 100%,
+            height: 22.8px,
+            layout: {align-items: .center, item-gap: 4px},
+            children: words,
+
+            words = text : typeScale.body {
+              contents: "Players fill each blank separately, in story order. To use",
+              font-size: 15.2,
+              fill[0].color: madlibColors.colors.muted
+            }
+          }
+
+          line1 = frame {
+            width: 100%,
+            height: 22.8px,
+            layout: {align-items: .center, item-gap: 4px},
+            children: words,
+
+            words = text : typeScale.body {
+              contents: "one answer in several places, press Reuse or give the",
+              font-size: 15.2,
+              fill[0].color: madlibColors.colors.muted
+            }
+          }
+
+          line2 = frame {
+            width: 100%,
+            height: 22.8px,
+            layout: {align-items: .center, item-gap: 4px},
+            children: [words, chip, tail],
+
+            words = text : typeScale.body {
+              contents: "blanks a shared name, like",
+              font-size: 15.2,
+              fill[0].color: madlibColors.colors.muted
+            }
+
+            chip = frame {
+              width: .auto,
+              height: 21.2px,
+              layout: {align-items: .center},
+              fill: palette.colors.paper,
+              border: palette.colors.rule,
+              padding: [0px, 5px],
+              children: value,
+
+              value = text : typeScale.mono {
+                contents: "{name:hero}",
+                font-size: 12.8
+              }
+            }
+
+            tail = text : typeScale.body {
+              contents: ". For young",
+              font-size: 15.2,
+              fill[0].color: madlibColors.colors.muted
+            }
+          }
+
+          line3 = frame {
+            width: 100%,
+            height: 22.8px,
+            layout: {align-items: .center, item-gap: 4px},
+            children: words,
+
+            words = text : typeScale.body {
+              contents: "kids, ask a question instead of naming the word type:",
+              font-size: 15.2,
+              fill[0].color: madlibColors.colors.muted
+            }
+          }
+
+          line4 = frame {
+            width: 100%,
+            height: 22.8px,
+            layout: {align-items: .center, item-gap: 4px},
+            children: [chip, tail],
+
+            chip = frame {
+              width: .auto,
+              height: 21.2px,
+              layout: {align-items: .center},
+              fill: palette.colors.paper,
+              border: palette.colors.rule,
+              padding: [0px, 5px],
+              children: value,
+
+              value = text : typeScale.mono {
+                contents: "{noun|Something squishy?}",
+                font-size: 12.8
+              }
+            }
+
+            tail = text : typeScale.body {
+              contents: ".",
+              font-size: 15.2,
+              fill[0].color: madlibColors.colors.muted
+            }
+          }
+        }
+      }
+    }
+  }
+
+  generateButton = frame : generation.generateButton {
+    left: 359.5px,
+    top: 8px
+  }
+}
+
+@variant
+export phone = frame : creator {
+  title: "Madlib Maker / Phone creator",
+  caption: "390px · Full page · Story, Blanks, Share follow the existing mobile DOM order.",
+  left: 1728px,
+  width: 390px,
+
+  main {
+    layout.item-gap: 28px,
+    padding-top: 32px,
+    padding-left: 16px,
+    padding-bottom: 48px,
+    padding-right: 16px,
+
+    columns {
+      overrides: [insert(mobileShare, after = creator.main.columns.blanks)],
+      layout.direction: .column,
+
+      blanks {
+        overrides: [
+          insert(mobileNote, after = creator.main.columns.blanks.empty),
+          remove(creator.main.columns.blanks.note)
+        ],
+        width: 100%,
+        padding-top: 17px,
+        padding-left: 17px,
+        padding-bottom: 17px,
+        padding-right: 17px
+      }
+
+      leading {
+        overrides: [remove(creator.main.columns.leading.share)],
+        width: 100%,
+
+        story {
+          toolbarBox {
+            toolbar {
+              custom {
+                width: 324px,
+
+                input {
+                  width: 259px
+                }
+              }
+
+              presets {
+                width: 324px
+              }
+
+              label {
+                height: 17.27px
+              }
+            }
+
+            height: 165.27px
+          }
+
+          editor {
+            height: 341.12px,
+
+            field {
+              height: 341.12px,
+
+              value {
+                font-size: 16
+              }
+
+              padding-top: 17px,
+              padding-left: 19px,
+              padding-bottom: 17px,
+              padding-right: 19px
+            }
+          }
+
+          hintBox {
+            height: 92.4px,
+
+            hint {
+              overrides: [
+                insert(
+                  lastLine,
+                  after = creator.main.columns.leading.story.hintBox.hint.words
+                ),
+                remove(creator.main.columns.leading.story.hintBox.hint.period),
+                remove(creator.main.columns.leading.story.hintBox.hint.code)
+              ],
+
+              words {
+                width: 100%,
+                contents: "Write your story, then select a word and pick\na type to blank it out. You can also type"
+              }
+
+              layout.direction: .column,
+              layout.align-items: .start,
+              layout.item-gap: 0
+            }
+          }
+
+          padding-top: 17px,
+          padding-left: 17px,
+          padding-bottom: 17px,
+          padding-right: 17px
+        }
+      }
+    }
+
+    intro {
+      actions {
+        width: 100%,
+        padding-top: 20px
+      }
+
+      copy {
+        width: 100%,
+
+        heading {
+          font-size: 32
+        }
+      }
+
+      layout.direction: .column,
+      layout.item-gap: 20px,
+      layout.align-items: .start
+    }
+  }
+
+  nav {
+    titleText {
+      fill[0].color: palette.colors.ink,
+      font-size: 11.84,
+      letter-spacing: 6%
+    }
+
+    back {
+      border[0].color: palette.colors.ink,
+      width: 32px,
+
+      label {
+        display: .none
+      }
+
+      layout.justify-content: .center
+    }
+
+    theme {
+      width: 32px
+    }
+
+    height: 57px,
+    padding-top: 12px,
+    padding-left: 16px,
+    padding-bottom: 12px,
+    padding-right: 16px
+  }
+
+  mobileNote = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column},
+    children: [line0, line1, line2, line3, line4, line5],
+
+    line0 = frame {
+      width: 100%,
+      height: 22.8px,
+      layout: {align-items: .center, item-gap: 4px},
+      children: words,
+
+      words = text : typeScale.body {
+        contents: "Players fill each blank separately, in story",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+
+    line1 = frame {
+      width: 100%,
+      height: 22.8px,
+      layout: {align-items: .center, item-gap: 4px},
+      children: words,
+
+      words = text : typeScale.body {
+        contents: "order. To use one answer in several places,",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+
+    line2 = frame {
+      width: 100%,
+      height: 22.8px,
+      layout: {align-items: .center, item-gap: 4px},
+      children: words,
+
+      words = text : typeScale.body {
+        contents: "press Reuse or give the blanks a shared",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+
+    line3 = frame {
+      width: 100%,
+      height: 22.8px,
+      layout: {align-items: .center, item-gap: 4px},
+      children: [words, chip, tail],
+
+      words = text : typeScale.body {
+        contents: "name, like",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+
+      chip = frame {
+        width: .auto,
+        height: 21.2px,
+        layout: {align-items: .center},
+        fill: palette.colors.paper,
+        border: palette.colors.rule,
+        padding: [0px, 5px],
+        children: value,
+
+        value = text : typeScale.mono {
+          contents: "{name:hero}",
+          font-size: 12.8
+        }
+      }
+
+      tail = text : typeScale.body {
+        contents: ". For young kids, ask",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+
+    line4 = frame {
+      width: 100%,
+      height: 22.8px,
+      layout: {align-items: .center, item-gap: 4px},
+      children: words,
+
+      words = text : typeScale.body {
+        contents: "a question instead of naming the word type:",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+
+    line5 = frame {
+      width: 100%,
+      height: 22.8px,
+      layout: {align-items: .center, item-gap: 4px},
+      children: [chip, tail],
+
+      chip = frame {
+        width: .auto,
+        height: 21.2px,
+        layout: {align-items: .center},
+        fill: palette.colors.paper,
+        border: palette.colors.rule,
+        padding: [0px, 5px],
+        children: value,
+
+        value = text : typeScale.mono {
+          contents: "{noun|Something squishy?}",
+          font-size: 12.8
+        }
+      }
+
+      tail = text : typeScale.body {
+        contents: ".",
+        font-size: 15.2,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+  }
+
+  mobileShare = frame : shareCard {
+    width: 100%
+  }
+
+  lastLine = frame {
+    width: 100%,
+    height: 22.8px,
+    layout: {align-items: .center, item-gap: 4px},
+    children: [words, chip, period],
+
+    words = text : typeScale.body {
+      contents: "blanks in braces, like",
+      font-size: 15.2,
+      fill[0].color: madlibColors.colors.muted
+    }
+
+    chip = frame {
+      width: .auto,
+      height: 22px,
+      layout: {align-items: .center},
+      fill: palette.colors.paper,
+      border: palette.colors.rule,
+      padding: [0px, 6px],
+      children: value,
+
+      value = text : typeScale.mono {
+        contents: "{noun}",
+        font-size: 13.6
+      }
+    }
+
+    period = text : typeScale.body {
+      contents: ".",
+      font-size: 15.2,
+      fill[0].color: madlibColors.colors.muted
+    }
+  }
+}
+
+export library = frame : dialogs.dialog {
+  title: "My madlibs / Empty library",
+  caption: "Existing empty library dialog. Native modal backdrop is represented in the screen.",
+  meta: {code: "madlib-maker/js/drafts.js#buildDialog"},
+  top: 1800px,
+  width: 640px,
+  padding-top: 0px,
+  padding-left: 0px,
+  padding-bottom: 0px,
+  padding-right: 0px,
+  fill[0].color: palette.colors.paper,
+  layout.item-gap: 0,
+  overrides: [
+    insert(header, after = .nil),
+    remove(dialogs.dialog.actions),
+    remove(dialogs.dialog.heading)
+  ],
+
+  content {
+    overrides: [
+      insert(body, after = .nil),
+      remove(dialogs.dialog.content.description)
+    ],
+    padding-top: 0px,
+    padding-left: 0px,
+    padding-bottom: 0px,
+    padding-right: 0px
+  }
+
+  header = frame {
+    width: 100%,
+    height: 70.39px,
+    layout: {
+      justify-content: .space-between,
+      align-items: .center,
+      item-gap: 12px
+    },
+    border: {color: palette.colors.rule, sides: .bottom},
+    padding: [18px, 23px],
+    children: [heading, close],
+
+    heading = text : typeScale.heading {
+      contents: "My madlibs",
+      font-size: 21.6,
+      line-height: 1.5,
+      letter-spacing: -0.5%
+    }
+
+    close = frame : buttons.secondary {
+      height: 28px,
+      padding-top: 0px,
+      padding-left: 10px,
+      padding-bottom: 0px,
+      padding-right: 10px,
+      border[0].color: palette.colors.rule,
+
+      label {
+        contents: "CLOSE",
+        font-size: 11.52
+      }
+    }
+  }
+
+  body = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column},
+    padding: [18px, 23px, 23px],
+    children: [newRow, emptyBox, noteBox],
+
+    newRow = frame {
+      width: 100%,
+      height: 60px,
+      layout: {direction: .row},
+      children: newMadlib,
+
+      newMadlib = frame : buttons.button {
+        height: 44px,
+        padding-top: 0px,
+        padding-left: 16px,
+        padding-bottom: 0px,
+        padding-right: 16px,
+
+        label {
+          contents: "NEW MADLIB",
+          font-size: 11.52
+        }
+      }
+    }
+
+    emptyBox = frame {
+      width: 100%,
+      height: 48px,
+      layout: {direction: .row},
+      padding-top: 12px,
+      children: empty,
+
+      empty = text : typeScale.body {
+        width: 100%,
+        contents: "No saved madlibs yet. Anything you write is saved here automatically.",
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+
+    noteBox = frame {
+      width: 100%,
+      height: 38.4px,
+      layout: {direction: .row},
+      padding-top: 18px,
+      children: note,
+
+      note = text : typeScale.body {
+        width: 100%,
+        height: 38.4px,
+        contents: "Madlibs are saved only in this browser.",
+        font-size: 13.6,
+        fill[0].color: madlibColors.colors.muted
+      }
+    }
+  }
+}
+
+export newToast = frame : toasts.toast {
+  title: "New madlib / Undo toast",
+  caption: "Persistent toast after starting over from a saved madlib.",
+  meta: {code: "madlib-maker/js/drafts.js#handleNewMadlib"},
+  top: 2200px,
+  width: .auto,
+  height: 48px,
+  padding-top: 12px,
+  padding-left: 19px,
+  padding-bottom: 12px,
+  padding-right: 19px,
+  layout.item-gap: 14px,
+  overrides: [
+    insert(dismissText, after = toasts.toast.undo),
+    remove(toasts.toast.dismiss)
+  ],
+
+  message {
+    width: .auto,
+    contents: "Started a new madlib"
+  }
+
+  dismissText = text : typeScale.small {
+    contents: "Dismiss",
+    underline: .single,
+    fill[0].color: palette.colors.paper
+  }
+}
+
+export shareCard = frame {
+  meta: {code: "madlib-maker/index.html#share-section"},
+  left: 0px,
+  top: 2500px,
+  width: 890px,
+  height: .auto,
+  layout: {direction: .column},
+  fill: palette.colors.surface,
+  border: palette.colors.ink,
+  children: [heading, body],
+
+  heading = frame {
+    width: 100%,
+    height: 48.72px,
+    layout: {direction: .row},
+    border: {color: palette.colors.rule, sides: .bottom},
+    padding: [14px, 19px],
+    children: label,
+
+    label = text : typeScale.caption {
+      contents: "SHARE",
+      font-size: 12.48
+    }
+  }
+
+  body = frame {
+    width: 100%,
+    height: .auto,
+    layout: {item-gap: 10px, wrap: .true, line-gap: 10px},
+    padding: [18px, 19px, 19px],
+    children: [player, editor, print],
+
+    player = frame : buttons.button {
+      height: 37px,
+      padding-top: 0px,
+      padding-left: 18px,
+      padding-bottom: 0px,
+      padding-right: 18px,
+
+      label {
+        contents: "SHARE WITH PLAYERS",
+        font-size: 12.48
+      }
+    }
+
+    editor = frame : buttons.secondary {
+      height: 37px,
+      padding-left: 18px,
+      padding-right: 18px,
+      fill[0].color: palette.colors.surface,
+
+      label {
+        contents: "COPY EDITOR LINK",
+        font-size: 12.48
+      }
+    }
+
+    print = frame : buttons.secondary {
+      height: 37px,
+      padding-left: 18px,
+      padding-right: 18px,
+      fill[0].color: palette.colors.surface,
+
+      label {
+        contents: "PRINT WORKSHEET",
+        font-size: 12.48
+      }
+    }
+  }
+}

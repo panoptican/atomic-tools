@@ -1,0 +1,1681 @@
+import "blocks/madlib-creator.elyx" as madlib
+import "controls/madlib-generate.elyx" as controls
+import "tokens/colors.elyx" as palette
+import "resources/assets/moon.svg" as moonAsset
+import "blocks/madlib-generation.elyx" as generation
+
+@with-context()
+file {}
+
+desktopGenerate = frame {
+  title: "Desktop / Generate / Light",
+  caption: "Existing creator · Generate inside Story, opposite Preview · Same modal shell as My madlibs.",
+  left: 0px,
+  top: 0px,
+  width: 1440px,
+  height: 1200px,
+  fill: palette.colors.paper,
+  children: [page, backdrop, dialog],
+
+  page = frame : madlib.creator {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+
+    main {
+      columns {
+        leading {
+          story {
+            previewRow {
+              generateButton {
+                connections[1].target: desktopSettings,
+                connections[0].target: desktopGenerate,
+                connections[1].label: "No saved key",
+                connections[0].label: "Saved key"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  backdrop = frame {
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 100%,
+    fill: rgb(0%, 0%, 0%, 40%)
+  }
+
+  dialog = frame : generation.generateReady {
+    title: "",
+    left: 400px,
+    top: 240px,
+
+    generateForm {
+      actions {
+        aiSettings {
+          connections[0].target: desktopSettings,
+          connections[0].label: "AI settings"
+        }
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+desktopGenerateDark = frame : desktopGenerate {
+  title: "Desktop / Generate / Dark",
+  left: 0px,
+  top: 1550px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+desktopSettings = frame {
+  title: "Desktop / Settings / Light",
+  caption: "Existing creator · Generate inside Story, opposite Preview · Same modal shell as My madlibs.",
+  left: 1728px,
+  top: 0px,
+  width: 1440px,
+  height: 1200px,
+  fill: palette.colors.paper,
+  children: [page, backdrop, dialog],
+
+  page = frame : madlib.creator {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+
+    main {
+      columns {
+        leading {
+          story {
+            previewRow {
+              generateButton {
+                connections[1].target: desktopSettings,
+                connections[0].target: desktopGenerate,
+                connections[1].label: "No saved key",
+                connections[0].label: "Saved key"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  backdrop = frame {
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 100%,
+    fill: rgb(0%, 0%, 0%, 40%)
+  }
+
+  dialog = frame : generation.aiSettingsDialog {
+    title: "",
+    caption: "",
+    left: 400px,
+    top: 240px,
+    width: 640px
+  }
+}
+
+@context(theme="dark")
+desktopSettingsDark = frame : desktopSettings {
+  title: "Desktop / Settings / Dark",
+  left: 1728px,
+  top: 1550px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+phoneGenerate = frame {
+  title: "Phone / Generate / Light",
+  caption: "Existing creator · Generate inside Story, opposite Preview · Dialog scrolls vertically if viewport height is smaller.",
+  left: 3456px,
+  top: 0px,
+  width: 390px,
+  height: 844px,
+  fill: palette.colors.paper,
+  children: [page, backdrop, dialog],
+
+  page = frame : madlib.phone {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+
+    main {
+      columns {
+        leading {
+          story {
+            previewRow {
+              generateButton {
+                connections[1].target: phoneSettings,
+                connections[0].target: phoneGenerate,
+                connections[1].label: "No saved key",
+                connections[0].label: "Saved key"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  backdrop = frame {
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 100%,
+    fill: rgb(0%, 0%, 0%, 40%)
+  }
+
+  dialog = frame : generation.generateReady {
+    title: "",
+    left: 19px,
+    top: 60px,
+    width: 352px,
+
+    generateForm {
+      actions {
+        aiSettings {
+          connections[0].target: phoneSettings,
+          connections[0].label: "AI settings"
+        }
+      }
+    }
+
+    header {
+      heading {
+        font-size: 18
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+phoneGenerateDark = frame : phoneGenerate {
+  title: "Phone / Generate / Dark",
+  left: 3456px,
+  top: 1550px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+phoneSettings = frame {
+  title: "Phone / Settings / Light",
+  caption: "Existing creator · Generate inside Story, opposite Preview · Dialog scrolls vertically if viewport height is smaller.",
+  left: 3924px,
+  top: 0px,
+  width: 390px,
+  height: 844px,
+  fill: palette.colors.paper,
+  children: [page, backdrop, dialog],
+
+  page = frame : madlib.phone {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+
+    main {
+      columns {
+        leading {
+          story {
+            previewRow {
+              generateButton {
+                connections[1].target: phoneSettings,
+                connections[0].target: phoneGenerate,
+                connections[1].label: "No saved key",
+                connections[0].label: "Saved key"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  backdrop = frame {
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 100%,
+    fill: rgb(0%, 0%, 0%, 40%)
+  }
+
+  dialog = frame : generation.aiSettingsDialog {
+    title: "",
+    caption: "",
+    left: 19px,
+    top: 60px,
+    width: 352px,
+
+    header {
+      heading {
+        font-size: 18
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+phoneSettingsDark = frame : phoneSettings {
+  title: "Phone / Settings / Dark",
+  left: 3924px,
+  top: 1550px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+desktopSuccess = frame {
+  title: "Desktop / Success / Light",
+  caption: "Dialog closed · Existing toast in place · Editor contents intentionally unspecified.",
+  left: 4492px,
+  top: 0px,
+  width: 1440px,
+  height: 1200px,
+  fill: palette.colors.paper,
+  children: [page, toast],
+
+  page = frame : madlib.creator {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%
+  }
+
+  toast = frame : generation.generatedToast {
+    title: "",
+    caption: "",
+    left: 470px,
+    top: 1128px,
+    width: 500px,
+
+    message {
+      width: 380px
+    }
+  }
+}
+
+@context(theme="dark")
+desktopSuccessDark = frame : desktopSuccess {
+  title: "Desktop / Success / Dark",
+  left: 4492px,
+  top: 1550px,
+
+  page {
+    top: -21px,
+
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+phoneSuccess = frame {
+  title: "Phone / Success / Light",
+  caption: "Dialog closed · Existing toast in place · Editor contents intentionally unspecified.",
+  left: 6220px,
+  top: 0px,
+  width: 390px,
+  height: 844px,
+  fill: palette.colors.paper,
+  children: [page, toast],
+
+  page = frame : madlib.phone {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%
+  }
+
+  toast = frame : generation.generatedToast {
+    title: "",
+    caption: "",
+    left: 16px,
+    top: 748px,
+    width: 358px,
+
+    message {
+      width: 245px
+    }
+  }
+}
+
+@context(theme="dark")
+phoneSuccessDark = frame : phoneSuccess {
+  title: "Phone / Success / Dark",
+  left: 6220px,
+  top: 1550px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+settingsLightDesktop00 = frame : generation.aiSettingsDialog {
+  left: 0px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop01 = frame : generation.keySaved {
+  left: 800px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop02 = frame : generation.providerMismatch {
+  left: 1600px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop03 = frame : generation.checkingKey {
+  left: 2400px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop04 = frame : generation.keyWorks {
+  left: 3200px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop05 = frame : generation.keyFailed {
+  left: 4000px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop06 = frame : generation.loadingModels {
+  left: 4800px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop07 = frame : generation.modelsLoaded {
+  left: 5600px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop08 = frame : generation.modelsFailed {
+  left: 6400px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop09 = frame : generation.rememberOff {
+  left: 7200px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop10 = frame : generation.storageBlocked {
+  left: 8000px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop11 = frame : generation.openAISettings {
+  left: 8800px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop12 = frame : generation.openAIModels {
+  left: 9600px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop13 = frame : generation.openAIWarning {
+  left: 10400px,
+  top: 3400px,
+  width: 640px
+}
+
+settingsLightDesktop14 = frame : generation.settingsFocus {
+  left: 11200px,
+  top: 3400px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop00 = frame : generation.aiSettingsDialog {
+  left: 0px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop01 = frame : generation.keySaved {
+  left: 800px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop02 = frame : generation.providerMismatch {
+  left: 1600px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop03 = frame : generation.checkingKey {
+  left: 2400px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop04 = frame : generation.keyWorks {
+  left: 3200px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop05 = frame : generation.keyFailed {
+  left: 4000px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop06 = frame : generation.loadingModels {
+  left: 4800px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop07 = frame : generation.modelsLoaded {
+  left: 5600px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop08 = frame : generation.modelsFailed {
+  left: 6400px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop09 = frame : generation.rememberOff {
+  left: 7200px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop10 = frame : generation.storageBlocked {
+  left: 8000px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop11 = frame : generation.openAISettings {
+  left: 8800px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop12 = frame : generation.openAIModels {
+  left: 9600px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop13 = frame : generation.openAIWarning {
+  left: 10400px,
+  top: 4600px,
+  width: 640px
+}
+
+@context(theme="dark")
+settingsDarkDesktop14 = frame : generation.settingsFocus {
+  left: 11200px,
+  top: 4600px,
+  width: 640px
+}
+
+settingsLightPhone00 = frame : generation.aiSettingsDialog {
+  left: 0px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone01 = frame : generation.keySaved {
+  left: 448px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone02 = frame : generation.providerMismatch {
+  left: 896px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone03 = frame : generation.checkingKey {
+  left: 1344px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone04 = frame : generation.keyWorks {
+  left: 1792px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone05 = frame : generation.keyFailed {
+  left: 2240px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone06 = frame : generation.loadingModels {
+  left: 2688px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone07 = frame : generation.modelsLoaded {
+  left: 3136px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone08 = frame : generation.modelsFailed {
+  left: 3584px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone09 = frame : generation.rememberOff {
+  left: 4032px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone10 = frame : generation.storageBlocked {
+  left: 4480px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone11 = frame : generation.openAISettings {
+  left: 4928px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone12 = frame : generation.openAIModels {
+  left: 5376px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone13 = frame : generation.openAIWarning {
+  left: 5824px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+settingsLightPhone14 = frame : generation.settingsFocus {
+  left: 6272px,
+  top: 5800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone00 = frame : generation.aiSettingsDialog {
+  left: 0px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone01 = frame : generation.keySaved {
+  left: 448px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone02 = frame : generation.providerMismatch {
+  left: 896px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone03 = frame : generation.checkingKey {
+  left: 1344px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone04 = frame : generation.keyWorks {
+  left: 1792px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone05 = frame : generation.keyFailed {
+  left: 2240px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone06 = frame : generation.loadingModels {
+  left: 2688px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone07 = frame : generation.modelsLoaded {
+  left: 3136px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone08 = frame : generation.modelsFailed {
+  left: 3584px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone09 = frame : generation.rememberOff {
+  left: 4032px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone10 = frame : generation.storageBlocked {
+  left: 4480px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone11 = frame : generation.openAISettings {
+  left: 4928px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone12 = frame : generation.openAIModels {
+  left: 5376px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone13 = frame : generation.openAIWarning {
+  left: 5824px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+settingsDarkPhone14 = frame : generation.settingsFocus {
+  left: 6272px,
+  top: 7000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightDesktop00 = frame : generation.generateDialog {
+  left: 0px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop01 = frame : generation.generateReady {
+  left: 800px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop02 = frame : generation.generateShort {
+  left: 1600px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop03 = frame : generation.generateLong {
+  left: 2400px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop04 = frame : generation.generateHumor {
+  left: 3200px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop05 = frame : generation.generating {
+  left: 4000px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop06 = frame : generation.keyError {
+  left: 4800px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop07 = frame : generation.modelError {
+  left: 5600px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop08 = frame : generation.creditError {
+  left: 6400px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop09 = frame : generation.busyError {
+  left: 7200px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop10 = frame : generation.providerError {
+  left: 8000px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop11 = frame : generation.networkError {
+  left: 8800px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop12 = frame : generation.declinedError {
+  left: 9600px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop13 = frame : generation.partialResult {
+  left: 10400px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop14 = frame : generation.generateFocus {
+  left: 11200px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop15 = frame : generation.cancelFocus {
+  left: 12000px,
+  top: 8400px,
+  width: 640px
+}
+
+generateLightDesktop16 = frame : generation.openAnywayFocus {
+  left: 12800px,
+  top: 8400px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop00 = frame : generation.generateDialog {
+  left: 0px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop01 = frame : generation.generateReady {
+  left: 800px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop02 = frame : generation.generateShort {
+  left: 1600px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop03 = frame : generation.generateLong {
+  left: 2400px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop04 = frame : generation.generateHumor {
+  left: 3200px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop05 = frame : generation.generating {
+  left: 4000px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop06 = frame : generation.keyError {
+  left: 4800px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop07 = frame : generation.modelError {
+  left: 5600px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop08 = frame : generation.creditError {
+  left: 6400px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop09 = frame : generation.busyError {
+  left: 7200px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop10 = frame : generation.providerError {
+  left: 8000px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop11 = frame : generation.networkError {
+  left: 8800px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop12 = frame : generation.declinedError {
+  left: 9600px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop13 = frame : generation.partialResult {
+  left: 10400px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop14 = frame : generation.generateFocus {
+  left: 11200px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop15 = frame : generation.cancelFocus {
+  left: 12000px,
+  top: 9600px,
+  width: 640px
+}
+
+@context(theme="dark")
+generateDarkDesktop16 = frame : generation.openAnywayFocus {
+  left: 12800px,
+  top: 9600px,
+  width: 640px
+}
+
+generateLightPhone00 = frame : generation.generateDialog {
+  left: 0px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone01 = frame : generation.generateReady {
+  left: 448px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone02 = frame : generation.generateShort {
+  left: 896px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone03 = frame : generation.generateLong {
+  left: 1344px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone04 = frame : generation.generateHumor {
+  left: 1792px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone05 = frame : generation.generating {
+  left: 2240px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone06 = frame : generation.keyError {
+  left: 2688px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone07 = frame : generation.modelError {
+  left: 3136px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone08 = frame : generation.creditError {
+  left: 3584px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone09 = frame : generation.busyError {
+  left: 4032px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone10 = frame : generation.providerError {
+  left: 4480px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone11 = frame : generation.networkError {
+  left: 4928px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone12 = frame : generation.declinedError {
+  left: 5376px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone13 = frame : generation.partialResult {
+  left: 5824px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone14 = frame : generation.generateFocus {
+  left: 6272px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone15 = frame : generation.cancelFocus {
+  left: 6720px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+generateLightPhone16 = frame : generation.openAnywayFocus {
+  left: 7168px,
+  top: 10800px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone00 = frame : generation.generateDialog {
+  left: 0px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone01 = frame : generation.generateReady {
+  left: 448px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone02 = frame : generation.generateShort {
+  left: 896px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone03 = frame : generation.generateLong {
+  left: 1344px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone04 = frame : generation.generateHumor {
+  left: 1792px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone05 = frame : generation.generating {
+  left: 2240px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone06 = frame : generation.keyError {
+  left: 2688px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone07 = frame : generation.modelError {
+  left: 3136px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone08 = frame : generation.creditError {
+  left: 3584px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone09 = frame : generation.busyError {
+  left: 4032px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone10 = frame : generation.providerError {
+  left: 4480px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone11 = frame : generation.networkError {
+  left: 4928px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone12 = frame : generation.declinedError {
+  left: 5376px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone13 = frame : generation.partialResult {
+  left: 5824px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone14 = frame : generation.generateFocus {
+  left: 6272px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone15 = frame : generation.cancelFocus {
+  left: 6720px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+@context(theme="dark")
+generateDarkPhone16 = frame : generation.openAnywayFocus {
+  left: 7168px,
+  top: 12000px,
+  width: 352px,
+
+  header {
+    heading {
+      font-size: 18
+    }
+  }
+}
+
+buttonLight0 = frame : controls.generateButton {
+  left: 0px,
+  top: 13400px
+}
+
+buttonLight1 = frame : controls.generateHover {
+  left: 240px,
+  top: 13400px
+}
+
+buttonLight2 = frame : controls.generateFocus {
+  left: 480px,
+  top: 13400px
+}
+
+buttonLight3 = frame : controls.generatePressed {
+  left: 720px,
+  top: 13400px
+}
+
+@context(theme="dark")
+buttonDark0 = frame : controls.generateButton {
+  left: 0px,
+  top: 13580px
+}
+
+@context(theme="dark")
+buttonDark1 = frame : controls.generateHover {
+  left: 240px,
+  top: 13580px
+}
+
+@context(theme="dark")
+buttonDark2 = frame : controls.generateFocus {
+  left: 480px,
+  top: 13580px
+}
+
+@context(theme="dark")
+buttonDark3 = frame : controls.generatePressed {
+  left: 720px,
+  top: 13580px
+}

@@ -1,0 +1,294 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/button.elyx" as buttons
+import "controls/segmented.elyx" as segments
+import "controls/toggle.elyx" as toggles
+import "resources/assets/check.svg" as checkAsset
+import "resources/assets/sparkles.svg" as sparklesAsset
+
+export generateButton = frame : buttons.secondary {
+  title: "Generate / default",
+  left: 0px,
+  top: 0px,
+  height: 37px,
+  padding-top: 0px,
+  padding-left: 18px,
+  padding-bottom: 0px,
+  padding-right: 18px,
+  fill[0].color: palette.colors.surface,
+  layout.item-gap: 6px,
+  overrides: [insert(sparkleIcon, after = .nil)],
+
+  label {
+    contents: "GENERATE",
+    font-size: 12.48
+  }
+
+  sparkleIcon = asset {
+    width: 16px,
+    height: 16px,
+    fill: palette.colors.ink,
+    contents: sparklesAsset
+  }
+}
+
+@variant
+export generateHover = frame : generateButton {
+  title: "Generate / hover",
+  left: 240px,
+  top: 0px,
+  fill[0].color: palette.colors.ink,
+
+  sparkleIcon {
+    fill[0].color: palette.colors.paper
+  }
+
+  label {
+    fill[0].color: palette.colors.paper
+  }
+}
+
+@variant
+export generateFocus = frame : generateButton {
+  title: "Generate / focus",
+  left: 480px,
+  top: 0px,
+  border[0].color: palette.colors.focus,
+  border[0].width: 3px
+}
+
+@variant
+export generatePressed = frame : generateHover {
+  title: "Generate / pressed",
+  left: 720px,
+  top: 0px,
+  border[0].color: palette.colors.soft,
+  fill[0].color: palette.colors.soft
+}
+
+export lengthPicker = frame {
+  left: 0px,
+  top: 200px,
+  width: 306px,
+  height: .auto,
+  layout: {direction: .column, item-gap: 6px},
+  children: [label, options],
+
+  label = text : typeScale.caption {
+    contents: "LENGTH"
+  }
+
+  options = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .row},
+    children: [short, medium, long],
+
+    short = frame : segments.segment {
+      width: 33.33%,
+      padding-top: 0px,
+      padding-left: 0px,
+      padding-bottom: 0px,
+      padding-right: 0px,
+
+      label {
+        contents: "SHORT"
+      }
+    }
+
+    medium = frame : segments.selected {
+      width: 33.33%,
+      padding-top: 0px,
+      padding-left: 0px,
+      padding-bottom: 0px,
+      padding-right: 0px,
+
+      label {
+        contents: "MEDIUM"
+      }
+    }
+
+    long = frame : segments.segment {
+      width: 33.33%,
+      padding-top: 0px,
+      padding-left: 0px,
+      padding-bottom: 0px,
+      padding-right: 0px,
+
+      label {
+        contents: "LONG"
+      }
+    }
+  }
+}
+
+@variant
+export lengthShort = frame : lengthPicker {
+  left: 400px,
+  top: 200px,
+
+  options {
+    @with-variant(segments.segment)
+    medium {}
+
+    @with-variant(segments.selected)
+    short {}
+  }
+}
+
+@variant
+export lengthLong = frame : lengthPicker {
+  left: 800px,
+  top: 200px,
+
+  options {
+    @with-variant(segments.selected)
+    long {}
+
+    @with-variant(segments.segment)
+    medium {}
+  }
+}
+
+export providerPicker = frame : segments.segmented {
+  left: 0px,
+  top: 400px,
+  width: 100%,
+
+  first {
+    width: 50%,
+
+    label {
+      contents: "CLAUDE"
+    }
+  }
+
+  second {
+    width: 50%,
+
+    label {
+      contents: "OPENAI"
+    }
+  }
+}
+
+@variant
+export providerOpenAI = frame : providerPicker {
+  left: 400px,
+  top: 400px,
+
+  @with-variant(segments.selected)
+  second {}
+
+  @with-variant(segments.segment)
+  first {}
+}
+
+export humorToggle = frame : toggles.toggle {
+  left: 0px,
+  top: 600px,
+  width: 100%,
+
+  copy {
+    width: 75%,
+
+    label {
+      contents: "Grown-up humor"
+    }
+
+    helper {
+      contents: "Off"
+    }
+  }
+}
+
+@variant
+export humorOn = frame : humorToggle {
+  left: 400px,
+  top: 600px,
+
+  hitArea {
+    track {
+      fill[0].color: palette.colors.ink,
+      border[0].color: palette.colors.ink,
+
+      thumb {
+        fill[0].color: palette.colors.paper
+      }
+
+      layout.justify-content: .end
+    }
+  }
+
+  copy {
+    helper {
+      contents: "On"
+    }
+  }
+}
+
+export rememberCheckbox = frame {
+  left: 0px,
+  top: 800px,
+  width: 100%,
+  height: 44px,
+  layout: {align-items: .center, item-gap: 10px},
+  children: [hitArea, label],
+
+  hitArea = frame {
+    width: 28px,
+    height: 44px,
+    layout: {justify-content: .center, align-items: .center},
+    children: box,
+
+    box = frame {
+      width: 20px,
+      height: 20px,
+      layout: {justify-content: .center, align-items: .center},
+      fill: palette.colors.ink,
+      border: palette.colors.ink,
+      children: check,
+
+      check = asset {
+        width: 14px,
+        height: 14px,
+        fill: palette.colors.paper,
+        contents: checkAsset
+      }
+    }
+  }
+
+  label = text : typeScale.small {
+    contents: "Remember on this device"
+  }
+}
+
+@variant
+export rememberUnchecked = frame : rememberCheckbox {
+  left: 400px,
+  top: 800px,
+
+  hitArea {
+    box {
+      fill[0].color: palette.colors.paper,
+
+      check {
+        display: .none
+      }
+    }
+  }
+}
+
+export settingsLink = frame {
+  left: 0px,
+  top: 1000px,
+  width: .auto,
+  height: 44px,
+  layout: {align-items: .center},
+  children: label,
+
+  label = text : typeScale.small {
+    contents: "AI settings",
+    underline: .single
+  }
+}

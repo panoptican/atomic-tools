@@ -1,0 +1,9 @@
+import "./madlib-colors.elyx" as base
+import "./colors.elyx" as palette
+
+@context(theme="dark")
+file {}
+
+export darkColors = tokens : base.colors {
+  muted: palette.colors.outline
+}

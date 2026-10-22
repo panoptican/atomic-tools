@@ -1,0 +1,1130 @@
+import "blocks/dialog.elyx" as dialogs
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/button.elyx" as buttons
+import "controls/input.elyx" as inputs
+import "controls/textarea.elyx" as textareas
+import "controls/madlib-generate.elyx" as controls
+import "blocks/madlib-creator.elyx" as madlib
+import "blocks/toast.elyx" as toasts
+
+export aiSettingsDialog = frame : madlib.library {
+  title: "AI settings / First use",
+  caption: "Claude default · Empty password field · Remember checked · Provider mismatch is advisory.",
+  left: 0px,
+  top: 0px,
+  overrides: [
+    insert(settingsForm, after = madlib.library.header),
+    remove(dialogs.dialog.content)
+  ],
+
+  header {
+    heading {
+      contents: "AI settings"
+    }
+  }
+
+  settingsForm = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 16px},
+    padding: [18px, 23px, 23px],
+    children: [
+      providerGroup,
+      apiKey,
+      keyStatus,
+      model,
+      modelActions,
+      modelList,
+      remember,
+      storageNotice,
+      privacyNote,
+      actions
+    ],
+
+    providerGroup = frame {
+      width: 100%,
+      height: .auto,
+      layout: {direction: .column, item-gap: 6px},
+      children: [label, providerPicker],
+
+      label = text : typeScale.caption {
+        contents: "PROVIDER"
+      }
+
+      providerPicker = frame : controls.providerPicker {}
+    }
+
+    apiKey = frame : inputs.input {
+      width: 100%,
+      overrides: [remove(inputs.input.helper)],
+
+      field {
+        border[0].color: palette.colors.ink,
+        fill[0].color: palette.colors.paper,
+
+        value {
+          contents: "Enter your API key"
+        }
+      }
+
+      label {
+        contents: "API KEY"
+      }
+    }
+
+    keyStatus = text : typeScale.small {
+      width: 100%,
+      display: .none,
+      contents: "Key works"
+    }
+
+    model = frame : inputs.input {
+      width: 100%,
+      overrides: [remove(inputs.input.helper)],
+
+      field {
+        border[0].color: palette.colors.ink,
+        fill[0].color: palette.colors.paper,
+
+        value {
+          fill[0].color: palette.colors.ink,
+          contents: "claude-haiku-5-5"
+        }
+      }
+
+      label {
+        contents: "MODEL"
+      }
+    }
+
+    modelActions = frame {
+      width: 100%,
+      height: .auto,
+      layout: {direction: .row},
+      children: loadModels,
+
+      loadModels = frame : buttons.secondary {
+        height: 37px,
+
+        label {
+          contents: "LOAD MODELS",
+          font-size: 11.52
+        }
+      }
+    }
+
+    modelList = frame {
+      width: 100%,
+      height: .auto,
+      display: .none,
+      layout: {direction: .column},
+      border: palette.colors.rule,
+      children: [haiku, sonnet, opus],
+
+      haiku = frame : buttons.button {
+        width: 100%,
+        height: 44px,
+        layout.justify-content: .start,
+
+        label {
+          contents: "claude-haiku-5-5",
+          font-size: 14,
+          letter-spacing: 0
+        }
+      }
+
+      sonnet = frame : buttons.secondary {
+        width: 100%,
+        height: 44px,
+        border[0].color: palette.colors.rule,
+        layout.justify-content: .start,
+
+        label {
+          contents: "claude-sonnet-5-5",
+          font-size: 14,
+          letter-spacing: 0
+        }
+      }
+
+      opus = frame : buttons.secondary {
+        width: 100%,
+        height: 44px,
+        border[0].color: palette.colors.rule,
+        layout.justify-content: .start,
+
+        label {
+          contents: "claude-opus-5-5",
+          font-size: 14,
+          letter-spacing: 0
+        }
+      }
+    }
+
+    remember = frame : controls.rememberCheckbox {}
+
+    storageNotice = text : typeScale.small {
+      width: 100%,
+      display: .none,
+      contents: "Your key won't be remembered in this browser.",
+      fill[0].color: palette.colors.muted
+    }
+
+    privacyNote = text : typeScale.small {
+      width: 100%,
+      contents: "Your key is stored in this browser and sent only to Claude. It's never included in share links. Use a key with a spend limit.",
+      fill[0].color: palette.colors.muted
+    }
+
+    actions = frame {
+      width: 100%,
+      height: .auto,
+      layout: {justify-content: .end, item-gap: 8px, wrap: .true, line-gap: 8px},
+      children: [checkKey, forgetKey, save],
+
+      checkKey = frame : buttons.secondary {
+        height: 44px,
+        padding-top: 0px,
+        padding-left: 12px,
+        padding-bottom: 0px,
+        padding-right: 12px,
+
+        label {
+          contents: "CHECK KEY",
+          font-size: 11.52
+        }
+      }
+
+      forgetKey = frame : buttons.secondary {
+        height: 44px,
+        display: .none,
+        padding-top: 0px,
+        padding-left: 12px,
+        padding-bottom: 0px,
+        padding-right: 12px,
+
+        label {
+          contents: "FORGET KEY",
+          font-size: 11.52
+        }
+      }
+
+      save = frame : buttons.button {
+        height: 44px,
+        padding-top: 0px,
+        padding-left: 16px,
+        padding-bottom: 0px,
+        padding-right: 16px,
+
+        label {
+          contents: "SAVE",
+          font-size: 11.52
+        }
+      }
+    }
+  }
+}
+
+@variant
+export keySaved = frame : aiSettingsDialog {
+  title: "AI settings / Key saved",
+  caption: "Password remains masked; never render a saved key in plain text.",
+  left: 800px,
+  top: 0px,
+
+  settingsForm {
+    apiKey {
+      field {
+        value {
+          fill[0].color: palette.colors.ink,
+          contents: "••••••••••••••••••••••••"
+        }
+      }
+    }
+
+    actions {
+      forgetKey {
+        display: .visible
+      }
+    }
+  }
+}
+
+@variant
+export providerMismatch = frame : keySaved {
+  title: "AI settings / Provider warning",
+  caption: "Advisory warning · Save remains enabled.",
+  left: 1600px,
+  top: 0px,
+
+  settingsForm {
+    keyStatus {
+      fill[0].color: palette.colors.soft,
+      display: .visible,
+      contents: "This doesn't look like a Claude key."
+    }
+  }
+}
+
+@variant
+export checkingKey = frame : keySaved {
+  title: "AI settings / Checking key",
+  caption: "",
+  left: 2400px,
+  top: 0px,
+
+  settingsForm {
+    actions {
+      checkKey {
+        fill[0].color: palette.colors.disabled,
+
+        label {
+          fill[0].color: palette.colors.disabledInk,
+          contents: "CHECKING…"
+        }
+      }
+    }
+  }
+}
+
+@variant
+export keyWorks = frame : keySaved {
+  title: "AI settings / Key works",
+  caption: "",
+  left: 3200px,
+  top: 0px,
+
+  settingsForm {
+    keyStatus {
+      display: .visible,
+      contents: "Key works"
+    }
+  }
+}
+
+@variant
+export keyFailed = frame : keySaved {
+  title: "AI settings / Check failed",
+  caption: "",
+  left: 4000px,
+  top: 0px,
+
+  settingsForm {
+    keyStatus {
+      fill[0].color: palette.colors.error,
+      display: .visible,
+      contents: "That key didn't work. Check it in AI settings."
+    }
+  }
+}
+
+@variant
+export loadingModels = frame : keySaved {
+  title: "AI settings / Loading models",
+  caption: "",
+  left: 4800px,
+  top: 0px,
+
+  settingsForm {
+    modelActions {
+      loadModels {
+        fill[0].color: palette.colors.disabled,
+
+        label {
+          fill[0].color: palette.colors.disabledInk,
+          contents: "LOADING…"
+        }
+      }
+    }
+  }
+}
+
+@variant
+export modelsLoaded = frame : keySaved {
+  title: "AI settings / Claude models",
+  caption: "Choose a row to fill the editable model field.",
+  left: 5600px,
+  top: 0px,
+
+  settingsForm {
+    modelList {
+      display: .visible
+    }
+  }
+}
+
+@variant
+export modelsFailed = frame : keySaved {
+  title: "AI settings / Models failed",
+  caption: "Keep the editable model and Load models action available to retry.",
+  left: 6400px,
+  top: 0px,
+
+  settingsForm {
+    storageNotice {
+      fill[0].color: palette.colors.error,
+      display: .visible,
+      contents: "Couldn't reach Claude. Check your connection and try again."
+    }
+
+    modelList {
+      display: .none
+    }
+  }
+}
+
+@variant
+export rememberOff = frame : keySaved {
+  title: "AI settings / Remember unchecked",
+  caption: "Key is kept for this session only.",
+  left: 7200px,
+  top: 0px,
+
+  settingsForm {
+    privacyNote {
+      contents: "Your key is sent only to Claude. It's never included in share links. Use a key with a spend limit."
+    }
+
+    @with-variant(controls.rememberUnchecked)
+    remember {}
+  }
+}
+
+@variant
+export storageBlocked = frame : rememberOff {
+  title: "AI settings / Storage blocked",
+  caption: "Save remains available for the current session.",
+  left: 8000px,
+  top: 0px,
+
+  settingsForm {
+    storageNotice {
+      display: .visible
+    }
+  }
+}
+
+@variant
+export openAISettings = frame : keySaved {
+  title: "AI settings / OpenAI",
+  caption: "",
+  left: 8800px,
+  top: 0px,
+
+  settingsForm {
+    privacyNote {
+      contents: "Your key is stored in this browser and sent only to OpenAI. It's never included in share links. Use a key with a spend limit."
+    }
+
+    model {
+      field {
+        value {
+          contents: "gpt-6-luna"
+        }
+      }
+    }
+
+    providerGroup {
+      @with-variant(controls.providerOpenAI)
+      providerPicker {}
+    }
+  }
+}
+
+@variant
+export openAIModels = frame : openAISettings {
+  title: "AI settings / OpenAI models",
+  caption: "",
+  left: 9600px,
+  top: 0px,
+
+  settingsForm {
+    modelList {
+      haiku {
+        label {
+          contents: "gpt-6-luna"
+        }
+      }
+
+      sonnet {
+        label {
+          contents: "gpt-6-astra"
+        }
+      }
+
+      opus {
+        label {
+          contents: "gpt-6.1-sol"
+        }
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export openAIWarning = frame : openAISettings {
+  title: "AI settings / OpenAI warning",
+  caption: "Advisory warning · Save remains enabled.",
+  left: 10400px,
+  top: 0px,
+
+  settingsForm {
+    keyStatus {
+      fill[0].color: palette.colors.soft,
+      display: .visible,
+      contents: "This doesn't look like an OpenAI key."
+    }
+  }
+}
+
+@variant
+export settingsFocus = frame : modelsLoaded {
+  title: "AI settings / Keyboard focus",
+  caption: "Focus treatment inventory; each ring appears independently when tabbing. Dialog focus is for initial focus only.",
+  left: 11200px,
+  top: 0px,
+  border[0].color: palette.colors.focus,
+  border[0].width: 2px,
+
+  settingsForm {
+    actions {
+      save {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+
+      forgetKey {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+
+      checkKey {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+    }
+
+    remember {
+      hitArea {
+        border[0].color: palette.colors.focus,
+        border[0].width: 2px
+      }
+    }
+
+    modelList {
+      opus {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+
+      sonnet {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+
+      haiku {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+    }
+
+    modelActions {
+      loadModels {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+    }
+
+    model {
+      field {
+        border[0].color: palette.colors.focus,
+        border[0].width: 2px
+      }
+    }
+
+    apiKey {
+      field {
+        border[0].color: palette.colors.focus,
+        border[0].width: 2px
+      }
+    }
+
+    providerGroup {
+      providerPicker {
+        second {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+
+        first {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+      }
+    }
+  }
+
+  header {
+    close {
+      border[0].color: palette.colors.focus,
+      border[0].width: 3px
+    }
+  }
+}
+
+export generateDialog = frame : madlib.library {
+  title: "Generate / Empty",
+  caption: "Required prompt · 500 character limit · Medium · Humor off · Generate disabled.",
+  left: 0px,
+  top: 1400px,
+  overrides: [
+    insert(generateForm, after = madlib.library.header),
+    remove(dialogs.dialog.content)
+  ],
+
+  header {
+    heading {
+      contents: "Generate a madlib"
+    }
+  }
+
+  generateForm = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 20px},
+    padding: [18px, 23px, 23px],
+    children: [
+      prompt,
+      lengthPicker,
+      humorToggle,
+      progressMessage,
+      errorMessage,
+      validationMessage,
+      actions
+    ],
+
+    prompt = frame : textareas.textarea {
+      width: 100%,
+
+      field {
+        fill[0].color: palette.colors.paper,
+        border[0].color: palette.colors.ink,
+        height: 128px,
+
+        value {
+          contents: "A pirate's first day at school",
+          font-size: 16,
+          font-family: "GT America",
+          font-style: "Medium",
+          line-height: 1.5
+        }
+
+        padding-top: 12px,
+        padding-left: 12px,
+        padding-bottom: 12px,
+        padding-right: 12px
+      }
+
+      label {
+        contents: "PROMPT (REQUIRED)"
+      }
+
+      helper {
+        contents: "0 / 500 characters",
+        font-size: 12
+      }
+    }
+
+    lengthPicker = frame : controls.lengthPicker {
+      width: 100%
+    }
+
+    humorToggle = frame : controls.humorToggle {}
+
+    progressMessage = text : typeScale.small {
+      width: 100%,
+      display: .none,
+      contents: "Generating your madlib… This can take 5–30 seconds.",
+      fill[0].color: palette.colors.muted
+    }
+
+    errorMessage = frame {
+      width: 100%,
+      height: .auto,
+      display: .none,
+      layout: {direction: .column},
+      fill: palette.colors.errorSurface,
+      border: palette.colors.error,
+      padding: 12px,
+      children: message,
+
+      message = text : typeScale.small {
+        width: 100%,
+        contents: "That key didn't work. Check it in AI settings.",
+        fill[0].color: palette.colors.error
+      }
+    }
+
+    validationMessage = frame {
+      width: 100%,
+      height: .auto,
+      display: .none,
+      layout: {direction: .column, item-gap: 8px},
+      border: palette.colors.outline,
+      padding: 12px,
+      children: [heading, issues, openAnyway],
+
+      heading = text : typeScale.body {
+        width: 100%,
+        contents: "This madlib needs a few fixes."
+      }
+
+      issues = text : typeScale.small {
+        width: 100%,
+        contents: "• Two blanks have no word type.\n• One shared blank uses different types."
+      }
+
+      openAnyway = frame : buttons.secondary {
+        height: 44px,
+
+        label {
+          contents: "OPEN ANYWAY",
+          font-size: 11.52
+        }
+      }
+    }
+
+    actions = frame {
+      width: 100%,
+      height: .auto,
+      layout: {
+        justify-content: .space-between,
+        align-items: .center,
+        item-gap: 8px,
+        wrap: .true,
+        line-gap: 8px
+      },
+      children: [aiSettings, buttonsRow],
+
+      aiSettings = frame : controls.settingsLink {}
+
+      buttonsRow = frame {
+        width: .auto,
+        height: .auto,
+        layout: {item-gap: 8px},
+        children: [cancel, generate],
+
+        cancel = frame : buttons.secondary {
+          height: 44px,
+          display: .none,
+          padding-top: 0px,
+          padding-left: 12px,
+          padding-bottom: 0px,
+          padding-right: 12px,
+
+          label {
+            contents: "CANCEL",
+            font-size: 11.52
+          }
+        }
+
+        generate = frame : buttons.disabled {
+          height: 44px,
+          padding-top: 0px,
+          padding-left: 16px,
+          padding-bottom: 0px,
+          padding-right: 16px,
+
+          label {
+            contents: "GENERATE",
+            font-size: 11.52
+          }
+        }
+      }
+    }
+  }
+}
+
+@variant
+export generateReady = frame : generateDialog {
+  title: "Generate / Ready",
+  caption: "",
+  left: 800px,
+  top: 1400px,
+
+  generateForm {
+    actions {
+      buttonsRow {
+        @with-variant(buttons.button)
+        generate {}
+      }
+    }
+
+    prompt {
+      field {
+        value {
+          fill[0].color: palette.colors.ink
+        }
+      }
+
+      helper {
+        contents: "29 / 500 characters"
+      }
+    }
+  }
+}
+
+@variant
+export generateShort = frame : generateReady {
+  title: "Generate / Short",
+  left: 1600px,
+  top: 1400px,
+
+  generateForm {
+    @with-variant(controls.lengthShort)
+    lengthPicker {}
+  }
+}
+
+@variant
+export generateLong = frame : generateReady {
+  title: "Generate / Long",
+  left: 2400px,
+  top: 1400px,
+
+  generateForm {
+    @with-variant(controls.lengthLong)
+    lengthPicker {}
+  }
+}
+
+@variant
+export generateHumor = frame : generateReady {
+  title: "Generate / Grown-up humor on",
+  left: 3200px,
+  top: 1400px,
+
+  generateForm {
+    @with-variant(controls.humorOn)
+    humorToggle {}
+  }
+}
+
+@variant
+export generating = frame : generateReady {
+  title: "Generate / Generating",
+  caption: "Prompt, length, humor and settings locked; Cancel remains keyboard accessible and restores the prompt.",
+  left: 4000px,
+  top: 1400px,
+
+  generateForm {
+    prompt {
+      field {
+        fill[0].color: palette.colors.disabled,
+
+        value {
+          fill[0].color: palette.colors.disabledInk
+        }
+      }
+    }
+
+    actions {
+      buttonsRow {
+        generate {
+          fill[0].color: palette.colors.disabled,
+          border[0].color: palette.colors.disabled,
+
+          label {
+            fill[0].color: palette.colors.disabledInk,
+            contents: "GENERATING…"
+          }
+        }
+
+        cancel {
+          display: .visible
+        }
+      }
+
+      aiSettings {
+        opacity: 0.5
+      }
+    }
+
+    lengthPicker {
+      opacity: 0.5
+    }
+
+    humorToggle {
+      opacity: 0.5
+    }
+
+    progressMessage {
+      display: .visible
+    }
+  }
+
+  header {
+    close {
+      display: .none
+    }
+  }
+}
+
+@variant
+export keyError = frame : generateReady {
+  title: "Generate / keyError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 4800px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "That key didn't work. Check it in AI settings."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export modelError = frame : generateReady {
+  title: "Generate / modelError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 5600px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "Your key can't use claude-haiku-5-5. Pick another model in AI settings."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export creditError = frame : generateReady {
+  title: "Generate / creditError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 6400px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "Your Claude account is out of credit."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export busyError = frame : generateReady {
+  title: "Generate / busyError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 7200px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "Claude is busy. Try again in a few seconds."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export providerError = frame : generateReady {
+  title: "Generate / providerError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 8000px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "Claude is having trouble. Try again shortly."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export networkError = frame : generateReady {
+  title: "Generate / networkError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 8800px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "Couldn't reach Claude. Check your connection and try again."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export declinedError = frame : generateReady {
+  title: "Generate / declinedError",
+  caption: "Prompt and choices kept · Generate available to retry · AI settings available.",
+  left: 9600px,
+  top: 1400px,
+
+  generateForm {
+    errorMessage {
+      message {
+        contents: "The model declined that prompt. Try a different idea."
+      }
+
+      display: .visible
+    }
+  }
+}
+
+@variant
+export partialResult = frame : generateReady {
+  title: "Generate / Checks need attention",
+  caption: "Open anyway opens the ordinary editor for manual fixes; no generated editor content is specified.",
+  left: 10400px,
+  top: 1400px,
+
+  generateForm {
+    validationMessage {
+      display: .visible
+    }
+  }
+}
+
+@variant
+export generateFocus = frame : generateReady {
+  title: "Generate / Keyboard focus",
+  caption: "Focus treatment inventory; each ring appears independently when tabbing. Trap focus in the modal; restore focus to Generate on close.",
+  left: 11200px,
+  top: 1400px,
+  border[0].color: palette.colors.focus,
+  border[0].width: 2px,
+
+  generateForm {
+    actions {
+      buttonsRow {
+        generate {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+      }
+
+      aiSettings {
+        border[0].color: palette.colors.focus,
+        border[0].width: 2px
+      }
+    }
+
+    humorToggle {
+      hitArea {
+        border[0].color: palette.colors.focus,
+        border[0].width: 2px
+      }
+    }
+
+    lengthPicker {
+      options {
+        long {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+
+        medium {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+
+        short {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+      }
+    }
+
+    prompt {
+      field {
+        border[0].color: palette.colors.focus,
+        border[0].width: 2px
+      }
+    }
+  }
+
+  header {
+    close {
+      border[0].color: palette.colors.focus,
+      border[0].width: 3px
+    }
+  }
+}
+
+@variant
+export cancelFocus = frame : generating {
+  title: "Generate / Cancel focus",
+  caption: "Cancel stops generation and restores the filled form.",
+  left: 12000px,
+  top: 1400px,
+
+  generateForm {
+    actions {
+      buttonsRow {
+        cancel {
+          border[0].color: palette.colors.focus,
+          border[0].width: 3px
+        }
+      }
+    }
+  }
+}
+
+@variant
+export openAnywayFocus = frame : partialResult {
+  title: "Generate / Open anyway focus",
+  caption: "",
+  left: 12800px,
+  top: 1400px,
+
+  generateForm {
+    validationMessage {
+      openAnyway {
+        border[0].color: palette.colors.focus,
+        border[0].width: 3px
+      }
+    }
+  }
+}
+
+export generatedToast = frame : madlib.newToast {
+  title: "Generated / Existing toast",
+  caption: "Same toast, generation message; no Undo action.",
+  left: 0px,
+  top: 2800px,
+  width: 500px,
+  height: .auto,
+  overrides: [remove(toasts.toast.undo)],
+
+  message {
+    width: 380px,
+    contents: "Generated. Check the blanks before sharing."
+  }
+}

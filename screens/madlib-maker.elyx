@@ -1,0 +1,309 @@
+import "blocks/madlib-creator.elyx" as madlib
+import "tokens/colors.elyx" as palette
+import "resources/assets/moon.svg" as moonAsset
+
+lightDesktopCreator = frame : madlib.creator {
+  title: "Madlib Maker / Desktop / light / creator",
+  caption: "1440px · Full-page empty creator · Editable instances of extracted components",
+  left: 0px,
+  top: 0px,
+
+  main {
+    intro {
+      actions {
+        newMadlib {
+          connections[0].target: lightDesktopToast,
+          connections[0].label: "New madlib"
+        }
+
+        library {
+          connections[0].target: lightDesktopDialog,
+          connections[0].label: "My madlibs"
+        }
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+darkDesktopCreator = frame : lightDesktopCreator {
+  title: "Madlib Maker / Desktop / dark / creator",
+  left: 2200px,
+  top: 0px,
+
+  nav {
+    theme {
+      action {
+        glyph {
+          contents: moonAsset
+        }
+      }
+    }
+  }
+}
+
+lightDesktopDialog = frame {
+  title: "Madlib Maker / Desktop / light / dialog",
+  caption: "1440px · Viewport at page top · My madlibs open",
+  left: 0px,
+  top: 2100px,
+  width: 1440px,
+  height: 1200px,
+  fill: palette.colors.paper,
+  children: [page, backdrop, dialog],
+
+  page = frame : madlib.creator {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 1281.3199px
+  }
+
+  backdrop = frame {
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 100%,
+    fill: rgb(0%, 0%, 0%, 40%)
+  }
+
+  dialog = frame : madlib.library {
+    title: "",
+    caption: "",
+    left: 400px,
+    top: 471.1px,
+
+    header {
+      close {
+        connections[0].target: lightDesktopCreator,
+        connections[0].label: "Close"
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+darkDesktopDialog = frame : lightDesktopDialog {
+  title: "Madlib Maker / Desktop / dark / dialog",
+  left: 2200px,
+  top: 2100px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+lightDesktopToast = frame {
+  title: "Madlib Maker / Desktop / light / toast",
+  caption: "1440px · Viewport at page top · Started a new madlib, Undo and Dismiss",
+  left: 0px,
+  top: 3650px,
+  width: 1440px,
+  height: 1200px,
+  fill: palette.colors.paper,
+  children: [page, toast],
+
+  page = frame : madlib.creator {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 1281.3199px
+  }
+
+  toast = frame : madlib.newToast {
+    title: "",
+    caption: "",
+    left: 575.11px,
+    top: 1128px,
+    width: 289.78px
+  }
+}
+
+@context(theme="dark")
+darkDesktopToast = frame : lightDesktopToast {
+  title: "Madlib Maker / Desktop / dark / toast",
+  left: 2200px,
+  top: 3650px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+lightPhoneCreator = frame : madlib.phone {
+  title: "Madlib Maker / Phone / light / creator",
+  caption: "390px · Full-page empty creator · Editable instances of extracted components",
+  left: 1728px,
+  top: 0px,
+  height: .auto,
+
+  main {
+    intro {
+      actions {
+        newMadlib {
+          connections[0].target: lightPhoneToast,
+          connections[0].label: "New madlib"
+        }
+
+        library {
+          connections[0].target: lightPhoneDialog,
+          connections[0].label: "My madlibs"
+        }
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+darkPhoneCreator = frame : lightPhoneCreator {
+  title: "Madlib Maker / Phone / dark / creator",
+  left: 3928px,
+  top: 0px,
+
+  nav {
+    theme {
+      action {
+        glyph {
+          contents: moonAsset
+        }
+      }
+    }
+  }
+}
+
+lightPhoneDialog = frame {
+  title: "Madlib Maker / Phone / light / dialog",
+  caption: "390px · Viewport at page top · My madlibs open",
+  left: 1728px,
+  top: 2100px,
+  width: 390px,
+  height: 844px,
+  fill: palette.colors.paper,
+  children: [page, backdrop, dialog],
+
+  page = frame : madlib.phone {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 1704.06px
+  }
+
+  backdrop = frame {
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 100%,
+    fill: rgb(0%, 0%, 0%, 40%)
+  }
+
+  dialog = frame : madlib.library {
+    title: "",
+    caption: "",
+    left: 19px,
+    top: 281.1px,
+    width: 352px,
+
+    header {
+      close {
+        connections[0].target: lightPhoneCreator,
+        connections[0].label: "Close"
+      }
+    }
+
+    content {
+      body {
+        emptyBox {
+          height: 72px
+        }
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+darkPhoneDialog = frame : lightPhoneDialog {
+  title: "Madlib Maker / Phone / dark / dialog",
+  left: 3928px,
+  top: 2100px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
+
+lightPhoneToast = frame {
+  title: "Madlib Maker / Phone / light / toast",
+  caption: "390px · Viewport at page top · Started a new madlib, Undo and Dismiss",
+  left: 1728px,
+  top: 3650px,
+  width: 390px,
+  height: 844px,
+  fill: palette.colors.paper,
+  children: [page, toast],
+
+  page = frame : madlib.phone {
+    title: "",
+    caption: "",
+    left: 0px,
+    top: 0px,
+    width: 100%,
+    height: 1704.06px
+  }
+
+  toast = frame : madlib.newToast {
+    title: "",
+    caption: "",
+    left: 50.11px,
+    top: 772px,
+    width: 289.78px
+  }
+}
+
+@context(theme="dark")
+darkPhoneToast = frame : lightPhoneToast {
+  title: "Madlib Maker / Phone / dark / toast",
+  left: 3928px,
+  top: 3650px,
+
+  page {
+    nav {
+      theme {
+        action {
+          glyph {
+            contents: moonAsset
+          }
+        }
+      }
+    }
+  }
+}
