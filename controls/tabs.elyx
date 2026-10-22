@@ -1,0 +1,30 @@
+import "controls/segmented.elyx" as segments
+
+export tabs = frame : segments.segmented {
+  left: 0px,
+  top: 0px,
+
+  first {
+    label {
+      contents: "ONE AT A TIME"
+    }
+  }
+
+  second {
+    label {
+      contents: "ALL AT ONCE"
+    }
+  }
+}
+
+@variant
+export alternate = frame : tabs {
+  left: 0px,
+  top: 150px,
+
+  @with-variant(segments.selected)
+  second {}
+
+  @with-variant(segments.segment)
+  first {}
+}

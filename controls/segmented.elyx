@@ -1,0 +1,84 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+
+export segment = frame {
+  left: 0px,
+  top: 0px,
+  width: .auto,
+  height: metrics.size.control,
+  layout: {justify-content: .center, align-items: .center},
+  fill: palette.colors.paper,
+  border: palette.colors.rule,
+  padding: [0px, 16px],
+  children: label,
+
+  label = text : typeScale.caption {
+    contents: "OPTION",
+    fill[0].color: palette.colors.muted
+  }
+}
+
+@variant
+export selected = frame : segment {
+  left: 0px,
+  top: 100px,
+  border[0].color: palette.colors.ink,
+  fill[0].color: palette.colors.ink,
+
+  label {
+    fill[0].color: palette.colors.paper
+  }
+}
+
+@variant
+export focused = frame : segment {
+  left: 0px,
+  top: 200px,
+  border[0].color: palette.colors.focus,
+  border[0].width: 2px
+}
+
+@variant
+export disabled = frame : segment {
+  left: 0px,
+  top: 300px,
+  fill[0].color: palette.colors.disabled,
+
+  label {
+    fill[0].color: palette.colors.disabledInk
+  }
+}
+
+export segmented = frame {
+  left: 400px,
+  top: 0px,
+  width: .auto,
+  height: .auto,
+  layout: {direction: .row},
+  children: [first, second],
+
+  first = frame : selected {
+    label {
+      contents: "SPLIT"
+    }
+  }
+
+  second = frame : segment {
+    label {
+      contents: "UNIFIED"
+    }
+  }
+}
+
+@variant
+export alternate = frame : segmented {
+  left: 0px,
+  top: 150px,
+
+  @with-variant(selected)
+  second {}
+
+  @with-variant(segment)
+  first {}
+}

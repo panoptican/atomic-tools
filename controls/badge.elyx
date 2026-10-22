@@ -1,0 +1,42 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+
+export badge = frame {
+  left: 0px,
+  top: 0px,
+  width: .auto,
+  height: .auto,
+  layout: {direction: .row},
+  border: palette.colors.ink,
+  padding: [4px, 8px],
+  children: label,
+
+  label = text : typeScale.caption {
+    contents: "SAVED"
+  }
+}
+
+@variant
+export active = frame : badge {
+  left: 0px,
+  top: 100px,
+  fill[0].color: palette.colors.ink,
+
+  label {
+    fill[0].color: palette.colors.paper,
+    contents: "ACTIVE"
+  }
+}
+
+@variant
+export error = frame : badge {
+  left: 0px,
+  top: 200px,
+  border[0].color: palette.colors.error,
+  fill[0].color: palette.colors.errorSurface,
+
+  label {
+    fill[0].color: palette.colors.error,
+    contents: "ERROR"
+  }
+}

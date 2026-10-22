@@ -1,0 +1,44 @@
+import "tokens/colors.elyx" as palette
+import "controls/segmented.elyx" as segments
+import "controls/select.elyx" as selects
+import "controls/button.elyx" as buttons
+
+export comparisonToolbar = frame {
+  title: "Comparison toolbar",
+  caption: "Grouped view, comparison unit and actions. Wraps when space is limited.",
+  left: 0px,
+  top: 0px,
+  width: 960px,
+  height: .auto,
+  layout: {align-items: .center, item-gap: 24px, wrap: .true, line-gap: 16px},
+  border: {color: palette.colors.rule, sides: [.top, .bottom]},
+  padding: [16px, 0px],
+  children: [view, unit, action],
+
+  view = frame : segments.segmented {}
+
+  unit = frame : selects.select {
+    width: 180px,
+
+    label {
+      display: .none
+    }
+
+    helper {
+      display: .none
+    }
+  }
+
+  action = frame : buttons.secondary {
+    label {
+      contents: "IGNORE CASE"
+    }
+  }
+}
+
+@variant
+export compact = frame : comparisonToolbar {
+  left: 0px,
+  top: 220px,
+  width: 360px
+}

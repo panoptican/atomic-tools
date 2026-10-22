@@ -1,0 +1,73 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+import "controls/label.elyx" as labels
+import "controls/icons.elyx" as icons
+
+export select = frame {
+  left: 0px,
+  top: 0px,
+  width: 240px,
+  height: .auto,
+  layout: {direction: .column, item-gap: metrics.space.xs},
+  children: [label, field, helper],
+
+  label = text : labels.label {
+    contents: "COMPARE BY"
+  }
+
+  field = frame {
+    width: 100%,
+    height: metrics.size.control,
+    layout: {justify-content: .space-between, align-items: .center},
+    fill: palette.colors.surface,
+    border: palette.colors.outline,
+    padding: [0px, 12px],
+    children: [value, chevron],
+
+    value = text : typeScale.body {
+      contents: "Words"
+    }
+
+    chevron = asset : icons.chevronDown {
+      width: 14px,
+      height: 14px
+    }
+  }
+
+  helper = text : typeScale.small {
+    width: 100%,
+    contents: "Choose a comparison unit.",
+    fill[0].color: palette.colors.muted
+  }
+}
+
+@variant
+export focused = frame : select {
+  left: 0px,
+  top: 180px,
+
+  field {
+    border[0].color: palette.colors.focus,
+    border[0].width: 2px
+  }
+}
+
+@variant
+export disabled = frame : select {
+  left: 0px,
+  top: 360px,
+
+  field {
+    border[0].color: palette.colors.rule,
+    fill[0].color: palette.colors.disabled,
+
+    chevron {
+      fill[0].color: palette.colors.disabledInk
+    }
+
+    value {
+      fill[0].color: palette.colors.disabledInk
+    }
+  }
+}

@@ -1,0 +1,19 @@
+import "./colors.elyx" as base
+
+@context(theme="dark")
+file {}
+
+export darkColors = tokens : base.colors {
+  paper: rgb(5.49%, 5.49%, 5.098%),
+  surface: rgb(8.6275%, 8.6275%, 7.84%),
+  ink: rgb(95.29%, 94.5098%, 91.76%),
+  soft: rgb(81.1765%, 80%, 76.86%),
+  muted: rgb(64.31%, 63.92%, 61.5686%),
+  rule: rgb(16.47%, 16.47%, 15.6863%),
+  outline: rgb(52.1569%, 51.37%, 47.45%),
+  focus: rgb(43.5294%, 55.29%, 100%),
+  error: rgb(85.098%, 43.92%, 43.92%),
+  errorSurface: rgb(16.47%, 10.1961%, 10.1961%),
+  disabled: rgb(16.47%, 16.47%, 15.6863%),
+  disabledInk: rgb(52.1569%, 51.37%, 47.45%)
+}

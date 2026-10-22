@@ -1,0 +1,114 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+
+export toggle = frame {
+  left: 0px,
+  top: 0px,
+  width: 320px,
+  height: .auto,
+  layout: {align-items: .center, item-gap: metrics.space.sm},
+  children: [hitArea, copy],
+
+  hitArea = frame {
+    width: 44px,
+    height: 44px,
+    layout: {align-items: .center},
+    children: track,
+
+    track = frame {
+      width: 44px,
+      height: 24px,
+      layout: {align-items: .center},
+      fill: palette.colors.paper,
+      border: palette.colors.outline,
+      padding: 3px,
+      children: thumb,
+
+      thumb = frame {
+        width: 16px,
+        height: 16px,
+        fill: palette.colors.muted
+      }
+    }
+  }
+
+  copy = frame {
+    width: 264px,
+    height: .auto,
+    layout: {direction: .column, item-gap: metrics.space.xxs},
+    children: [label, helper],
+
+    label = text : typeScale.body {
+      contents: "Remember preferences"
+    }
+
+    helper = text : typeScale.small {
+      contents: "Off · Use defaults",
+      fill[0].color: palette.colors.muted
+    }
+  }
+}
+
+@variant
+export on = frame : toggle {
+  left: 0px,
+  top: 150px,
+
+  hitArea {
+    track {
+      fill[0].color: palette.colors.ink,
+      border[0].color: palette.colors.ink,
+
+      thumb {
+        fill[0].color: palette.colors.paper
+      }
+
+      layout.justify-content: .end
+    }
+  }
+
+  copy {
+    helper {
+      contents: "On · Saved on this device"
+    }
+  }
+}
+
+@variant
+export focused = frame : toggle {
+  left: 0px,
+  top: 300px,
+
+  hitArea {
+    border[0].color: palette.colors.focus,
+    border[0].width: 2px
+  }
+}
+
+@variant
+export disabled = frame : toggle {
+  left: 0px,
+  top: 450px,
+
+  copy {
+    label {
+      fill[0].color: palette.colors.disabledInk
+    }
+
+    helper {
+      contents: "Off · Unavailable"
+    }
+  }
+
+  hitArea {
+    track {
+      fill[0].color: palette.colors.disabled,
+      border[0].color: palette.colors.rule,
+
+      thumb {
+        fill[0].color: palette.colors.disabledInk
+      }
+    }
+  }
+}

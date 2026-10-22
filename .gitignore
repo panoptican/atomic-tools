@@ -64,3 +64,6 @@ _concepts/
 /videos/
 /product-description/
 /.seo/
+
+# Local licensed fonts
+/resources/fonts/*

@@ -1,0 +1,111 @@
+import "tokens/colors.elyx" as palette
+import "resources/assets/arrowLeft.svg" as arrowLeftAsset
+import "resources/assets/chevronDown.svg" as chevronDownAsset
+import "resources/assets/plus.svg" as plusAsset
+import "resources/assets/minus.svg" as minusAsset
+import "resources/assets/close.svg" as closeAsset
+import "resources/assets/copy.svg" as copyAsset
+import "resources/assets/sun.svg" as sunAsset
+import "resources/assets/moon.svg" as moonAsset
+import "resources/assets/delete.svg" as deleteAsset
+import "resources/assets/dice.svg" as diceAsset
+import "resources/assets/check.svg" as checkAsset
+
+export arrowLeft = asset {
+  left: 0px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: arrowLeftAsset
+}
+
+export chevronDown = asset {
+  left: 64px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: chevronDownAsset
+}
+
+export plus = asset {
+  left: 128px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: plusAsset
+}
+
+export minus = asset {
+  left: 192px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: minusAsset
+}
+
+export close = asset {
+  left: 256px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: closeAsset
+}
+
+export copy = asset {
+  left: 320px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: copyAsset
+}
+
+export sun = asset {
+  left: 384px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: sunAsset
+}
+
+export moon = asset {
+  left: 448px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: moonAsset
+}
+
+export delete = asset {
+  left: 512px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: deleteAsset
+}
+
+export dice = asset {
+  left: 576px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: diceAsset
+}
+
+export check = asset {
+  left: 640px,
+  top: 0px,
+  width: 20px,
+  height: 20px,
+  fill: palette.colors.ink,
+  contents: checkAsset
+}

@@ -1,0 +1,110 @@
+import "resources/assets/moon.svg" as moonAsset
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/icon-button.elyx" as iconButtons
+import "controls/icons.elyx" as icons
+import "resources/assets/sun.svg" as sunAsset
+
+export navigation = frame {
+  title: "Tool navigation",
+  caption: "Shared back navigation, centered tool name and theme action.",
+  left: 0px,
+  top: 0px,
+  width: 960px,
+  height: .auto,
+  layout: {justify-content: .space-between, align-items: .center},
+  fill: palette.colors.paper,
+  border: {color: palette.colors.rule, sides: .bottom},
+  padding: [16px, 24px],
+  children: [back, titleText, theme],
+
+  back = frame {
+    width: 160px,
+    height: 44px,
+    layout: {align-items: .center, item-gap: 8px},
+    children: [arrow, label],
+
+    arrow = asset : icons.arrowLeft {
+      width: 14px,
+      height: 14px
+    }
+
+    label = text : typeScale.caption {
+      contents: "ALL TOOLS"
+    }
+  }
+
+  titleText = text : typeScale.caption {
+    contents: "TOOL NAME",
+    fill[0].color: palette.colors.muted
+  }
+
+  theme = frame {
+    width: 160px,
+    height: 44px,
+    layout: {justify-content: .end},
+    children: action,
+
+    action = frame : iconButtons.iconButton {
+      glyph {
+        width: 16px,
+        height: 16px,
+        contents: sunAsset
+      }
+    }
+  }
+}
+
+@variant
+export compact = frame : navigation {
+  left: 0px,
+  top: 200px,
+  width: 360px,
+  padding-top: 12px,
+  padding-left: 16px,
+  padding-bottom: 12px,
+  padding-right: 16px,
+
+  back {
+    border[0].color: palette.colors.rule,
+    width: 44px,
+
+    label {
+      display: .none
+    }
+
+    layout.justify-content: .center
+  }
+
+  theme {
+    width: 44px
+  }
+}
+
+@context(theme="dark")
+export dark = frame : navigation {
+  left: 0px,
+  top: 400px,
+
+  theme {
+    action {
+      glyph {
+        contents: moonAsset
+      }
+    }
+  }
+}
+
+@context(theme="dark")
+export darkCompact = frame : compact {
+  left: 0px,
+  top: 600px,
+
+  theme {
+    action {
+      glyph {
+        contents: moonAsset
+      }
+    }
+  }
+}

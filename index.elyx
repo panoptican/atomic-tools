@@ -1,0 +1,1644 @@
+import "controls/icons.elyx" as icons
+import "tokens/colors.elyx" as palette
+import "controls/icon-button.elyx" as iconButtons
+import "tokens/spacing.elyx" as metrics
+import "controls/segmented.elyx" as segments
+import "foundations/typography.elyx" as typeScale
+import "controls/tabs.elyx" as tabs
+import "controls/select.elyx" as selects
+import "controls/label.elyx" as labels
+import "controls/textarea.elyx" as textareas
+import "controls/input.elyx" as inputs
+import "controls/badge.elyx" as badges
+import "controls/input-action.elyx" as inputActions
+import "controls/button.elyx" as buttons
+import "blocks/navigation.elyx" as navigation
+import "blocks/editor-pane.elyx" as editors
+import "blocks/comparison-toolbar.elyx" as toolbars
+import "blocks/share-panel.elyx" as sharing
+import "blocks/library-card.elyx" as library
+import "blocks/collection-row.elyx" as collections
+import "blocks/disclosure.elyx" as disclosures
+import "blocks/status.elyx" as statuses
+import "blocks/toast.elyx" as toasts
+import "controls/toggle.elyx" as toggles
+import "blocks/panel.elyx" as panels
+import "blocks/dialog.elyx" as dialogs
+
+overview = frame {
+  title: "Atomic Tools / Design system",
+  caption: "Foundations, controls and composed blocks. Select theme=dark to preview the alternate palette.",
+  left: 0px,
+  top: 0px,
+  width: 1200px,
+  height: .auto,
+  layout: {direction: .column, item-gap: 48px},
+  fill: palette.colors.paper,
+  padding: 64px,
+  children: [
+    intro,
+    colors,
+    foundations,
+    buttonSection,
+    inputSection,
+    toggleSection,
+    blockSection,
+    compactControls,
+    selectionControls,
+    textControls,
+    navigationSection,
+    editingSection,
+    sharingSection,
+    feedbackSection,
+    footer
+  ],
+
+  intro = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 16px},
+    children: [eyebrow, heading, description],
+
+    eyebrow = text : typeScale.caption {
+      contents: "ATOMIC TOOLS / FOUNDATIONS & COMPONENTS"
+    }
+
+    heading = text : typeScale.title {
+      contents: "Small tools. Shared language."
+    }
+
+    description = text : typeScale.body {
+      contents: "Warm paper, confident ink, quiet rules. A reusable starting point drawn from the existing tools.",
+      fill[0].color: palette.colors.soft
+    }
+  }
+
+  colors = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, scale],
+
+    heading = text : typeScale.heading {
+      contents: "01 / Color"
+    }
+
+    description = text : typeScale.small {
+      contents: "Semantic roles follow the theme. Blue is reserved for focus; red communicates errors.",
+      fill[0].color: palette.colors.muted
+    }
+
+    scale = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 12px},
+      children: [paper, surface, ink, soft, muted, rule, outline, focus, error],
+
+      paper = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.paper,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Paper"
+        }
+      }
+
+      surface = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.surface,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Surface"
+        }
+      }
+
+      ink = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.ink,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Ink"
+        }
+      }
+
+      soft = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.soft,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Soft ink"
+        }
+      }
+
+      muted = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.muted,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Muted"
+        }
+      }
+
+      rule = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.rule,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Rule"
+        }
+      }
+
+      outline = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.outline,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Outline"
+        }
+      }
+
+      focus = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.focus,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Focus"
+        }
+      }
+
+      error = frame {
+        width: 108px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 8px},
+        children: [chip, label],
+
+        chip = frame {
+          width: 108px,
+          height: 72px,
+          fill: palette.colors.error,
+          border: palette.colors.rule
+        }
+
+        label = text : typeScale.small {
+          contents: "Error"
+        }
+      }
+    }
+  }
+
+  foundations = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, columns],
+
+    heading = text : typeScale.heading {
+      contents: "02 / Typography & spacing"
+    }
+
+    description = text : typeScale.small {
+      contents: "One body component powers the full type scale. Spacing follows a compact 4px rhythm.",
+      fill[0].color: palette.colors.muted
+    }
+
+    columns = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 64px},
+      children: [typography, spacing],
+
+      typography = frame {
+        width: 560px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 16px},
+        children: [title, heading, body, small, caption, mono],
+
+        title = text : typeScale.title {
+          contents: "Title / 44"
+        }
+
+        heading = text : typeScale.heading {
+          contents: "Heading / 24"
+        }
+
+        body = text : typeScale.body {
+          contents: "Body / 16 — Clear, useful language."
+        }
+
+        small = text : typeScale.small {
+          contents: "Small / 14 — Helper text and supporting detail."
+        }
+
+        mono = text : typeScale.mono {
+          contents: "Mono / 14 — Text, code and counts"
+        }
+
+        caption = text : typeScale.caption {
+          contents: "CAPTION / 12 — LABELS & METADATA"
+        }
+      }
+
+      spacing = frame {
+        width: 448px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 24px},
+        children: [label, steps, note],
+
+        label = text : typeScale.caption {
+          contents: "SPACING / 4–64"
+        }
+
+        steps = frame {
+          width: 100%,
+          height: .auto,
+          layout: {align-items: .end, item-gap: 12px},
+          children: [step0, step1, step2, step3, step4, step5, step6, step7],
+
+          step0 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.xxs,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "4px"
+            }
+          }
+
+          step1 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.xs,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "8px"
+            }
+          }
+
+          step2 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.sm,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "12px"
+            }
+          }
+
+          step3 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.md,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "16px"
+            }
+          }
+
+          step4 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.lg,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "24px"
+            }
+          }
+
+          step5 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.xl,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "32px"
+            }
+          }
+
+          step6 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.xxl,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "48px"
+            }
+          }
+
+          step7 = frame {
+            width: 44px,
+            height: .auto,
+            layout: {direction: .column, item-gap: 8px},
+            children: [bar, label],
+
+            bar = frame {
+              width: 24px,
+              height: metrics.space.section,
+              fill: palette.colors.ink
+            }
+
+            label = text : typeScale.small {
+              contents: "64px"
+            }
+          }
+        }
+
+        note = text : typeScale.small {
+          width: 100%,
+          contents: "GT America Medium for interface text; Expanded Regular for headings; Menlo for editable text and counts.",
+          fill[0].color: palette.colors.muted
+        }
+      }
+    }
+  }
+
+  buttonSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, states, sizes],
+
+    heading = text : typeScale.heading {
+      contents: "03 / Buttons"
+    }
+
+    description = text : typeScale.small {
+      contents: "Ink-filled primary and outlined secondary. States share one base; sizes are 36, 44 and 52px.",
+      fill[0].color: palette.colors.muted
+    }
+
+    states = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 24px},
+      children: [primary, secondary, hover, focus, disabled],
+
+      primary = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "PRIMARY",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.button {}
+      }
+
+      secondary = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SECONDARY",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.secondary {}
+      }
+
+      hover = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "HOVER",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.hover {}
+      }
+
+      focus = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FOCUS",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.focused {}
+      }
+
+      disabled = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "DISABLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.disabled {}
+      }
+    }
+
+    sizes = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 24px},
+      children: [compact, regular, large],
+
+      compact = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "COMPACT / 36",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.compact {}
+      }
+
+      regular = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "REGULAR / 44",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.button {}
+      }
+
+      large = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "LARGE / 52",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : buttons.large {}
+      }
+    }
+  }
+
+  inputSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, labelRow, states, moreStates],
+
+    heading = text : typeScale.heading {
+      contents: "04 / Labels & input fields"
+    }
+
+    description = text : typeScale.small {
+      contents: "Visible labels, 16px input text, and persistent helper space. Errors explain what to fix.",
+      fill[0].color: palette.colors.muted
+    }
+
+    labelRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 32px},
+      children: [optional, required],
+
+      optional = text : labels.label {
+        contents: "OPTIONAL LABEL"
+      }
+
+      required = text : labels.required {
+        contents: "REQUIRED LABEL *"
+      }
+    }
+
+    states = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 48px},
+      children: [empty, filled, focus],
+
+      empty = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "EMPTY",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputs.input {}
+      }
+
+      filled = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FILLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputs.filled {}
+      }
+
+      focus = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FOCUS",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputs.focused {}
+      }
+    }
+
+    moreStates = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 48px},
+      children: [error, disabled],
+
+      error = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "ERROR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputs.error {}
+      }
+
+      disabled = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "DISABLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputs.disabled {}
+      }
+    }
+  }
+
+  toggleSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, states, moreStates],
+
+    heading = text : typeScale.heading {
+      contents: "05 / Toggles"
+    }
+
+    description = text : typeScale.small {
+      contents: "Square geometry, a 44px control area, and an explicit state label.",
+      fill[0].color: palette.colors.muted
+    }
+
+    states = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 48px},
+      children: [off, on],
+
+      off = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "OFF",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : toggles.toggle {}
+      }
+
+      on = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "ON",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : toggles.on {}
+      }
+    }
+
+    moreStates = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 48px},
+      children: [focused, disabled],
+
+      focused = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FOCUS",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : toggles.focused {}
+      }
+
+      disabled = frame {
+        width: 320px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "DISABLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : toggles.disabled {}
+      }
+    }
+  }
+
+  blockSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, examples],
+
+    heading = text : typeScale.heading {
+      contents: "06 / Composed blocks"
+    }
+
+    description = text : typeScale.small {
+      contents: "Reusable content slots keep panels and dialogs adaptable without rebuilding controls.",
+      fill[0].color: palette.colors.muted
+    }
+
+    examples = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [panel, dialog],
+
+      panel = frame : panels.panel {}
+
+      dialog = frame : dialogs.dialog {}
+    }
+  }
+
+  compactControls = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [
+      heading,
+      description,
+      glyphs,
+      iconStates,
+      badgeStates,
+      inputActionsRow
+    ],
+
+    heading = text : typeScale.heading {
+      contents: "07 / Icons & compact controls"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "SVG glyphs, square icon buttons, state badges and labelled inline actions.",
+      fill[0].color: palette.colors.muted
+    }
+
+    glyphs = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 24px},
+      children: [
+        back,
+        down,
+        plus,
+        minus,
+        close,
+        copy,
+        sun,
+        moon,
+        delete,
+        dice,
+        check
+      ],
+
+      back = asset : icons.arrowLeft {}
+
+      down = asset : icons.chevronDown {}
+
+      plus = asset : icons.plus {}
+
+      minus = asset : icons.minus {}
+
+      close = asset : icons.close {}
+
+      copy = asset : icons.copy {}
+
+      sun = asset : icons.sun {}
+
+      moon = asset : icons.moon {}
+
+      delete = asset : icons.delete {}
+
+      dice = asset : icons.dice {}
+
+      check = asset : icons.check {}
+    }
+
+    iconStates = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 24px},
+      children: [default, hover, focus, disabled],
+
+      default = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "ICON / DEFAULT",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : iconButtons.iconButton {}
+      }
+
+      hover = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "HOVER",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : iconButtons.hover {}
+      }
+
+      focus = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FOCUS",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : iconButtons.focused {}
+      }
+
+      disabled = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "DISABLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : iconButtons.disabled {}
+      }
+    }
+
+    badgeStates = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 24px},
+      children: [saved, active, error],
+
+      saved = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "BADGE / NEUTRAL",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : badges.badge {}
+      }
+
+      active = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "ACTIVE",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : badges.active {}
+      }
+
+      error = frame {
+        width: 160px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "ERROR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : badges.error {}
+      }
+    }
+
+    inputActionsRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [suggestion, add],
+
+      suggestion = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "INPUT + SUGGESTION",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputActions.inputAction {}
+      }
+
+      add = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "INPUT + ADD ACTION",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : inputActions.addAction {}
+      }
+    }
+  }
+
+  selectionControls = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, groups, selectStates],
+
+    heading = text : typeScale.heading {
+      contents: "08 / Selection controls"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "Segmented views and tabs share the same selection primitive; closed selects retain familiar platform styling.",
+      fill[0].color: palette.colors.muted
+    }
+
+    groups = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [segmented, tabGroup],
+
+      segmented = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SEGMENTED / SPLIT VIEW",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : segments.segmented {}
+      }
+
+      tabGroup = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "TABS / ALTERNATE SELECTED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : tabs.alternate {}
+      }
+    }
+
+    selectStates = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 48px},
+      children: [default, focus, disabled],
+
+      default = frame {
+        width: 300px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SELECT / DEFAULT",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : selects.select {}
+      }
+
+      focus = frame {
+        width: 300px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FOCUS",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : selects.focused {}
+      }
+
+      disabled = frame {
+        width: 300px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "DISABLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : selects.disabled {}
+      }
+    }
+  }
+
+  textControls = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, textareaStates, textareaFeedback],
+
+    heading = text : typeScale.heading {
+      contents: "09 / Multiline fields"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "Textarea variants inherit the existing input label, helper and validation structure.",
+      fill[0].color: palette.colors.muted
+    }
+
+    textareaStates = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [empty, filled],
+
+      empty = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "EMPTY",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : textareas.textarea {}
+      }
+
+      filled = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FILLED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : textareas.filled {}
+      }
+    }
+
+    textareaFeedback = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [focused, error],
+
+      focused = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FOCUS",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : textareas.focused {}
+      }
+
+      error = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "ERROR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : textareas.error {}
+      }
+    }
+  }
+
+  navigationSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, desktop, compact],
+
+    heading = text : typeScale.heading {
+      contents: "10 / Navigation"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "The shared tool header, with a compact variant that mirrors the mobile shell.",
+      fill[0].color: palette.colors.muted
+    }
+
+    desktop = frame {
+      width: 960px,
+      height: .auto,
+      layout: {direction: .column, item-gap: 12px},
+      children: [label, example],
+
+      label = text : typeScale.caption {
+        contents: "DESKTOP / 960",
+        fill[0].color: palette.colors.muted
+      }
+
+      example = frame : navigation.navigation {}
+    }
+
+    compact = frame {
+      width: 360px,
+      height: .auto,
+      layout: {direction: .column, item-gap: 12px},
+      children: [label, example],
+
+      label = text : typeScale.caption {
+        contents: "COMPACT / 360",
+        fill[0].color: palette.colors.muted
+      }
+
+      example = frame : navigation.compact {}
+    }
+  }
+
+  editingSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, toolbar, panes, compactToolbar],
+
+    heading = text : typeScale.heading {
+      contents: "11 / Editing & comparison"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "Reusable pane headers, counts, multiline inputs and grouped tool actions.",
+      fill[0].color: palette.colors.muted
+    }
+
+    toolbar = frame {
+      width: 960px,
+      height: .auto,
+      layout: {direction: .column, item-gap: 12px},
+      children: [label, example],
+
+      label = text : typeScale.caption {
+        contents: "COMPARISON TOOLBAR",
+        fill[0].color: palette.colors.muted
+      }
+
+      example = frame : toolbars.comparisonToolbar {}
+    }
+
+    panes = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [original, revised],
+
+      original = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "EMPTY EDITOR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : editors.editorPane {}
+      }
+
+      revised = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "FILLED EDITOR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : editors.filled {}
+      }
+    }
+
+    compactToolbar = frame {
+      width: 360px,
+      height: .auto,
+      layout: {direction: .column, item-gap: 12px},
+      children: [label, example],
+
+      label = text : typeScale.caption {
+        contents: "TOOLBAR / WRAPPED AT 360",
+        fill[0].color: palette.colors.muted
+      }
+
+      example = frame : toolbars.compact {}
+    }
+  }
+
+  sharingSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, sharingRow, libraryRow, collectionRow],
+
+    heading = text : typeScale.heading {
+      contents: "12 / Sharing & libraries"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "Share-link feedback, draft cards and saved-item rows compose existing controls.",
+      fill[0].color: palette.colors.muted
+    }
+
+    sharingRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [ready, copied],
+
+      ready = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SHARE / READY",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : sharing.sharePanel {}
+      }
+
+      copied = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SHARE / COPIED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : sharing.copied {}
+      }
+    }
+
+    libraryRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [draft, active],
+
+      draft = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "LIBRARY / DRAFT",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : library.libraryCard {}
+      }
+
+      active = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "LIBRARY / ACTIVE",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : library.active {}
+      }
+    }
+
+    collectionRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [saved, failed],
+
+      saved = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SAVED COLLECTION ROW",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : collections.collectionRow {}
+      }
+
+      failed = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "SHARE / RECOVERABLE ERROR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : sharing.unavailable {}
+      }
+    }
+  }
+
+  feedbackSection = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: 24px},
+    border: {color: palette.colors.rule, sides: .top},
+    padding-top: 24px,
+    children: [heading, description, disclosureRow, statusRow, toastRow],
+
+    heading = text : typeScale.heading {
+      contents: "13 / Disclosure & feedback"
+    }
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "Closed and expanded sections, persistent status messages, and dismissible toast examples.",
+      fill[0].color: palette.colors.muted
+    }
+
+    disclosureRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [closed, expanded],
+
+      closed = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "CLOSED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : disclosures.disclosure {}
+      }
+
+      expanded = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "EXPANDED",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : disclosures.expanded {}
+      }
+    }
+
+    statusRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [info, error],
+
+      info = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "INLINE / INFORMATION",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : statuses.status {}
+      }
+
+      error = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "INLINE / ERROR",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : statuses.error {}
+      }
+    }
+
+    toastRow = frame {
+      width: 100%,
+      height: .auto,
+      layout: {item-gap: 96px},
+      children: [info, error],
+
+      info = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "TOAST / UNDO",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : toasts.toast {}
+      }
+
+      error = frame {
+        width: 480px,
+        height: .auto,
+        layout: {direction: .column, item-gap: 12px},
+        children: [label, example],
+
+        label = text : typeScale.caption {
+          contents: "TOAST / RETRY",
+          fill[0].color: palette.colors.muted
+        }
+
+        example = frame : toasts.error {}
+      }
+    }
+  }
+
+  footer = text : typeScale.caption {
+    contents: "ATOMIC TOOLS / LIGHT + DARK / SHARED TOKENS, COMPONENTS & COMPOSED PATTERNS",
+    fill[0].color: palette.colors.muted
+  }
+}

@@ -1,0 +1,79 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+
+export button = frame {
+  left: 0px,
+  top: 0px,
+  width: .auto,
+  height: metrics.size.control,
+  layout: {justify-content: .center, align-items: .center},
+  fill: palette.colors.ink,
+  border: palette.colors.ink,
+  padding: [0px, 20px],
+  children: label,
+
+  label = text : typeScale.caption {
+    contents: "CONTINUE",
+    fill[0].color: palette.colors.paper
+  }
+}
+
+@variant
+export secondary = frame : button {
+  left: 0px,
+  top: 100px,
+  fill[0].color: palette.colors.paper,
+
+  label {
+    fill[0].color: palette.colors.ink
+  }
+}
+
+@variant
+export hover = frame : button {
+  left: 0px,
+  top: 200px,
+  border[0].color: palette.colors.soft,
+  fill[0].color: palette.colors.soft
+}
+
+@variant
+export focused = frame : button {
+  left: 0px,
+  top: 300px,
+  border[0].color: palette.colors.focus,
+  border[0].width: 3px
+}
+
+@variant
+export disabled = frame : button {
+  left: 0px,
+  top: 400px,
+  border[0].color: palette.colors.disabled,
+  fill[0].color: palette.colors.disabled,
+
+  label {
+    fill[0].color: palette.colors.disabledInk
+  }
+}
+
+@variant
+export compact = frame : button {
+  top: 500px,
+  height: metrics.size.compact,
+  padding-top: 0px,
+  padding-left: 14px,
+  padding-bottom: 0px,
+  padding-right: 14px
+}
+
+@variant
+export large = frame : button {
+  top: 600px,
+  height: metrics.size.large,
+  padding-top: 0px,
+  padding-left: 24px,
+  padding-bottom: 0px,
+  padding-right: 24px
+}

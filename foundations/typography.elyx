@@ -1,0 +1,55 @@
+use "resources/fonts/GT-America-Standard-Medium.woff2"
+use "resources/fonts/GT-America-Expanded-Regular.woff2"
+
+import "tokens/colors.elyx" as palette
+
+export body = text {
+  left: 0px,
+  top: 0px,
+  fill: palette.colors.ink,
+  contents: "Body / 16",
+  font-size: 16,
+  font-family: "GT America",
+  font-style: "Medium",
+  line-height: 1.5
+}
+
+export title = text : body {
+  top: 80px,
+  contents: "Title / 44",
+  font-size: 44,
+  font-family: "GT America",
+  font-style: "Expanded Regular",
+  line-height: 1.15,
+  letter-spacing: -1%
+}
+
+export heading = text : body {
+  top: 200px,
+  contents: "Heading / 24",
+  font-size: 24,
+  font-family: "GT America",
+  font-style: "Expanded Regular",
+  line-height: 1.25
+}
+
+export small = text : body {
+  top: 280px,
+  contents: "Small / 14",
+  font-size: 14
+}
+
+export caption = text : body {
+  top: 340px,
+  contents: "CAPTION / 12",
+  font-size: 12,
+  letter-spacing: 8%
+}
+
+export mono = text : body {
+  top: 400px,
+  contents: "Mono / 14",
+  font-size: 14,
+  font-family: "Menlo",
+  font-style: "Regular"
+}

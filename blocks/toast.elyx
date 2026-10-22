@@ -1,0 +1,69 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/icon-button.elyx" as iconButtons
+import "resources/assets/close.svg" as closeAsset
+
+export toast = frame {
+  title: "Toast message",
+  caption: "Transient feedback with optional undo and dismiss actions.",
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {align-items: .center, item-gap: 16px},
+  fill: palette.colors.ink,
+  border: palette.colors.ink,
+  padding: [8px, 16px],
+  children: [message, undo, dismiss],
+
+  message = text : typeScale.small {
+    width: 280px,
+    contents: "Item deleted.",
+    fill[0].color: palette.colors.paper
+  }
+
+  undo = text : typeScale.small {
+    contents: "Undo",
+    underline: .single,
+    fill[0].color: palette.colors.paper
+  }
+
+  dismiss = frame : iconButtons.iconButton {
+    border[0].color: palette.colors.ink,
+    fill[0].color: palette.colors.ink,
+
+    glyph {
+      fill[0].color: palette.colors.paper,
+      width: 16px,
+      height: 16px,
+      contents: closeAsset
+    }
+  }
+}
+
+@variant
+export error = frame : toast {
+  left: 0px,
+  top: 180px,
+  border[0].color: palette.colors.error,
+  fill[0].color: palette.colors.errorSurface,
+
+  dismiss {
+    border[0].color: palette.colors.errorSurface,
+    fill[0].color: palette.colors.errorSurface,
+
+    glyph {
+      fill[0].color: palette.colors.error
+    }
+  }
+
+  undo {
+    fill[0].color: palette.colors.error,
+    contents: "Retry"
+  }
+
+  message {
+    fill[0].color: palette.colors.error,
+    contents: "Couldn’t complete that action."
+  }
+}

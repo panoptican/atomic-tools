@@ -1,0 +1,14 @@
+import "foundations/typography.elyx" as typeScale
+
+export label = text : typeScale.caption {
+  left: 0px,
+  top: 0px,
+  contents: "FIELD LABEL"
+}
+
+@variant
+export required = text : label {
+  left: 0px,
+  top: 60px,
+  contents: "FIELD LABEL *"
+}

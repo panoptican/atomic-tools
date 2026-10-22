@@ -1,0 +1,19 @@
+export primary = tokens {
+  white: .white,
+  black: .black
+}
+
+export colors = tokens {
+  paper: rgb(96.0784%, 95.6863%, 93.7255%),
+  surface: rgb(98.43%, 98.0392%, 96.47%),
+  ink: rgb(6.6667%, 6.6667%, 6.6667%),
+  soft: rgb(26.6667%, 26.6667%, 26.6667%),
+  muted: rgb(43.1373%, 43.1373%, 41.1765%),
+  rule: rgb(84.7059%, 83.92%, 81.1765%),
+  outline: rgb(55.6863%, 55.29%, 52.94%),
+  focus: rgb(16.86%, 37.25%, 100%),
+  error: rgb(69.0196%, 18.82%, 18.82%),
+  errorSurface: rgb(96.0784%, 88.2353%, 88.2353%),
+  disabled: rgb(89.8%, 89.0196%, 86.27%),
+  disabledInk: rgb(46.6667%, 46.27%, 43.5294%)
+}

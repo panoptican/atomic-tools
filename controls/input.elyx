@@ -1,0 +1,101 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+import "controls/label.elyx" as labels
+
+export input = frame {
+  left: 0px,
+  top: 0px,
+  width: 320px,
+  height: .auto,
+  layout: {direction: .column, item-gap: metrics.space.xs},
+  children: [label, field, helper],
+
+  label = text : labels.label {
+    contents: "EMAIL ADDRESS"
+  }
+
+  field = frame {
+    width: 100%,
+    height: metrics.size.control,
+    layout: {align-items: .center},
+    fill: palette.colors.surface,
+    border: palette.colors.outline,
+    padding: [0px, 12px],
+    children: value,
+
+    value = text : typeScale.body {
+      contents: "you@example.com",
+      fill[0].color: palette.colors.muted
+    }
+  }
+
+  helper = text : typeScale.small {
+    width: 100%,
+    contents: "We’ll only use this for your account.",
+    fill[0].color: palette.colors.muted
+  }
+}
+
+@variant
+export filled = frame : input {
+  left: 0px,
+  top: 180px,
+
+  field {
+    value {
+      fill[0].color: palette.colors.ink,
+      contents: "jason@example.com"
+    }
+  }
+}
+
+@variant
+export focused = frame : input {
+  left: 0px,
+  top: 360px,
+
+  field {
+    border[0].color: palette.colors.focus,
+    border[0].width: 2px
+  }
+}
+
+@variant
+export error = frame : input {
+  left: 0px,
+  top: 540px,
+
+  helper {
+    fill[0].color: palette.colors.error,
+    contents: "Enter a complete email address."
+  }
+
+  field {
+    fill[0].color: palette.colors.errorSurface,
+    border[0].color: palette.colors.error,
+
+    value {
+      contents: "jason@"
+    }
+  }
+}
+
+@variant
+export disabled = frame : input {
+  left: 0px,
+  top: 720px,
+
+  field {
+    fill[0].color: palette.colors.disabled,
+    border[0].color: palette.colors.rule,
+
+    value {
+      fill[0].color: palette.colors.disabledInk
+    }
+  }
+
+  helper {
+    contents: "This field is currently unavailable."
+  }
+}

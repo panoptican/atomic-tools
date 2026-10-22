@@ -1,0 +1,109 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/input.elyx" as inputs
+import "controls/button.elyx" as buttons
+
+export sharePanel = frame {
+  title: "Share link panel",
+  caption: "A read-only link, copy action and explicit feedback.",
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {direction: .column, item-gap: 20px},
+  fill: palette.colors.surface,
+  border: palette.colors.ink,
+  padding: 24px,
+  children: [heading, description, link, actions],
+
+  heading = text : typeScale.caption {
+    contents: "SHARE"
+  }
+
+  description = text : typeScale.small {
+    width: 100%,
+    contents: "Anyone with this link can open your shared item.",
+    fill[0].color: palette.colors.soft
+  }
+
+  link = frame : inputs.filled {
+    width: 100%,
+
+    label {
+      contents: "SHAREABLE LINK"
+    }
+
+    field {
+      value {
+        contents: "tools.example/share/abc123",
+        font-size: 14,
+        font-family: "Menlo",
+        font-style: "Regular"
+      }
+    }
+
+    helper {
+      contents: "Read-only link · Ready to copy"
+    }
+  }
+
+  actions = frame {
+    width: 100%,
+    height: .auto,
+    layout: {item-gap: 12px},
+    children: [copy, open],
+
+    copy = frame : buttons.button {
+      label {
+        contents: "COPY LINK"
+      }
+    }
+
+    open = frame : buttons.secondary {
+      label {
+        contents: "OPEN LINK"
+      }
+    }
+  }
+}
+
+@variant
+export copied = frame : sharePanel {
+  left: 0px,
+  top: 420px,
+
+  link {
+    helper {
+      contents: "Link copied to clipboard."
+    }
+  }
+
+  actions {
+    copy {
+      label {
+        contents: "COPIED"
+      }
+    }
+  }
+}
+
+@variant
+export unavailable = frame : sharePanel {
+  left: 0px,
+  top: 840px,
+
+  link {
+    helper {
+      fill[0].color: palette.colors.error,
+      contents: "Couldn’t create a link. Try again."
+    }
+  }
+
+  actions {
+    copy {
+      label {
+        contents: "TRY AGAIN"
+      }
+    }
+  }
+}

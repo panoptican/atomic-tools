@@ -1,0 +1,44 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+import "controls/input.elyx" as inputs
+import "controls/toggle.elyx" as toggles
+import "controls/button.elyx" as buttons
+
+export panel = frame {
+  title: "Sample panel",
+  caption: "Compose fields, preferences and actions from shared controls.",
+  left: 0px,
+  top: 0px,
+  width: 440px,
+  height: .auto,
+  layout: {direction: .column, item-gap: metrics.space.lg},
+  fill: palette.colors.surface,
+  border: palette.colors.rule,
+  padding: metrics.space.lg,
+  children: [heading, content, action],
+
+  heading = text : typeScale.heading {
+    contents: "Your preferences"
+  }
+
+  content = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column, item-gap: metrics.space.lg},
+    slot: .true,
+    children: [email, remember],
+
+    email = frame : inputs.filled {
+      width: 100%
+    }
+
+    remember = frame : toggles.on {}
+  }
+
+  action = frame : buttons.button {
+    label {
+      contents: "SAVE PREFERENCES"
+    }
+  }
+}

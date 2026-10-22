@@ -1,0 +1,55 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "foundations/typography.elyx" as typeScale
+import "controls/button.elyx" as buttons
+
+export dialog = frame {
+  title: "Confirmation dialog",
+  caption: "A compact confirmation with clear primary and secondary actions.",
+  left: 0px,
+  top: 0px,
+  width: 440px,
+  height: .auto,
+  layout: {direction: .column, item-gap: metrics.space.lg},
+  fill: palette.colors.surface,
+  border: palette.colors.ink,
+  padding: metrics.space.lg,
+  children: [heading, content, actions],
+
+  heading = text : typeScale.heading {
+    contents: "Save your changes?"
+  }
+
+  content = frame {
+    width: 100%,
+    height: .auto,
+    layout: {direction: .column},
+    slot: .true,
+    children: description,
+
+    description = text : typeScale.body {
+      width: 100%,
+      contents: "Your preferences will be available the next time you use this tool.",
+      fill[0].color: palette.colors.soft
+    }
+  }
+
+  actions = frame {
+    width: 100%,
+    height: .auto,
+    layout: {justify-content: .end, item-gap: metrics.space.sm},
+    children: [cancel, confirm],
+
+    cancel = frame : buttons.secondary {
+      label {
+        contents: "CANCEL"
+      }
+    }
+
+    confirm = frame : buttons.button {
+      label {
+        contents: "SAVE CHANGES"
+      }
+    }
+  }
+}

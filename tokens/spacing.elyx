@@ -1,0 +1,16 @@
+export space = tokens {
+  xxs: 4,
+  xs: 8,
+  sm: 12,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+  section: 64
+}
+
+export size = tokens {
+  compact: 36,
+  control: 44,
+  large: 52
+}

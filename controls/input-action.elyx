@@ -1,0 +1,72 @@
+import "controls/button.elyx" as buttons
+import "resources/assets/dice.svg" as diceAsset
+import "controls/input.elyx" as inputs
+import "controls/icon-button.elyx" as iconButtons
+
+export inputAction = frame : inputs.input {
+  left: 0px,
+  top: 0px,
+  width: 360px,
+
+  field {
+    layout.justify-content: .space-between,
+    padding-right: 0px,
+    overrides: [insert(action, after = inputs.input.field.value)],
+
+    value {
+      width: 75%,
+      contents: "Enter a word"
+    }
+  }
+
+  label {
+    contents: "YOUR ANSWER"
+  }
+
+  helper {
+    contents: "Need an idea? Try a suggestion."
+  }
+
+  action = frame : iconButtons.iconButton {
+    glyph {
+      contents: diceAsset
+    }
+  }
+}
+
+@variant
+export addAction = frame : inputAction {
+  left: 0px,
+  top: 200px,
+
+  helper {
+    contents: "Add an item to the current list."
+  }
+
+  field {
+    overrides: [
+      insert(add, after = inputs.input.field.value),
+      remove(inputAction.action)
+    ],
+
+    value {
+      width: 70%,
+      contents: "Enter an item"
+    }
+  }
+
+  label {
+    contents: "CUSTOM ITEM"
+  }
+
+  add = frame : buttons.button {
+    padding-top: 0px,
+    padding-left: 14px,
+    padding-bottom: 0px,
+    padding-right: 14px,
+
+    label {
+      contents: "ADD"
+    }
+  }
+}

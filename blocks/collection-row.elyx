@@ -1,0 +1,49 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/icon-button.elyx" as iconButtons
+import "resources/assets/delete.svg" as deleteAsset
+
+export collectionRow = frame {
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {align-items: .center, item-gap: 16px},
+  fill: palette.colors.paper,
+  border: palette.colors.rule,
+  padding: [12px, 16px],
+  children: [copy, action],
+
+  copy = frame {
+    width: 384px,
+    height: .auto,
+    layout: {direction: .column, item-gap: 8px},
+    children: [titleText, excerpt, date],
+
+    titleText = text : typeScale.heading {
+      contents: "A saved item",
+      font-size: 18
+    }
+
+    excerpt = text : typeScale.small {
+      width: 100%,
+      contents: "A short preview of the saved content.",
+      fill[0].color: palette.colors.soft
+    }
+
+    date = text : typeScale.caption {
+      contents: "SAVED TODAY",
+      fill[0].color: palette.colors.muted
+    }
+  }
+
+  action = frame : iconButtons.iconButton {
+    border[0].color: palette.colors.paper,
+
+    glyph {
+      width: 16px,
+      height: 16px,
+      contents: deleteAsset
+    }
+  }
+}

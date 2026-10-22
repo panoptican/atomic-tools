@@ -1,0 +1,92 @@
+import "tokens/colors.elyx" as palette
+import "controls/input.elyx" as inputs
+
+export textarea = frame : inputs.input {
+  left: 0px,
+  top: 0px,
+  width: 440px,
+
+  field {
+    value {
+      width: 100%,
+      contents: "Paste or type your text here.",
+      font-size: 14,
+      font-family: "Menlo",
+      font-style: "Regular",
+      line-height: 1.6
+    }
+
+    height: 160px,
+    layout.align-items: .start,
+    padding-top: 16px,
+    padding-left: 16px,
+    padding-bottom: 16px,
+    padding-right: 16px
+  }
+
+  label {
+    contents: "ORIGINAL TEXT"
+  }
+
+  helper {
+    contents: "Plain text · Line breaks are preserved."
+  }
+}
+
+@variant
+export filled = frame : textarea {
+  left: 0px,
+  top: 320px,
+
+  field {
+    value {
+      fill[0].color: palette.colors.ink,
+      contents: "Small tools, built for everyday work.\nOne task at a time."
+    }
+  }
+}
+
+@variant
+export focused = frame : textarea {
+  left: 0px,
+  top: 640px,
+
+  field {
+    border[0].color: palette.colors.focus,
+    border[0].width: 2px
+  }
+}
+
+@variant
+export error = frame : textarea {
+  left: 0px,
+  top: 960px,
+
+  helper {
+    fill[0].color: palette.colors.error,
+    contents: "Add some text before continuing."
+  }
+
+  field {
+    border[0].color: palette.colors.error,
+    fill[0].color: palette.colors.errorSurface
+  }
+}
+
+@variant
+export disabled = frame : textarea {
+  left: 0px,
+  top: 1280px,
+
+  field {
+    fill[0].color: palette.colors.disabled,
+
+    value {
+      fill[0].color: palette.colors.disabledInk
+    }
+  }
+
+  helper {
+    contents: "Editing is currently unavailable."
+  }
+}

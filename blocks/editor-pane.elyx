@@ -1,0 +1,69 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/textarea.elyx" as textareas
+
+export editorPane = frame {
+  title: "Editor pane",
+  caption: "A labelled text area with count and supporting hint.",
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {direction: .column, item-gap: 12px},
+  children: [header, editor],
+
+  header = frame {
+    width: 100%,
+    height: .auto,
+    layout: {justify-content: .space-between, align-items: .center},
+    children: [label, count],
+
+    label = text : typeScale.caption {
+      contents: "ORIGINAL",
+      fill[0].color: palette.colors.muted
+    }
+
+    count = text : typeScale.mono {
+      contents: "0 characters",
+      font-size: 12,
+      fill[0].color: palette.colors.muted
+    }
+  }
+
+  editor = frame : textareas.textarea {
+    width: 100%,
+
+    field {
+      height: 200px
+    }
+
+    label {
+      display: .none
+    }
+
+    helper {
+      contents: "Paste text to get started."
+    }
+  }
+}
+
+@variant
+export filled = frame : editorPane {
+  left: 0px,
+  top: 400px,
+
+  editor {
+    field {
+      value {
+        fill[0].color: palette.colors.ink,
+        contents: "Small tools, built for everyday work. One useful task at a time."
+      }
+    }
+  }
+
+  header {
+    count {
+      contents: "65 characters"
+    }
+  }
+}

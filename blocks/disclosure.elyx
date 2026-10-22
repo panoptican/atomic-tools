@@ -1,0 +1,68 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/icons.elyx" as icons
+import "resources/assets/minus.svg" as minusAsset
+
+export disclosure = frame {
+  title: "Collapsible section",
+  caption: "Closed and expanded examples; content is a composition slot.",
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {direction: .column},
+  fill: palette.colors.surface,
+  border: palette.colors.ink,
+  children: [header, content],
+
+  header = frame {
+    width: 100%,
+    height: 52px,
+    layout: {justify-content: .space-between, align-items: .center},
+    padding: [0px, 18px],
+    children: [label, glyph],
+
+    label = text : typeScale.caption {
+      contents: "MORE OPTIONS"
+    }
+
+    glyph = asset : icons.plus {
+      width: 16px,
+      height: 16px,
+      fill[0].color: palette.colors.muted
+    }
+  }
+
+  content = frame {
+    width: 100%,
+    height: .auto,
+    display: .none,
+    layout: {direction: .column, item-gap: 12px},
+    border: {color: palette.colors.rule, sides: .top},
+    slot: .true,
+    padding: 18px,
+    children: description,
+
+    description = text : typeScale.small {
+      width: 100%,
+      contents: "Additional settings live here. Replace this content with shared controls or supporting information.",
+      fill[0].color: palette.colors.soft
+    }
+  }
+}
+
+@variant
+export expanded = frame : disclosure {
+  left: 0px,
+  top: 180px,
+
+  header {
+    glyph {
+      contents: minusAsset
+    }
+  }
+
+  content {
+    display: .visible
+  }
+}

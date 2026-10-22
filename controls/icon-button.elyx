@@ -1,0 +1,48 @@
+import "tokens/colors.elyx" as palette
+import "tokens/spacing.elyx" as metrics
+import "controls/icons.elyx" as icons
+
+export iconButton = frame {
+  title: "Icon button",
+  caption: "44px area; supply an accessible name when implemented.",
+  left: 0px,
+  top: 0px,
+  width: metrics.size.control,
+  height: metrics.size.control,
+  layout: {justify-content: .center, align-items: .center},
+  fill: palette.colors.paper,
+  border: palette.colors.rule,
+  children: glyph,
+
+  glyph = asset : icons.copy {}
+}
+
+@variant
+export hover = frame : iconButton {
+  left: 0px,
+  top: 100px,
+  fill[0].color: palette.colors.ink,
+
+  glyph {
+    fill[0].color: palette.colors.paper
+  }
+}
+
+@variant
+export focused = frame : iconButton {
+  left: 0px,
+  top: 200px,
+  border[0].color: palette.colors.focus,
+  border[0].width: 2px
+}
+
+@variant
+export disabled = frame : iconButton {
+  left: 0px,
+  top: 300px,
+  fill[0].color: palette.colors.disabled,
+
+  glyph {
+    fill[0].color: palette.colors.disabledInk
+  }
+}

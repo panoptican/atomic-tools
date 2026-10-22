@@ -1,0 +1,56 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/button.elyx" as buttons
+
+export status = frame {
+  title: "Inline status",
+  caption: "Persistent information and recoverable error feedback.",
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {align-items: .center, item-gap: 16px},
+  fill: palette.colors.surface,
+  border: palette.colors.ink,
+  padding: 16px,
+  children: [message, action],
+
+  message = text : typeScale.small {
+    width: 292px,
+    contents: "Your changes are saved on this device."
+  }
+
+  action = frame : buttons.secondary {
+    padding-top: 0px,
+    padding-left: 12px,
+    padding-bottom: 0px,
+    padding-right: 12px,
+
+    label {
+      contents: "UNDO"
+    }
+  }
+}
+
+@variant
+export error = frame : status {
+  left: 0px,
+  top: 200px,
+  border[0].color: palette.colors.error,
+  fill[0].color: palette.colors.errorSurface,
+
+  action {
+    border[0].color: palette.colors.error,
+    fill[0].color: palette.colors.errorSurface,
+
+    label {
+      fill[0].color: palette.colors.error,
+      contents: "RETRY"
+    }
+  }
+
+  message {
+    fill[0].color: palette.colors.error,
+    contents: "Couldn’t save your changes. Try again."
+  }
+}

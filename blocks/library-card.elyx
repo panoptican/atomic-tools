@@ -1,0 +1,96 @@
+import "tokens/colors.elyx" as palette
+import "foundations/typography.elyx" as typeScale
+import "controls/badge.elyx" as badges
+import "controls/button.elyx" as buttons
+
+export libraryCard = frame {
+  title: "Library card",
+  caption: "Title, state, metadata, excerpt and contextual actions.",
+  left: 0px,
+  top: 0px,
+  width: 480px,
+  height: .auto,
+  layout: {direction: .column, item-gap: 16px},
+  fill: palette.colors.paper,
+  border: palette.colors.rule,
+  padding: 20px,
+  children: [header, metadata, excerpt, actions],
+
+  header = frame {
+    width: 100%,
+    height: .auto,
+    layout: {
+      justify-content: .space-between,
+      align-items: .center,
+      item-gap: 12px
+    },
+    children: [titleText, badge],
+
+    titleText = text : typeScale.heading {
+      contents: "Untitled draft",
+      font-size: 18
+    }
+
+    badge = frame : badges.badge {
+      label {
+        contents: "DRAFT"
+      }
+    }
+  }
+
+  metadata = text : typeScale.caption {
+    contents: "EDITED TODAY / 6 FIELDS",
+    fill[0].color: palette.colors.muted
+  }
+
+  excerpt = text : typeScale.small {
+    width: 100%,
+    contents: "A short preview helps you find the right item.",
+    fill[0].color: palette.colors.soft
+  }
+
+  actions = frame {
+    width: 100%,
+    height: .auto,
+    layout: {item-gap: 12px},
+    slot: .true,
+    children: [open, delete],
+
+    open = frame : buttons.secondary {
+      height: 44px,
+
+      label {
+        contents: "OPEN"
+      }
+    }
+
+    delete = frame : buttons.secondary {
+      height: 44px,
+      border[0].color: palette.colors.rule,
+
+      label {
+        fill[0].color: palette.colors.soft,
+        contents: "DELETE"
+      }
+    }
+  }
+}
+
+@variant
+export active = frame : libraryCard {
+  left: 0px,
+  top: 360px,
+  border[0].color: palette.colors.ink,
+  fill[0].color: palette.colors.surface,
+
+  header {
+    badge {
+      fill[0].color: palette.colors.ink,
+
+      label {
+        fill[0].color: palette.colors.paper,
+        contents: "ACTIVE"
+      }
+    }
+  }
+}
