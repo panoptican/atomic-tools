@@ -271,6 +271,10 @@
   grid-template-columns: minmax(0, 1fr) auto;
 }
 .gen-input-row .gen-input { border-right: 0; }
+/* The attached button comes later, so it would paint over the field's
+   focus ring; lift the focused field (and the focused button) above it */
+.gen-input-row .gen-input:focus-visible,
+.gen-input-row .gen-btn:focus-visible { position: relative; z-index: 1; }
 .gen-btn.gen-row-btn { min-height: 0; background-color: var(--surface); }
 
 /* Models opens a list under the field, like a select. Doubled class so the
