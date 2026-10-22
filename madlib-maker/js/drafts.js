@@ -63,28 +63,29 @@ const DraftManager = (function() {
     URLManager.showToast("Couldn’t save your madlib. This browser’s storage is full or turned off, so use Copy editor link to keep a copy.", true);
   }
 
-  // Save to the library (internal, immediate)
+  // Save to the library (internal, immediate). Returns false only when a
+  // write was needed and failed (storage full, blocked or turned off).
   function doSave() {
     saveTimeout = null;
-    if (!isEnabled || !hasLibrary()) return;
+    if (!isEnabled || !hasLibrary()) return false;
 
     const state = collectState();
 
     if (fromLink) {
-      if (isEmpty(state)) return;
+      if (isEmpty(state)) return true;
       fromLink = false;
       // Reopening a link to a madlib that's already saved reuses that entry
       const match = MadlibLibrary.list().find(entry => sameContent(entry, state));
       if (match) {
         setActive(match.id);
-        return;
+        return true;
       }
       activeId = null;
     }
 
     const current = activeId ? MadlibLibrary.get(activeId) : null;
-    if (current && sameContent(current, state)) return;
-    if (!activeId && isEmpty(state)) return;
+    if (current && sameContent(current, state)) return true;
+    if (!activeId && isEmpty(state)) return true;
 
     // Another tab saved this madlib since this tab loaded it: keep both versions
     // rather than overwriting theirs with ours
@@ -102,11 +103,12 @@ const DraftManager = (function() {
     });
     if (!saved) {
       warnStorage();
-      return;
+      return false;
     }
     if (saved.id !== activeId) setActive(saved.id);
     remember(saved);
     if (dialogEl && dialogEl.open) renderList();
+    return true;
   }
 
   // Save with debounce (public API)
@@ -216,17 +218,18 @@ const DraftManager = (function() {
 
   // Open a madlib made elsewhere (e.g. generated) as a new library entry.
   // The madlib that was open stays as it was in My madlibs.
+  // Returns { opened, saved }: opened is false when nothing changed in the
+  // editor; saved is false when it's in the editor but the library write failed.
   function openAsNew(data) {
-    if (!isEnabled || !hasLibrary()) return false;
+    if (!isEnabled || !hasLibrary()) return { opened: false, saved: false };
     flush();
     fromLink = false;
     setActive(null);
-    if (!URLManager.loadData(data)) return false;
+    if (!URLManager.loadData(data)) return { opened: false, saved: false };
     showCreator();
     // Save now rather than after the debounce, so it's in My madlibs right away
     cancelPending();
-    doSave();
-    return true;
+    return { opened: true, saved: doSave() };
   }
 
   // Enable/disable auto-save (disable for player mode)

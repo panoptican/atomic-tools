@@ -882,17 +882,22 @@ const MadlibGenerate = (function() {
 
   // Open the result as a new madlib; the one that was open stays in My madlibs
   function finish(result) {
-    const opened = DraftManager.openAsNew({
+    const outcome = DraftManager.openAsNew({
       v: MadlibFormat.VERSION,
       title: result.title,
       subtitle: result.subtitle,
       story: result.story
     });
-    if (!opened) {
+    if (!outcome.opened) {
       showError("Couldn't open the madlib. Your browser's storage may be full or turned off.");
       return;
     }
     closeDialog(ui.generate);
+    if (!outcome.saved) {
+      // It's in the editor but not in My madlibs, so it would be lost on reload
+      URLManager.showToast("Generated, but couldn't save it. This browser's storage is full or turned off, so use Copy editor link to keep a copy.", true);
+      return;
+    }
     URLManager.showToast('Generated. Check the blanks before sharing.');
   }
 
