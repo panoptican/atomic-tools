@@ -1,0 +1,8 @@
+# Cloudflare Pages response headers, copied into dist/ by scripts/publish.mjs.
+# No tool is meant to be embedded, so no page may be framed by another site.
+# frame-ancestors only works as a header, not in a page's CSP <meta> tag.
+# One site-wide rule: overlapping rules would join values with a comma, and
+# "DENY, DENY" is not a valid X-Frame-Options value.
+/*
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY
