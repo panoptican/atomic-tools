@@ -214,6 +214,21 @@ const DraftManager = (function() {
     });
   }
 
+  // Open a madlib made elsewhere (e.g. generated) as a new library entry.
+  // The madlib that was open stays as it was in My madlibs.
+  function openAsNew(data) {
+    if (!isEnabled || !hasLibrary()) return false;
+    flush();
+    fromLink = false;
+    setActive(null);
+    if (!URLManager.loadData(data)) return false;
+    showCreator();
+    // Save now rather than after the debounce, so it's in My madlibs right away
+    cancelPending();
+    doSave();
+    return true;
+  }
+
   // Enable/disable auto-save (disable for player mode)
   function setEnabled(enabled) {
     isEnabled = enabled;
@@ -514,6 +529,7 @@ const DraftManager = (function() {
     clear,
     restore,
     resetEditor,
-    setEnabled
+    setEnabled,
+    openAsNew
   };
 })();

@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="css/print.css">
   <link rel="stylesheet" href="css/collection.css">
   <link rel="stylesheet" href="css/library.css">
+  <link rel="stylesheet" href="css/generate.css">
 </head>
 
 <body>
@@ -92,6 +93,14 @@
 
       <!-- Story Editor Section -->
       <div class="section primary-section" id="story-editor-section">
+        <!-- Generate from a prompt: shown by js/generate.js, hidden if that feature isn't loaded -->
+        <button type="button" class="generate-link" id="generate-btn" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/>
+            <path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>
+          </svg>
+          Generate
+        </button>
         <!-- The title is the card's heading, edited in place -->
         <div class="title-block">
           <label for="madlib-title" class="visually-hidden">Title</label>
@@ -124,14 +133,24 @@
           </form>
         </div>
 
-        <textarea
-          id="story-editor"
-          class="story-textarea"
-          aria-label="Story"
-          aria-describedby="story-hint"
-          placeholder="Once upon a time, a {noun} walked into a {place}…"
-          rows="12"
-        ></textarea>
+        <div class="story-field">
+          <textarea
+            id="story-editor"
+            class="story-textarea"
+            aria-label="Story"
+            aria-describedby="story-hint"
+            placeholder="Once upon a time, a {noun} walked into a {place}…"
+            rows="12"
+          ></textarea>
+          <!-- Shown by js/generate.js while the story is empty -->
+          <button type="button" class="story-generate-hint" id="generate-hint" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/>
+              <path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>
+            </svg>
+            Or generate one from a prompt
+          </button>
+        </div>
 
         <!-- Check the story the way players will see it -->
         <div class="story-actions">
@@ -266,6 +285,8 @@
   <script src="js/collection.js"></script>
   <script src="js/library.js"></script>
   <script src="js/drafts.js"></script>
+  <script src="js/generate-format.js"></script>
+  <script src="js/generate.js"></script>
   <script src="js/modes.js"></script>
   <script src="js/main.js"></script>
 </body>

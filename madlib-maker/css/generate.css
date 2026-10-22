@@ -1,0 +1,403 @@
+/* Generate a madlib from a prompt (js/generate.js) ------------------------ */
+/* Design: blocks/madlib-generation.elyx, controls/madlib-generate.elyx */
+
+/* Entry points: a text button at the top right of the story card, and a
+   hint floating under the story field's placeholder while the story is empty */
+#story-editor-section.has-generate { position: relative; }
+#story-editor-section.has-generate .title-block { padding-right: 120px; }
+
+.generate-link,
+.story-generate-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--text);
+  cursor: pointer;
+}
+.generate-link[hidden],
+.story-generate-hint[hidden] { display: none; }
+.generate-link svg,
+.story-generate-hint svg { flex: none; }
+
+.generate-link {
+  position: absolute;
+  top: 28px;
+  right: 30px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.story-field { position: relative; }
+
+/* Sits just under the one-line placeholder (padding + one line of text) */
+.story-generate-hint {
+  position: absolute;
+  z-index: 2;
+  left: 28px;
+  top: calc(26px + 1.92rem + 6px);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  #story-editor-section.has-generate .title-block { padding-right: 100px; }
+  .generate-link { top: 16px; right: 16px; }
+  /* The placeholder wraps to two lines on a phone */
+  .story-generate-hint { left: 18px; top: calc(16px + 3.2rem + 6px); font-size: 0.9rem; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .generate-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .story-generate-hint:hover { color: var(--ink); }
+}
+
+/* Dialog layout ---------------------------------------------------------- */
+
+.gen-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-x: hidden;
+}
+
+.gen-field { margin: 0; padding: 0; border: 0; min-width: 0; }
+
+.gen-label {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.gen-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 1rem; /* 16px keeps iOS from zooming the page on focus */
+  line-height: 1.4;
+}
+.gen-input::placeholder { color: var(--ink-muted); }
+.gen-input:disabled { background: var(--rule-soft); color: var(--ink-muted); }
+
+.gen-prompt { min-height: 128px; resize: vertical; }
+
+.gen-count,
+.gen-note,
+.gen-progress {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+.gen-count { margin-top: 6px; font-size: 0.78rem; }
+
+/* A one-line status under a field: provider warning, key check, model errors */
+.gen-inline-status {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+.gen-inline-status[hidden] { display: none; }
+.gen-inline-status.is-error { color: var(--err); }
+.gen-body > .gen-inline-status { margin: -8px 0 0; color: var(--ink-muted); }
+.gen-body > .gen-inline-status.is-error { color: var(--err); }
+
+/* Segmented control (Provider, Length): radios styled as one row ---------- */
+
+.gen-segments {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  border: 1px solid var(--rule-soft);
+}
+
+.gen-segment { position: relative; display: block; cursor: pointer; }
+.gen-segment + .gen-segment { border-left: 1px solid var(--rule-soft); }
+
+.gen-segment input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.gen-segment-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 10px 6px;
+  background: var(--surface);
+  color: var(--ink-muted);
+  text-align: center;
+}
+.gen-segment-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Length estimate under the label, e.g. "~150 words · 10 blanks" */
+.gen-segment-detail { font-size: 0.72rem; font-weight: 400; letter-spacing: 0; }
+.gen-segment input:checked + .gen-segment-text { background: var(--ink); color: var(--paper); font-weight: 600; }
+.gen-segment input:focus-visible + .gen-segment-text { outline: 2px solid var(--focus); outline-offset: 2px; position: relative; z-index: 1; }
+.gen-segmented:disabled .gen-segment { cursor: default; }
+.gen-segmented:disabled .gen-segment-text { color: var(--ink-muted); opacity: 0.7; }
+.gen-segmented:disabled .gen-segment input:checked + .gen-segment-text { background: var(--ink-muted); color: var(--paper); }
+
+/* Switch (Grown-up humor) ------------------------------------------------- */
+
+.gen-switch {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.gen-switch-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.gen-switch-track {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 22px;
+  margin-top: 2px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+.gen-switch-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: var(--ink-muted);
+  transition: transform 140ms ease-out;
+}
+.gen-switch-input:checked + .gen-switch-track { background: var(--ink); }
+.gen-switch-input:checked + .gen-switch-track::after { background: var(--paper); transform: translateX(20px); }
+.gen-switch-input:focus-visible + .gen-switch-track { outline: 2px solid var(--focus); outline-offset: 3px; }
+.gen-switch-input:disabled + .gen-switch-track { opacity: 0.5; }
+.gen-switch-input:disabled ~ .gen-switch-text { color: var(--ink-muted); }
+
+.gen-switch-text { display: flex; flex-direction: column; gap: 2px; }
+.gen-switch-label { font-size: 1rem; }
+.gen-switch-state { color: var(--ink-muted); font-size: 0.85rem; font-weight: 400; }
+
+.gen-settings-group { margin-top: 6px; }
+
+/* Checkbox (Remember on this device) -------------------------------------- */
+
+.gen-check {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  align-self: flex-start;
+  cursor: pointer;
+  font-size: 0.92rem;
+}
+
+.gen-check-input {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.gen-check-box {
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+.gen-check-input:checked + .gen-check-box { border-color: var(--ink); background: var(--ink); }
+/* Check mark in the paper color, so it flips with the theme */
+.gen-check-input:checked + .gen-check-box::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--paper);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.gen-check-input:focus-visible + .gen-check-box { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* Model list -------------------------------------------------------------- */
+
+/* A field with its button attached on the right: API key + Check, Model + Models */
+.gen-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.gen-input-row .gen-input { border-right: 0; }
+.gen-btn.gen-row-btn { min-height: 0; background-color: var(--surface); }
+
+/* Models opens a list under the field, like a select. Doubled class so the
+   general .gen-btn rule further down doesn't reset the padding or chevron. */
+.gen-btn.gen-dropdown-btn {
+  padding-right: 32px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 17px top 50%, right 12px top 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+.gen-btn.gen-dropdown-btn[aria-expanded="true"] {
+  background-image:
+    linear-gradient(135deg, transparent 50%, currentColor 50%),
+    linear-gradient(45deg, currentColor 50%, transparent 50%);
+}
+
+.gen-model-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: -1px;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--rule-soft);
+}
+.gen-model-list[hidden] { display: none; }
+
+.gen-model {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: none; /* rows keep their height; the list scrolls instead */
+  border: 0;
+  border-bottom: 1px solid var(--rule-soft);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+.gen-model:last-child { border-bottom: 0; }
+.gen-model.is-selected { background: var(--ink); color: var(--paper); font-weight: 600; }
+.gen-model:focus-visible { outline-offset: -3px; }
+
+/* Buttons and links ------------------------------------------------------- */
+
+.gen-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.gen-actions-end { justify-content: flex-end; }
+.gen-actions-split { justify-content: space-between; gap: 12px; }
+
+.gen-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.gen-btn[hidden] { display: none; }
+.gen-btn-primary { background-color: var(--ink); color: var(--paper); font-weight: 600; }
+.gen-btn:disabled {
+  border-color: var(--rule-soft);
+  background-color: var(--rule-soft);
+  color: var(--ink-muted);
+  cursor: default;
+}
+
+.gen-confirm-text { margin: 0; }
+
+.gen-link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.gen-link:disabled { color: var(--ink-muted); cursor: default; }
+
+/* Results ----------------------------------------------------------------- */
+
+.gen-error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--err);
+  background: var(--err-soft);
+  color: var(--err);
+  font-size: 0.9rem;
+}
+.gen-error[hidden],
+.gen-partial[hidden],
+.gen-progress[hidden] { display: none; }
+
+.gen-partial {
+  padding: 14px;
+  border: 1px solid var(--rule-soft);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+.gen-partial-title { margin: 0 0 6px; font-weight: 600; }
+.gen-partial-list { margin: 0 0 12px; padding-left: 18px; overflow-wrap: anywhere; }
+.gen-partial-list li + li { margin-top: 2px; }
+
+@media (hover: hover) and (pointer: fine) {
+  /* background-color only, so the Models chevron keeps its size and position */
+  .gen-btn:not(:disabled):hover { background-color: var(--ink); color: var(--paper); }
+  .gen-btn-primary:not(:disabled):hover { opacity: 0.88; }
+  .gen-segment:hover input:not(:checked):not(:disabled) + .gen-segment-text { color: var(--ink); }
+  .gen-model:not(.is-selected):hover { background: var(--paper); }
+  .gen-link:not(:disabled):hover { color: var(--ink-soft); }
+}
+
+@media (max-width: 560px) {
+  .gen-actions-end .gen-btn { flex: 1 1 auto; }
+  /* The phone design keeps "Generate a madlib" on one line */
+  .gen-dialog .mm-dialog-title { font-size: 1.125rem; }
+}

@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     typeof MadlibShare !== 'undefined' && MadlibShare,
     typeof MadlibSuggest !== 'undefined' && MadlibSuggest,
     typeof MadlibPrint !== 'undefined' && MadlibPrint,
-    typeof MadlibCollection !== 'undefined' && MadlibCollection
+    typeof MadlibCollection !== 'undefined' && MadlibCollection,
+    typeof MadlibGenerate !== 'undefined' && MadlibGenerate
   ];
   features.forEach(feature => {
     if (!feature || typeof feature.init !== 'function') return;
